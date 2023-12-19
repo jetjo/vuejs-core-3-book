@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>[[Set]]内部方法</title>
+    <script>
+      window.tryRun = function (cb) {
+        try {
+          cb()
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <h1>o.[[Set]](propertyKey, newVal, receiver)的执行过程</h1>
+    <ul>
+      <li>1、调用o.[[GetOwnProperty]]获取ownDesc</li>
+      <li>
+        2、如果ownDesc是undefined, 那么
+        <ul>
+          <li>a、调用o.[[GetPrototypeOf]]获取parent</li>
+          <li>
+            b、如果parent不是null, 返回parent.[[Set]](propertyKey, newVal,
+            receiver)
+          </li>
+          <li>
+            c、否则, 使得ownDesc为{ writeable: true, enumerable:
+            true,configurable: true }
+          </li>
+        </ul>
+      </li>
+      <li>
+        3、如果ownDesc是data-descriptor, 那么
+        <ul>
+          <li>
+            a、如果ownDesc.writeable是false,返回false
+            <script type="module">
+              console.log('测试第3-a步: ')
+              const parent = Object.create(null, {
+                foo: {
+                  value: '由原型定义的不可写的数据属性',
+                  writable: false
+                }
+              })
+              const o = Object.create(parent)
+              tryRun(() => (o.foo = 'bar'))
+            </script>
+          </li>
+          <li>
+            b、如果receiver不是object,返回false
+            <script type="module">
+              console.log('测试第3-b步: ')
+              console.warn('没有测试用例')
+            </script>
+          </li>
+          <li>c、调用receiver.[[GetOwnProperty]]获取receiverDesc</li>
+          <li>
+            d、如果receiverDesc不是undefined,那么
+            <ul>
+              <li>
+                i、如果receiverDesc是accessor-descriptor,返回false
+                <script type="module">
+                  console.log('测试第3-d-i步: ')
+                  const parent1 = Object.create(null, {
+                    foo: {
+                      value: '由原型定义的可写的数据属性',
+                      writable: true
+                    }
+                  })
+                  const receiver1 = {
+                    get foo() {
+                      return '由receiver定义的只读的访问器属性'
+                    }
+                  }
+                  const o1 = Object.create(parent1)
+                  tryRun(() => {
+                    console.log(Reflect.set(o1, 'foo', 'bar', receiver1))
+                  })
+                </script>
+              </li>
+              <li>ii、如果receiverDesc.writeable是false, 返回false</li>
+              <li>
+                <i style="color: crimson">
+                  iii、返回receiver.[[DefineOwnProperty](propertyKey, { value:
+                  newVal })
+                </i>
+                <script type="module">
+                  console.log('测试第3-d-iii步, 最简单的情况: ')
+                  const o2 = Object.create(null, {
+                    foo: {
+                      value: '',
+                      writable: true,
+                      // configurable: false,
+                      configurable: true,
+                      enumerable: false
+                    }
+                  })
+                  tryRun(() => (o2.foo = 'bar'))
+                  console.log(Object.getOwnPropertyDescriptor(o2, 'foo'))
+                  console.log('测试第3-d-iii步, 其他情况: ')
+                  const receiver2 = o2
+                  tryRun(() =>
+                    Reflect.set({}, 'foo', 'bar from reflect', receiver2)
+                  )
+                  console.log(Object.getOwnPropertyDescriptor(receiver2, 'foo'))
+                </script>
+              </li>
+            </ul>
+          </li>
+          <li>e、断言:receiver对象自身没有[propertyKey]属性</li>
+          <li>
+            <i style="color: crimson"
+              >f、返回CreateDataProperty(receiver, propertyKey, newVal)</i
+            >
+            <script type="module">
+              console.log('测试第3-f步: ')
+              const parent3 = Object.create(null, {
+                foo: {
+                  value: '来自于原型的数据属性',
+                  writable: true //缺省值是false
+                }
+              })
+              // console.log(Object.getOwnPropertyDescriptor(parent3, 'foo'), 'parent.foo')
+              const o3 = Object.create(parent3)
+              tryRun(() => (o3.foo = 'bar from son'))
+              console.log(
+                Object.getOwnPropertyDescriptor(parent3, 'foo'),
+                'parent.foo'
+              )
+              console.log(Object.getOwnPropertyDescriptor(o3, 'foo'), 'o3.foo')
+              // NOTE: 如果对象O自身没有一个属性foo,那么即使原型链上有这个属性,
+              // 只要原型链上的这个属性是可写的,
+              // 那么执行O.foo='xxx'后,并不会改写原型链上的foo属性,而是会在O自身上定义名称为foo的数据属性.
+              // 但是在执行O.foo='xxx'之前,访问O.foo返回的是原型链上的foo;
+              // 执行O.foo='xxx'之后,再访问O.foo返回的就是O自身的foo属性了,原型链上的foo属性被遮蔽了.
+            </script>
+          </li>
+        </ul>
+      </li>
+      <li>4、断言: ownDesc是accessor-descriptor</li>
+      <li>5、使得setter为ownDesc.set</li>
+      <li>
+        6、如果setter是undefined,返回false
+        <script type="module">
+          console.log('测试第6步: ')
+          const parent4 = Object.create(null, {
+            foo: {
+              get() {
+                return '来自原型的只读访问器属性'
+              }
+            }
+          })
+          const o4 = Object.create(parent4)
+          tryRun(() => (o4.foo = 'bar from son'))
+        </script>
+      </li>
+      <li>
+        <i style="color: crimson">7、否则,执行Call(setter, receiver, newVal)</i>
+      </li>
+      <li>
+        8、返回true
+        <script type="module">
+          console.log('测试第7-8步: ')
+          const parent5 = Object.create(null, {
+            foo: {
+              set(v) {
+                console.log('this: ', this)
+                // this.bar = v
+                parent5.bar = v
+              }
+            }
+          })
+          const o5 = {
+            __proto__: parent5,
+            bar: ''
+          }
+          tryRun(() => (o5.foo = 'bar from son'))
+          console.log(o5)
+          // NOTE: 当给O设置foo属性时, 如果O自身没有foo属性,
+          // 当原型链上有foo属性时, 如果原型链上的foo是数据属性,那么最终还是会在O自身上设置foo;
+          // 当原型链上的foo是访问器属性时,会调用原型链上foo的setter,这时,就不一定会将属性设置在O自身上了.
+        </script>
+      </li>
+    </ul>
+  </body>
+</html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ordinary Object [[DefineOwnProperty]]</title>
+  </head>
+  <body>
+    <ul>
+      <li>
+        <pre>
+            [[DefineOwnProperty]]在对象O自身上定义属性,
+            如果O.[[IsExtensible]]返回false,那么属性定义失败,
+            [[DefineOwnProperty]]返回false
+        </pre>
+      </li>
+      <li>
+        <pre>
+            当给对象O的属性赋值时(形式: obj.foo='bar'),如果对象obj的属性foo是一个
+            数据属性,
+            那么内部方法[[Set]]会最终调用[[DefineOwnProperty]]方法来完成操作,
+            所以如果[[IsExtensible]]返回false的话赋值操作会失败;
+            [[Set]]内部方法在调用[[DefineOwnProperty]]之前会先检查propertyDescriptor.writable,
+            如果propertyDescriptor.writable为false,则根本不会执行到对[[DefineOwnProperty]]的调用.
+        </pre>
+      </li>
+      <li>
+        <pre>
+            当给对象O的属性赋值时,
+            如果原型链上的foo是访问器属性,并且propertyDescriptor.set不是undefined,
+            这会执行Call(getOwnPropertyDescriptor.set, receiver, val),
+            后续步骤不一定调用到[[DefineOwnProperty]]
+        </pre>
+      </li>
+    </ul>
+  </body>
+</html>

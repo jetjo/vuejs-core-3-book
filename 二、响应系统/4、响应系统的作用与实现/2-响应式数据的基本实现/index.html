@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>4.2 响应式数据的基本实现</title>
+    <script>
+      // 副作用函数集合,利用Set的自动去重
+      const bucket = new Set()
+      // 当前正在执行的副作用
+      let activeEffectFn
+      function reactive(target) {
+        return new Proxy(target, {
+          // 副作用收集
+          get(target, key) {
+            activeEffectFn && bucket.add(activeEffectFn)
+            return target[key]
+          },
+          // 副作用查找并执行
+          set(target, key, newVal) {
+            target[key] = newVal
+            bucket.forEach(ef => ef())
+            // 返回true, 代表赋值成功
+            return true
+          }
+        })
+      }
+      activeEffectFn = effect
+      const obj = { txt: 'hello world! ' }
+      const state = reactive(obj)
+      function effect() {
+        document.body.innerText = state.txt
+      }
+      setTimeout(() => {
+        state.txt = 'hello vue3!'
+      }, 10000)
+      window.addEventListener('load', () => effect())
+    </script>
+  </head>
+  <body></body>
+</html>

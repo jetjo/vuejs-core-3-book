@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>4-11 过期的副作用</title>
+  </head>
+  <body>
+    <script type="module">
+      import { reactive } from './reactive/index.js'
+      import { watch } from './watch/index.js'
+
+      const state1 = reactive({ name: 'liuyifei' })
+      const state2 = reactive({ age: 18 })
+      const state3 = reactive({ price: 3000 })
+
+      const cancel = watch(
+        [state1, state2, state3],
+        async (val, oldVal, rs) => {
+          let expired = false
+          rs(() => (expired = true))
+
+          const price = state3.price
+          console.log('副作用开始: ', price, val, oldVal)
+
+          await new Promise(res => {
+            setTimeout(
+              () => {
+                res()
+              },
+              price >= 3000 ? 10000 : 3000
+            )
+          })
+
+          if (expired) {
+            console.warn('副作用失效: ', price, val, oldVal)
+            return
+          }
+          console.log('副作用有效: ', price, val, oldVal)
+        },
+        {
+          immediate: true,
+          flush: undefined, //'sync'
+        }
+      )
+
+      state3.price = 1000
+
+      // cancel()
+
+      state3.price = 5000 // 没有cancel
+
+      setTimeout(() => {
+        state3.price = 1000 // cancel
+      }, 0)
+    </script>
+  </body>
+</html>

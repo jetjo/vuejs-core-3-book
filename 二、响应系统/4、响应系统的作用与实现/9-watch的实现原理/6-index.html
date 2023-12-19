@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Watch 深度响应 测试</title>
+  </head>
+  <body>
+    <script type="module">
+      import { reactive } from '../11-竞态问题与过期的副作用/reactive/index.js'
+      import { watch } from '../11-竞态问题与过期的副作用/watch/index.js'
+
+      const state = reactive({
+        name: 'liuyifei',
+        price: 3000,
+        bodyQu: {
+          height: 179,
+          weight: 70
+        }
+      })
+
+      watch(
+        () => state.bodyQu.height,
+        () => {
+          console.log('liuyifei.body.height: ', state.bodyQu.height)
+        }
+      )
+
+      setTimeout(() => {
+        state.bodyQu.height = 175
+      }, 0)
+
+      setTimeout(() => {
+        state.bodyQu = { height: 180, weight: 70 }
+      }, 0)
+
+      setTimeout(() => {
+        state.bodyQu.height = 175
+        state.bodyQu.height = 176
+        state.bodyQu.height = 177
+      }, 0)
+
+    //   setInterval(() => {
+    //     console.log('bucket size: ', bucket)
+    //     // console.log('reactiveMap.size: ', reactiveMap)
+    //   }, 10000)
+    </script>
+  </body>
+</html>

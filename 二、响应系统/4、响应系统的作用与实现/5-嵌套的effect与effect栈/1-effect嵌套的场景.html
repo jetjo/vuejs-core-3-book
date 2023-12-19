@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>4.5 effect嵌套的场景</title>
+    <script type="module">
+      import { effect } from '../4-分支切换与cleanup/1-effect-fn-reg.js'
+      import { reactive } from '../4-分支切换与cleanup/2-reactive.js'
+      const state = reactive({ txt: 'hello world! ' })
+      window.addEventListener('load', () => {
+        const el = document.getElementById('app')
+        effect(() => {
+          console.log('effect run')
+          effect(() => {
+            console.log('inner effect run')
+          })
+          el.innerText = state.txt
+        })
+      })
+      setTimeout(() => {
+        console.log('修改响应式数据')
+        state.txt = 'hello vue3! '
+      }, 10000)
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <pre>
+      组件的渲染是一种副作用,即组件的渲染逻辑或者说render方法需要的一个副作用中执行;
+      而组件是可以嵌套的,所以渲染一个组件的过程中也要渲染子组件;
+      再者,每个组件的渲染逻辑都封装在各自的渲染函数中,render函数有封装在各自的effect中,
+      所以副作用effect需要支持嵌套.
+    </pre>
+    <a href="./2-index.html">effect栈</a>
+  </body>
+</html>

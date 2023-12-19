@@ -1,0 +1,6 @@
+export * from './get.js'
+export * from './set.js'
+export * from './ownKeys.js'
+export * from './getProto.js'
+export * from './has.js'
+export * from './deleteProperty.js'

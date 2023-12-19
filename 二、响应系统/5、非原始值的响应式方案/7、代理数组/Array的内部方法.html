@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>数组与普通对象的区别</title>
+  </head>
+  <body>
+    <pre>
+    数组和普通对象(OrdinaryObject)一样也部署了[[Get]]、[[Set]]、[[Delete]]、[[HasProperty]]、
+    [[GetOwnProperty]]、[[DefineOwnProperty]]等内部方法;
+
+        这其中除了[[DefineOwnProperty]]之外,其余内部方法的实现是相同的,执行逻辑由<a
+      href="https://tc39.es/ecma262/multipage/ordinary-and-exotic-objects-behaviours.html#sec-ordinary-object-internal-methods-and-internal-slots"
+      >ES语言规范第10.1.x节</a
+    >定义; 
+        而对于[[DefineOwnProperty]],数组有独有的实现,执行逻辑由<a
+      href="https://tc39.es/ecma262/multipage/ordinary-and-exotic-objects-behaviours.html#sec-array-exotic-objects-defineownproperty-p-desc"
+      >ES语言规范第10.4.2.1节</a
+    >定义;
+        因为内部方法[[Set]]执行时最终是要调用各自的内部方法[[DefineOwnProperty]]来完成属性的设置,
+        所以对于数组,读取一个属性值(array[index]、array.length)的过程和普通对象一样,因为[[Get]]是一样的实现;
+
+        但是设置一个属性值时,其执行逻辑不同于普通对象;
+        分以下两种情况:
+        1、如果是设置length,假如设置成功;
+            那么那些索引值大于等于length的属性,会被以调用[[Delete]]的方式删除掉;
+            删除的顺序是降序;
+            如果删除到某一个索引对应的属性时删除失败了(原因可能是这个属性的propertyDescription.writable是false);
+            那么会重新设置length的值为这个删除失败的属性的索引+1
+        2、如果是设置某一个索引的属性值,如果这个索引大于等于属性length,并且length的propertyDescription.writable是false(
+            原因可能是数组是freeze的),那么终止操作;
+            否则,当索引的属性赋值成功后,如果索引大于等于length,
+            会将length的值设置为length+1
+    </pre>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script type="module">
+      import { effect } from './effect/index.js'
+      import { reactive } from './reactive/index.js'
+      const state = reactive(Array(100))
+
+      effect(() => {
+        console.log(state)
+        for (const key in state) {
+          if (Object.hasOwnProperty.call(state, key)) {
+            const element = state[key]
+          }
+        }
+      })
+
+      state[50] = 'liuyifei'
+    </script>
+  </body>
+</html>

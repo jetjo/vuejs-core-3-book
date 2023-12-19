@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script type="module">
+      import { effect } from './effect/index.js'
+      import { reactive } from './reactive/index.js'
+      const state = reactive([])
+
+      effect(() => {
+        for (const item of state) {
+          console.log(item)
+        }
+      })
+
+      state.push('刘亦菲')
+    </script>
+  </body>
+</html>

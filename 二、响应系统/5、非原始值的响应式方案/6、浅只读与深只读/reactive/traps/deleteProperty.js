@@ -1,0 +1,27 @@
+import { warn } from '../../../index.js'
+import { TRIGGER_TYPE } from './convention.js'
+
+/**
+ * @param {import('../index.js').ProxyTrapOption} [options]
+ * @returns {ProxyHandler['deleteProperty']}
+ * */
+function getDeleteTrap(options = {}) {
+  const { trigger, isReadonly } = options
+  /**@type {ProxyHandler['deleteProperty']} */
+  const deleteProperty = function deleteProperty(target, p) {
+    if (isReadonly) {
+      warn(`不能删除只读状态对象的属性!`)
+      return true
+    }
+    const desc = Reflect.getOwnPropertyDescriptor(target, p)
+    if (typeof desc === 'undefined') return true
+    const suc = Reflect.deleteProperty(target, p)
+    if (suc) {
+      trigger(target, p, TRIGGER_TYPE.DELETE)
+    }
+    return suc
+  }
+  return deleteProperty
+}
+
+export { getDeleteTrap }

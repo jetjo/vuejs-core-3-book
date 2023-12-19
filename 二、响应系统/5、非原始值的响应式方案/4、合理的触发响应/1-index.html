@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>5、4合理的触发响应</title>
+  </head>
+  <body>
+    <script type="module">
+      import { reactive, watch } from '../index.js'
+      const childState = reactive({})
+      const parentState = reactive({ bar: 1 })
+      Object.setPrototypeOf(childState, parentState)
+      //   console.log(childState)
+
+      watch(
+        () => childState.bar,
+        val => {
+          console.log('属性bar被赋值: ', val)
+        },
+        {
+          immediate: true
+        }
+      )
+
+      //此时childState自身没有bar, 能够触发一次effect
+      parentState.bar = 2
+      //给childState自身设置bar属性, 应该只执行一次effect
+      childState.bar = 3
+      //此时,因为childState自身已经有bar属性,并且因为上一行给childState自身设置bar之前cleanup的缘故,
+      //   effect不应再依赖于parentState
+      // 但是,因为这是同步代码,effect是微任务,cleanup还没执行,
+      // 所以这次仍然会导致effect被重复加入微任务列队
+      parentState.bar = 4
+
+      setTimeout(() => {
+        // cleanup后不在触发effect
+        parentState.bar = 5
+      }, 0)
+    </script>
+  </body>
+</html>

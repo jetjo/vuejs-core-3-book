@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <pre>
+满足TypeError的最少条件:
+        1、writable是false
+        2、configurable是false
+        3、设置的值与当前属性值不同
+    </pre>
+    <script type="module">
+      import { reactive } from '../../../index.js'
+      const target = {}
+      Object.defineProperty(target, 'foo', {
+        value: '我的值不能变',
+        writable: false,
+        configurable: false
+      })
+      const py = reactive(target)
+      py.foo = py.foo + 'py.foo'
+    </script>
+  </body>
+</html>

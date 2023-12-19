@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Watch 对象 测试</title>
+  </head>
+  <body>
+    <script type="module">
+      import { reactive } from '../11-竞态问题与过期的副作用/reactive/index.js'
+      import { watch } from '../11-竞态问题与过期的副作用/watch/index.js'
+
+      const state = reactive({
+        name: 'liuyifei',
+        price: 3000,
+        bodyQu: {
+          height: 179,
+          weight: 70
+        }
+      })
+
+      watch(state, () => {
+        const keys = []
+        for (const key in state) {
+          if (Object.hasOwnProperty.call(state, key)) {
+            keys.push(key)
+          }
+        }
+        console.log('girl: ', keys)
+      })
+
+      setTimeout(() => {
+        state.bodyQu.height = 175
+      }, 0)
+
+      setTimeout(() => {
+        // watch 回调依赖于state的所有key,
+        // 但是目前添加新属性不会触发回调.
+        // 会调用trigger,
+        // 但是bucket中没有依赖于这些属性的effect.
+        state.bodyQu.bustGrade = 'B+'
+        state.bodyQu.waistInch = 20
+        state.bodyQu.hipInch = 40
+        // console.log(state)
+      }, 0)
+
+      setTimeout(() => {
+        state.bodyQu.hipInch++
+      }, 1000)
+    </script>
+  </body>
+</html>

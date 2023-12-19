@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script type="module">
+      const arr = Array(10)
+      arr.fill('liuyifei', 4, 7)
+      arr.fill(undefined, 7, 9)
+      delete arr[5]
+      Object.defineProperty(arr, '2', {
+        value: '老婆',
+        writable: true,
+        enumerable: false,
+        configurable: true
+      })
+      // [空属性 × 2, '老婆', 空白, 'liuyifei', 空白, 'liuyifei', undefined, undefined, 空白]
+      console.log(arr)
+
+      {
+        // 略过空白的操作
+        const mapped = arr.map(f => `fuck ${f}`)
+        console.log(mapped)
+        arr.forEach(f => console.log(f))
+        const filterPassAll = arr.filter(() => true) //通过给定callback函数测试的元素的浅拷贝
+        console.log(filterPassAll)
+        const objKeys = Object.keys(arr)
+        console.log(objKeys)
+        const objectSpread = { ...arr }
+        console.log(objectSpread)
+      }
+      {
+        // 把空白(empty slots )当作undefined
+        for (const iterator of arr) {
+          console.log(iterator)
+        }
+
+        const arrSpreading = [...arr] // 把本来的空槽变成了值为undefined的属性曹
+        console.log(arrSpreading)
+      }
+    </script>
+  </body>
+</html>

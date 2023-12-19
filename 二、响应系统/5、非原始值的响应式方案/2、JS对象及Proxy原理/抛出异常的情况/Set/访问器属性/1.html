@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <pre>
+满足TypeError的最少条件:
+        1、只有getter
+        2、返回Reflect.set的调用结果(false)
+    </pre>
+    <script type="module">
+      const target = {}
+      Object.defineProperty(target, 'foo', {
+        get() {
+          return 'bar'
+        },
+        configurable: true
+      })
+      const py = new Proxy(target, {
+        set() {
+          // NOTE: 当一个访问器属性没有setter且configurable是false时,
+          // 不光使用Reflect.set返回false会报错,
+          // 即使直接返回true也一样会抛出TypeError异常.
+          // 但如果只是没有setter,而configurable是true的话,
+          // 直接返回true是不报错的.
+          const suc = Reflect.set(...arguments)
+          console.log({ suc })
+          // return true
+          return suc
+        }
+      })
+      py.foo = py.foo
+      //   py.foo = undefined
+    </script>
+  </body>
+</html>
