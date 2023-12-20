@@ -4,8 +4,18 @@ const { plugins } = require("./webpack.plugins");
 const { dir } = require("console");
 
 const ENTRY = "./" + (process.env.ENTRY || "二、响应系统/index.js");
+const title = ENTRY.split("/").pop().split(".").shift();
 
+/**
+ * NOTE: 这里千万别以./开头,
+ * 否则webpack-dev-server找不到页面,还没有报错
+ * 我草泥马!!!!, 这还用配置你webpack,点明了要你报错才报吗???
+ * 这么严重的问题,不该自动报错吗???
+ * 我草泥马的十三点,配置一大坨,垃圾webpack
+ */
+const publicPath = "/assets/";
 console.warn("ENTRY", ENTRY);
+console.warn("OPEN: ", `${publicPath}${title}.html`);
 
 module.exports = {
   context: __dirname,
@@ -17,10 +27,10 @@ module.exports = {
     chunkFilename: "[contenthash]@[name].js",
     // path: path.resolve(__dirname, "./dist/[fullhash]"),
     path: path.resolve(__dirname, "./dist/assets"),
-    publicPath: "./assets/",
+    publicPath,
     // 输出目录path中的资源发布到服务器后,
     // 相对于被访问的页面(页面需要加载打包输出的资源)而言的虚拟路径
-    // publicPath: "./[fullhash]/",
+    // publicPath: "/[fullhash]/",
     clean: true,
   },
   // experiments: {
@@ -36,11 +46,7 @@ module.exports = {
   // },
   plugins,
   devServer: {
-    port: 3080, // 端口号
-    // https: false, // HTTP/2
-    static: {
-      directory: path.join(__dirname, "./dist"),
-      serveIndex: true,
-    },
+    port: 3080,
+    open: false
   },
 };
