@@ -1,0 +1,23 @@
+{
+  "name": "vuejs-core-3-book",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "preview": "http-server ./dist -p 3001",
+    "serve": "webpack serve --open"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "html-webpack-plugin": "^5.5.4",
+    "http-server": "^14.1.1",
+    "js-config-webpack-plugin": "^2.0.3",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  }
+}

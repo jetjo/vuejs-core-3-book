@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="cn">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no"
+    />
+    <!-- <link rel="icon" href="favicon.ico"> -->
+    <!-- <script src="./config.js"></script> -->
+    <title><%= htmlWebpackPlugin.options.title %></title>
+  </head>
+
+  <body style="margin: 0; padding: 0; border: none; background-color: #fff">
+    <div id="app"></div>
+    <div>
+      <% for(var key in htmlWebpackPlugin.files) { %>
+      <p><%= key %> : <%= JSON.stringify(htmlWebpackPlugin.files[key]) %></p>
+      <% } %>
+    </div>
+    <div>
+      <% for(var key in webpackConfig.entry) { %>
+      <h2><%= key %> : <%= JSON.stringify(webpackConfig.entry[key]) %></h2>
+      <% } %>
+    </div>
+  </body>
+</html>
