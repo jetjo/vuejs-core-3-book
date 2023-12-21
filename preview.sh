@@ -1,3 +1,5 @@
+echo "arg1: $1"
+echo "arg2: $2"
 # ENTRY=$0
 PUB_PATH=/assets/
 export PUB_PATH
@@ -28,7 +30,7 @@ if [ -z "$1" ]; then
     fi
 else
     ENTRY=$1
-    echo "./preview.sh '$1'" >>preview.sh.log
+    echo "./preview.sh '$1' '$2'" >>preview.sh.log
     export ENTRY
     pnpm build -- --watch &
     pnpm preview -- $DISK_OUT_BASE_PATH
