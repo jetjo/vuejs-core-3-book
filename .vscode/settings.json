@@ -1,0 +1,9 @@
+{
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "files.autoSave": "onFocusChange",
+    "cSpell.words": [
+        "brotli",
+        "fullhash"
+    ]
+}

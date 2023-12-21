@@ -1,22 +1,8 @@
 const path = require("path");
 // const { rules } = require("./webpack.rules");
 const { plugins } = require("./webpack.plugins");
-const { dir } = require("console");
 
-const ENTRY = "./" + (process.env.ENTRY || "二、响应系统/index.js");
-const title = ENTRY.split("/").pop().split(".").shift();
-
-/**
- * NOTE: 这里千万别以./开头,
- * 否则webpack-dev-server找不到页面,还没有报错
- * 我草泥马!!!!, 这还用配置你webpack,点明了要你报错才报吗???
- * 这么严重的问题,不该自动报错吗???
- * 我草泥马的十三点,配置一大坨,垃圾webpack
- */
-const publicPath = "/assets/";
-console.warn("ENTRY", ENTRY);
-console.warn("OPEN: ", `${publicPath}${title}.html`);
-
+const { ENTRY, OUT_BASE_PATH, publicPath } = require("./webpack.env");
 module.exports = {
   context: __dirname,
   mode: "development",
@@ -26,10 +12,14 @@ module.exports = {
     filename: "[contenthash]@[name].js",
     chunkFilename: "[contenthash]@[name].js",
     // path: path.resolve(__dirname, "./dist/[fullhash]"),
-    path: path.resolve(__dirname, "./dist/assets"),
+    path: path.resolve(__dirname, `${OUT_BASE_PATH}/${publicPath}`),
     publicPath,
     // 输出目录path中的资源发布到服务器后,
     // 相对于被访问的页面(页面需要加载打包输出的资源)而言的虚拟路径
+    // 从根本用意讲,publicPath应该是绝对路径或相对于域的路径,
+    // 而不应该是以./开头的相对于当前页面的路径
+    // 因为当前页面的路径是不确定的,
+    // 这就使得publicPath失去了定位打包资源url的能力
     // publicPath: "/[fullhash]/",
     clean: true,
   },
@@ -47,6 +37,6 @@ module.exports = {
   plugins,
   devServer: {
     port: 3080,
-    open: false
+    open: false,
   },
 };

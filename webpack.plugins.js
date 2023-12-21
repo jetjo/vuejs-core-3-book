@@ -2,43 +2,61 @@
 
 // const webpack = require("webpack");
 
-const htmlPlugin = require("html-webpack-plugin");
-
 // const CopyPlugin = require("copy-webpack-plugin");
 
-const JsConfigWebpackPlugin = require('js-config-webpack-plugin');
+const JsConfigWebpackPlugin = require("js-config-webpack-plugin");
 
-const ENTRY = process.env.ENTRY || "二、响应系统/index.js";
-const title = ENTRY.split("/").pop().split(".").shift();
-console.warn("title", title);
+const htmlPlugin = require("html-webpack-plugin");
+const { title, publicPath, IS_WEBPACK_DEV_SERVER } = require("./webpack.env");
+
+const htmlShareConf = {
+  template: `index.ejs`,
+  filename: `index.html`,
+  // filename: "../[name].html",
+  // base: { href: "/learn.html" },
+  // inject: 'body'
+  // scriptLoading: 'blocking',//如果是默认值‘defer’将导致document.write语句失效！！！
+};
 
 const plugins = [
+  new htmlPlugin({
+    ...htmlShareConf,
+    title,
+    filename: `${title}.html`,
+  }),
   // new JsConfigWebpackPlugin(),
   // new CopyPlugin({
   //     patterns: [
   //         { from: './src/config.js', to: './' },
   //     ]
   // }),
-  new htmlPlugin({
-    title,
-    template: `index.ejs`,
-    filename: `${title}.html`,
-    base: { href: "/learn.html" },
-  }),
-  new htmlPlugin({
-    title,
-    // inject: 'body'
-    // scriptLoading: 'blocking',//如果是默认值‘defer’将导致document.write语句失效！！！
-    template: `index.ejs`,
-    filename: "../learn.html",
-    // filename: "../[name].html",
-  }),
-  /* ,
-  new webpack.DefinePlugin({
-    __VUE_OPTIONS_API__: JSON.stringify(true),
-    __VUE_PROD_DEVTOOLS__: JSON.stringify(false),
-    BASE_URL: JSON.stringify("./"),
-  }), */
+  // new webpack.DefinePlugin({
+  //   __VUE_OPTIONS_API__: JSON.stringify(true),
+  //   __VUE_PROD_DEVTOOLS__: JSON.stringify(false),
+  //   BASE_URL: JSON.stringify("./"),
+  // }),
 ];
+
+if (IS_WEBPACK_DEV_SERVER) {
+  plugins.push(
+    new htmlPlugin({
+      ...htmlShareConf,
+      meta: {
+        refresh: {
+          "http-equiv": "refresh",
+          content: `3;url=${publicPath}${title}.html`,
+        },
+      },
+    })
+  );
+} else {
+  plugins.push(
+    new htmlPlugin({
+      ...htmlShareConf,
+      title,
+      filename: "../learn.html",
+    })
+  );
+}
 
 module.exports.plugins = plugins;

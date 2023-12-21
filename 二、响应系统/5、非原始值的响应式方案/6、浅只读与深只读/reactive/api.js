@@ -78,7 +78,10 @@ function _getProxyHandler(trapOption) {
   }
   doWithAllTrapGetter(trapsModule, handleGetter)
   _trapGetters.forEach(handleGetter)
-  return { /* proxyHandler: getProxyHandler(traps), */ trapOption, trapGetters }
+  return {
+    /* proxyHandler: getProxyHandler(traps), */ trapOption,
+    trapGetters
+  }
 }
 
 /**
@@ -96,7 +99,7 @@ function createReactive(isShallow = false, isReadonly = false) {
   4个api用的不是同一个集合,
   但是内部和外部api是同一个集合,
   所以需要在`createReactive`内且`__getApi`外声明 ;
-  @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index.vue|GitHub-learn-vue项目 }
+  @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index.vue |GitHub-learn-vue项目 }
   */
   const reactiveMap = new WeakMap()
 
@@ -116,16 +119,19 @@ function createReactive(isShallow = false, isReadonly = false) {
         if (isReactive(target)) {
           warn('参数target不能是reactive的返回值类型!')
           /**
-           * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2.vue|GitHub-learn-vue项目 }
-           * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2-2.vue|GitHub-learn-vue项目 }
-           * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2-3.vue|GitHub-learn-vue项目 }
-           * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2-4.vue|GitHub-learn-vue项目 }
+           * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2.vue |GitHub-learn-vue项目 }
+           * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2-2.vue |GitHub-learn-vue项目 }
+           * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2-3.vue |GitHub-learn-vue项目 }
+           * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2-4.vue |GitHub-learn-vue项目 }
            */
           if (isExpectedReactive(target, true)) return target
           // target可能仍然是响应式数据. v并没有这样, 而是再次包裹了一层Proxy
           // target = getTarget(target, true)
         }
       }
+      // 解决当对象属性是引用类型时,对属性的两次读取结果不一致的问题
+      // 二、响应系统/5、非原始值的响应式方案/7、代理数组/includes.js
+      // https://github.com/jetjo/vuejs-core-3-book/blob/master/%E4%BA%8C%E3%80%81%E5%93%8D%E5%BA%94%E7%B3%BB%E7%BB%9F/5%E3%80%81%E9%9D%9E%E5%8E%9F%E5%A7%8B%E5%80%BC%E7%9A%84%E5%93%8D%E5%BA%94%E5%BC%8F%E6%96%B9%E6%A1%88/7%E3%80%81%E4%BB%A3%E7%90%86%E6%95%B0%E7%BB%84/includes.js
       if (reactiveMap.has(target)) return reactiveMap.get(target)
       // const py = new Proxy(target, handler)
       const py = new Proxy(target, __getApi.getProxyHandler())

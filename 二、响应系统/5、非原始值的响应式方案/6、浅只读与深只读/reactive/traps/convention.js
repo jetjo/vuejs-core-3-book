@@ -61,14 +61,10 @@ function isExpectedReactiveFlag(
 }
 
 /**
- * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2.vue|GitHub-learn-vue项目 }
- * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2-2.vue|GitHub-learn-vue项目 }
- * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2-3.vue|GitHub-learn-vue项目 }
- * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2-4.vue|GitHub-learn-vue项目 }
- * @see {@link file:///Users/loong/project/vue-project/src/响应式数据/index2.vue } 本地仓库vue-project项目
- * @see {@link file:///Users/loong/project/vue-project/src/响应式数据/index2-2.vue } 本地仓库vue-project项目
- * @see {@link file:///Users/loong/project/vue-project/src/响应式数据/index2-3.vue } 本地仓库vue-project项目
- * @see {@link file:///Users/loong/project/vue-project/src/响应式数据/index2-4.vue } 本地仓库vue-project项目
+ * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2.vue |GitHub-learn-vue项目 }
+ * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2-2.vue |GitHub-learn-vue项目 }
+ * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2-3.vue |GitHub-learn-vue项目 }
+ * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2-4.vue |GitHub-learn-vue项目 }
  */
 function isExpectedReactive(
   reactive,
