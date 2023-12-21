@@ -3,11 +3,11 @@ import { rewriteArrayProtoFindMethod } from './helper.js'
 const arrayFindMethods = [
   {
     name: 'indexOf',
-    isInvalidRes: res => res !== -1
+    isInvalidRes: res => res === -1
   },
   {
     name: 'lastIndexOf',
-    isInvalidRes: res => res !== -1
+    isInvalidRes: res => res === -1
   },
   {
     name: 'includes',
