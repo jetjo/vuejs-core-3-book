@@ -92,4 +92,16 @@ const runWithoutProto = (target, cb) => {
   }
 }
 
-export { runWithoutProto }
+function runWithoutArg0Proto(fn, ...args) {
+  const target = args[0]
+  if (typeof target !== 'object' || target === null) return fn(...args)
+  const protoBak = Object.getPrototypeOf(target)
+  Object.setPrototypeOf(target, null)
+  try {
+    return fn(...args)
+  } finally {
+    Object.setPrototypeOf(target, protoBak)
+  }
+}
+
+export { runWithoutProto, runWithoutArg0Proto }
