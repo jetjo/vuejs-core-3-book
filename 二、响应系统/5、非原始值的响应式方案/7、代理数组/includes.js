@@ -2,6 +2,8 @@
 const { effect } = await import('./effect/index.js')
 const { reactive } = await import('./reactive/index.js')
 const arr = [{}, {}]
+arr.includes = Array.prototype.includes
+// arr.includes = () => true
 const state = reactive(arr)
 effect(() => {
   // 调用`includes`方法时,
