@@ -1,5 +1,6 @@
-import { rewriteArrayProtoFindMethod } from './helper.js'
-
+/**@type {{
+ * name: FindsName;
+ * }[]} */
 const arrayFindMethods = [
   {
     name: 'indexOf',
@@ -18,11 +19,19 @@ const arrayFindMethods = [
   }
 ]
 
-const arrayInstrumentations = Object.create(null)
+// const arrayProto = {
+//   indexOf: Array.prototype.indexOf,
+//   lastIndexOf: Array.prototype.lastIndexOf,
+//   includes: Array.prototype.includes
+// }
 
-arrayFindMethods.reduce((instrumentations, method) => {
-  instrumentations[method.name] = rewriteArrayProtoFindMethod(method)
-  return instrumentations
-}, arrayInstrumentations)
+/**@typedef {{
+ * indexOf: (...args: any[]) => any;
+ * lastIndexOf: (...args: any[]) => any;
+ * includes: (...args: any[]) => any;
+ * }} FindsType */
+/**@typedef {keyof FindsType} FindsName */
 
-export { arrayInstrumentations }
+export default arrayFindMethods
+
+// export { arrayProto as findsProto }

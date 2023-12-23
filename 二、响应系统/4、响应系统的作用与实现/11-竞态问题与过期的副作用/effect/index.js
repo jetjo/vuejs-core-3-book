@@ -47,6 +47,11 @@ Object.defineProperty(Effect, 'hasActive', {
     return !!activeEffect
   }
 })
+Object.defineProperty(Effect, 'activeEffects', {
+  get() {
+    return effectStack.filter(ef => !!ef)
+  }
+})
 
 /**
  * @param {EFn} efn
@@ -63,7 +68,7 @@ Effect.isOnlyFromHasTrap = function (efn, deps) {
 
 /**@param {EFn} efn */
 Effect.scheduler = function (efn, cb) {
-  if (efn === activeEffect) return
+  if (efn === activeEffect || effectStack.includes(efn)) return
   const { scheduler: run, mustSynCallPre } = efn.options
   mustSynCallPre && mustSynCallPre()
   if (run) scheduler(run)
@@ -112,6 +117,10 @@ Effect.runWithoutEffect = function (cb) {
   return runEffect(cb, false)
 }
 
+Effect.applyWithoutEffect = function (cb, ...args) {
+  return applyEffect(cb, false, this, ...args)
+}
+
 function runEffect(fn, enableEffect = true) {
   const eFn = enableEffect ? fn[FN_EFFECT_MAP_KEY] : undefined
   eFn && cleanup(eFn)
@@ -119,6 +128,19 @@ function runEffect(fn, enableEffect = true) {
   effectStack.push(eFn)
   try {
     return fn()
+  } finally {
+    effectStack.pop()
+    activeEffect = effectStack[effectStack.length - 1]
+  }
+}
+
+function applyEffect(fn, enableEffect = true, thisArg, ...args) {
+  const eFn = enableEffect ? fn[FN_EFFECT_MAP_KEY] : undefined
+  eFn && cleanup(eFn)
+  activeEffect = eFn
+  effectStack.push(eFn)
+  try {
+    return fn.apply(thisArg, args)
   } finally {
     effectStack.pop()
     activeEffect = effectStack[effectStack.length - 1]

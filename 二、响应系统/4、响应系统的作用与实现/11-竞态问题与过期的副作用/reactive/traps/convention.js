@@ -8,6 +8,8 @@ function getTarget(reactive, internalCall = false) {
   return reactive[RAW]
 }
 
+/**@typedef {typeof getTarget} GetTarget*/
+
 const TRIGGER_TYPE = {
   ADD: Symbol('TRIGGER_TYPE.ADD'),
   SET: Symbol('TRIGGER_TYPE.SET'),

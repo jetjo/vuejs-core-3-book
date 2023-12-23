@@ -5,6 +5,7 @@ import { ITERATE_KEY, TRIGGER_TYPE } from './traps/convention.js'
 
 /**@type {WeakMap<, Map<, Set<import('./index.js').EffectFn>>>} */
 const bucket = new WeakMap()
+const triggerBucket = new WeakMap()
 
 /**getTrigger */
 function getTrigger(options = {}) {
@@ -13,11 +14,13 @@ function getTrigger(options = {}) {
   /**@type {import('./index.js').TriggerType} type 属性操作类型 */
   let triggerType
   let newPropertyVal
+  let triggerTarget
+  let triggerPropertyKey
 
   function run(key, deps) {
     const effects = deps || depsMap?.get(key)
     if (!(effects?.size > 0)) return
-    runEffects(effects)
+    runEffects(effects, key)
   }
   function tryRun(key, tr = false) {
     if (tr) {
@@ -61,7 +64,16 @@ function getTrigger(options = {}) {
   }
 
   /** @param {(import('./index.js').EffectFn)[]} effects */
-  function runEffects(effects) {
+  function runEffects(effects, key) {
+    const activeEffects = Effect.activeEffects
+    activeEffects.forEach(ef => {
+      if (!triggerBucket.has(ef)) triggerBucket.set(ef, new WeakMap())
+      const triggerMap = triggerBucket.get(ef)
+      if (!triggerMap.has(triggerTarget))
+        triggerMap.set(triggerTarget, new Set())
+      const triggerSet = triggerMap.get(triggerTarget)
+      triggerSet.add(key)
+    })
     // warn('try scheduler job...')
     // if (effects?.size === 0) return
     // 防止cleanup引发的无限循环,必须实例化一个effects的副本
@@ -72,6 +84,20 @@ function getTrigger(options = {}) {
         Effect.isOnlyFromHasTrap(ef, effects)
       )
         return
+
+      const triggerMap = triggerBucket.get(ef)
+      if (triggerMap) {
+        const triggerSet = triggerMap.get(triggerTarget)
+        if (triggerSet) {
+          if (triggerSet.has(triggerPropertyKey)) {
+            return
+          }
+          if (triggerSet.has(key)) {
+            return
+          }
+        }
+        triggerBucket.delete(ef)
+      }
       return Effect.scheduler(ef)
     })
   }
@@ -90,6 +116,8 @@ function getTrigger(options = {}) {
     newVal,
     _isCommonArrayPropertySet
   ) {
+    triggerTarget = target
+    triggerPropertyKey = key
     // tryCall(() => {
     depsMap = bucket.get(target)
     if (!depsMap) return

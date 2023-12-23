@@ -1,8 +1,10 @@
 import { getReactive as _getReactive } from '../../../6、浅只读与深只读/reactive/traps/Reactive.js'
-import { TRY_PROXY_NO_RESULT } from './convention.js'
-import { arrayInstrumentations } from './array/find.js'
+import { TRY_PROXY_NO_RESULT, getTarget } from './convention.js'
+import { getArrayInstrumentations } from './array/index.js'
 
 function getReactive(options = {}) {
+  options.getTarget = getTarget
+  const arrayInstrumentations = getArrayInstrumentations(options)
   const Reactive = _getReactive(options)
   const _tryGet = Reactive.tryGet
   // _tryGet.bind(Reactive) // 不能使用bind,否则会导致this丢失???
