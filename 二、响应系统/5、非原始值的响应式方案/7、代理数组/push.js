@@ -12,6 +12,14 @@ effect(
     queueJob: false
   }
 )
+effect(
+  () => {
+    console.log('合理的effect2: ', state.push('liuyifei'))
+  },
+  {
+    queueJob: false
+  }
+)
 
 // setTimeout(() => {
 // debugger
