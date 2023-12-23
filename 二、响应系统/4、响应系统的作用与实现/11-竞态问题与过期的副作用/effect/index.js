@@ -139,7 +139,7 @@ function effect(fn, options = {}) {
   eFn.options = options
   const { scheduler: run, lazy, queueJob: qj } = options
 
-  if (!lazy) (run || eFn)()
+  if (!lazy) (run || eFn)(eFn)
   if (qj || undefined === qj) options.scheduler = run ? () => run(eFn) : eFn
   return eFn
 }

@@ -12,6 +12,7 @@ const TRIGGER_TYPE = {
   ADD: Symbol('TRIGGER_TYPE.ADD'),
   SET: Symbol('TRIGGER_TYPE.SET'),
   DELETE: Symbol('TRIGGER_TYPE.DELETE'),
+  CLEAR: Symbol('TRIGGER_TYPE.CLEAR'),
   EmptySlotSet: Symbol('TRIGGER_TYPE.EmptySlotSet'),
   LengthSubtract: Symbol('TRIGGER_TYPE.LengthSubtract')
 }

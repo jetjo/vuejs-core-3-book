@@ -22,7 +22,7 @@ import { FLUSH_TYPE } from './convention.js'
  * @returns {undefined | (() => void)}
  */
 function watch(target, cb, options = {}) {
-  if (options.flush === undefined) options.flush = FLUSH_TYPE.post
+  if (options.flush === undefined) options.flush = FLUSH_TYPE.pre
   if (!requireReactiveTarget(target, false)) return
   for (let i = watchers.length - 1; i >= 0; i--) {
     const watcher = watchers[i]
@@ -36,28 +36,32 @@ function watchFn(fn, cb, options = {}) {
   let oldVal, newVal, finalValWithCanceled, cleanExpiredEffect // 默认空函数造成不必要的出入栈 = () => void 0
 
   /**@param {() => void} cb */
-  function registerExpiredEffectCleaner(cb) {
+  function registerExpiredCleaner(cb) {
     cleanExpiredEffect = cb
+  }
+  function runCleanExpired() {
+    cleanExpiredEffect()
   }
   function mustSynCallPre() {
     if (cleanExpiredEffect) {
-      Effect.runWithoutEffect(() => {
-        cleanExpiredEffect()
-      })
+      Effect.runWithoutEffect(runCleanExpired)
     }
+  }
+  function runCB() {
+    return cb(newVal, oldVal, registerExpiredCleaner)
   }
   function job() {
     newVal = finalValWithCanceled || efn()
-    Effect.runWithoutEffect(() => {
-      cb(newVal, oldVal, registerExpiredEffectCleaner)
-    })
+    Effect.runWithoutEffect(runCB)
     oldVal = newVal
     // finalValWithCanceled = undefined
   }
+  function isQueueJob() {
+    return options.flush === FLUSH_TYPE.post || options.flush === FLUSH_TYPE.pre
+  }
   const efn = effect(fn, {
     lazy: true,
-    // TODO: 还未考虑pre
-    queueJob: options.flush === FLUSH_TYPE.post,
+    queueJob: isQueueJob(),
     scheduler: job,
     mustSynCallPre
   })
