@@ -29,4 +29,5 @@ module.exports = {
   publicPath,
   IS_WEBPACK_DEV_SERVER,
   OUT_BASE_PATH,
+  DEV_PORT: process.env.DEV_PORT || 8080,
 };

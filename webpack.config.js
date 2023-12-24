@@ -1,16 +1,16 @@
-const path = require("path");
+const path = require('path')
 // const { rules } = require("./webpack.rules");
-const { plugins } = require("./webpack.plugins");
+const { plugins } = require('./webpack.plugins')
 
-const { ENTRY, OUT_BASE_PATH, publicPath } = require("./webpack.env");
+const { ENTRY, OUT_BASE_PATH, publicPath, DEV_PORT } = require('./webpack.env')
 module.exports = {
   context: __dirname,
-  mode: "development",
-  devtool: "inline-source-map", //'eval';//'source-map';,
+  mode: 'development',
+  devtool: 'inline-source-map', //'eval';//'source-map';,
   entry: { index: ENTRY },
   output: {
-    filename: "[contenthash]@[name].js",
-    chunkFilename: "[contenthash]@[name].js",
+    filename: '[contenthash]@[name].js',
+    chunkFilename: '[contenthash]@[name].js',
     // path: path.resolve(__dirname, "./dist/[fullhash]"),
     path: path.resolve(__dirname, `${OUT_BASE_PATH}/${publicPath}`),
     publicPath,
@@ -21,22 +21,22 @@ module.exports = {
     // 因为当前页面的路径是不确定的,
     // 这就使得publicPath失去了定位打包资源url的能力
     // publicPath: "/[fullhash]/",
-    clean: true,
+    clean: true
   },
   // experiments: {
   //   topLevelAwait: true,
   // },
   resolve: {
     alias: {
-      "@book2": path.resolve(__dirname, "./二、响应系统"),
-    },
+      '@book2': path.resolve(__dirname, './二、响应系统')
+    }
   },
   // module: {
   //   rules,
   // },
   plugins,
   devServer: {
-    port: 3080,
-    open: false,
-  },
-};
+    port: DEV_PORT,
+    open: false
+  }
+}

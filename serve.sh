@@ -12,6 +12,14 @@ else
 fi
 # echo "SERVE_OPT: $SERVE_OPT"
 
+if [ -z "$3" ]; then
+    DEV_PORT=3002
+else
+    DEV_PORT="$3"
+fi
+
+export DEV_PORT
+
 if [ -z "$1" ]; then
     if [ -z "$ENTRY" ]; then
         echo "Usage: ./serve.sh <entry>"
@@ -22,7 +30,7 @@ if [ -z "$1" ]; then
     fi
 else
     ENTRY=$1
-    echo "./serve.sh '$1' '$2'" >>serve.sh.log
+    echo "./serve.sh '$1' '$2' '$3'" >>serve.sh.log
     export ENTRY
     pnpm serve -- "$SERVE_OPT"
 fi

@@ -80,7 +80,9 @@ function getTrigger(options = {}) {
         triggerMap.set(triggerTarget, new Set())
       const triggerSet = triggerMap.get(triggerTarget)
       triggerSet.add(key)
-      ef = efs.next({ triggerMap, triggerSet })
+      const efi = efs.next({ triggerMap, triggerSet })
+      noEff = efi.done
+      ef = efi.value
     }
   }
 
