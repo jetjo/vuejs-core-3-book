@@ -22,7 +22,7 @@ effect(
 )
 
 // setTimeout(() => {
-// debugger
+//   debugger
 effect(() => {
   state.length
   state.push(1)

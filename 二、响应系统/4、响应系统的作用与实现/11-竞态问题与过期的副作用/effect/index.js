@@ -27,6 +27,7 @@ Object.setPrototypeOf(Effect, null)
 /**@typedef {typeof Effect} EffectM */
 
 /**
+ * 收集副作用的依赖项
  * @param {Object} args
  * @param {!Set<EFn>} args.deps
  * */
@@ -42,6 +43,26 @@ Effect.track = function ({ deps, isFromHasTrap }) {
   activeEffect.deps.push(deps)
 }
 
+/**
+ * @param {Object} args
+ * @param {WeakMap<EFn, WeakMap<, Set<string>>>} args.triggerBucket */
+Effect.trackTriggers = function* ({ triggerBucket }) {
+  const afs = effectStack.filter(ef => ef !== undefined)
+  for (const ef of afs) {
+    /**
+     * @type {{
+     * triggerMap: WeakMap<, Set<string>>
+     * triggerSet: Set<string>}}
+     */
+    const { triggerMap, triggerSet } = yield ef
+    triggerBucket.set(ef, triggerMap)
+    afs.forEach(ef => {
+      ef.triggers.add(triggerSet)
+    })
+    // return 0
+  }
+}
+
 Object.defineProperty(Effect, 'hasActive', {
   get() {
     return !!activeEffect
@@ -49,7 +70,7 @@ Object.defineProperty(Effect, 'hasActive', {
 })
 Object.defineProperty(Effect, 'activeEffects', {
   get() {
-    return effectStack.filter(ef => !!ef)
+    return effectStack.filter(ef => ef !== undefined)
   }
 })
 
@@ -82,8 +103,9 @@ Effect.scheduler = function (efn, cb) {
 /**
  * 副作用函数
  * @typedef EFnConf
- * @property {!Set<EFn>[]} deps - 包含此EFn的集合们, 没有去重
- * @property {!Set<EFn>[]} [hasTrapDeps] - 当这个副作用只依赖于相应的属性的有无时, 包含此副作用的集合会存入这里, 没有去重
+ * @property {!(!Set<EFn>)[]} deps - 包含此EFn的集合们, 没有去重
+ * @property {(!Set<EFn>)[]} [hasTrapDeps] - 当这个副作用只依赖于相应的属性的有无时, 包含此副作用的集合会存入这里, 没有去重
+ * @property {!Set<!Set<string>>} triggers - 包含此EFn修改过的属性的集合
  * @typedef EFnOptions
  * @property {boolean} [lazy]
  * @property {boolean} [queueJob = true]
@@ -102,6 +124,8 @@ function cleanup(eFn) {
     eFn.hasTrapDeps.forEach(s => s.delete(eFn))
     eFn.hasTrapDeps.length = 0
   }
+  eFn.triggers.forEach(s => s.clear())
+  eFn.triggers.clear()
 }
 // 外部依赖她
 Effect.cleanup = cleanup
@@ -152,12 +176,13 @@ Effect.run = runEffect
  * @param {EFnOptions} [options]
  * @returns {EFn} */
 function effect(fn, options = {}) {
+  /**@type {EFn} */
   const eFn = () => runEffect(fn)
   fn[FN_EFFECT_MAP_KEY] = eFn
   eFn[FN_EFFECT_MAP_KEY] = fn
 
-  /**@type {!Set<EFn>} */
   eFn.deps = []
+  eFn.triggers = new Set()
   eFn.options = options
   const { scheduler: run, lazy, queueJob: qj } = options
 

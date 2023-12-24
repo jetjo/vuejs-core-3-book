@@ -5,6 +5,7 @@ import { ITERATE_KEY, TRIGGER_TYPE } from './traps/convention.js'
 
 /**@type {WeakMap<, Map<, Set<import('./index.js').EffectFn>>>} */
 const bucket = new WeakMap()
+/**@type {WeakMap<import('./index.js').EffectFn, Map<, Set<string>>>} */
 const triggerBucket = new WeakMap()
 
 /**getTrigger */
@@ -22,11 +23,11 @@ function getTrigger(options = {}) {
     if (!(effects?.size > 0)) return
     runEffects(effects, key)
   }
-  function tryRun(key, tr = false) {
+  function tryRun(key, tr = false, deps = undefined) {
     if (tr) {
-      tryCall(() => run(key))
+      tryCall(() => run(key, deps))
     }
-    run(key)
+    run(key, deps)
   }
 
   function handleLengthSub() {
@@ -47,11 +48,18 @@ function getTrigger(options = {}) {
 
   const arrayHandlers = new Map([
     [TRIGGER_TYPE.ADD, () => tryRun('length')],
-    [TRIGGER_TYPE.EmptySlotSet, () => tryRun(ITERATE_KEY)],
+    [
+      TRIGGER_TYPE.EmptySlotSet,
+      () => {
+        const deps = depsMap?.get(ITERATE_KEY)
+        if (deps && deps.size > 0) tryRun(ITERATE_KEY, false, deps)
+      }
+    ],
     [
       TRIGGER_TYPE.LengthSubtract,
       () => {
-        tryRun(ITERATE_KEY)
+        const deps = depsMap?.get(ITERATE_KEY)
+        if (deps && deps.size > 0) tryRun(ITERATE_KEY, false, deps)
         handleLengthSub()
       }
     ]
@@ -63,42 +71,49 @@ function getTrigger(options = {}) {
     if (handler) handler()
   }
 
-  /** @param {(import('./index.js').EffectFn)[]} effects */
-  function runEffects(effects, key) {
-    const activeEffects = Effect.activeEffects
-    activeEffects.forEach(ef => {
-      if (!triggerBucket.has(ef)) triggerBucket.set(ef, new WeakMap())
-      const triggerMap = triggerBucket.get(ef)
+  function trackEffect(key) {
+    const efs = Effect.trackTriggers({ triggerBucket })
+    let ef = efs.next()
+    while (!ef.done) {
+      const triggerMap = triggerBucket.get(ef) || new WeakMap()
       if (!triggerMap.has(triggerTarget))
         triggerMap.set(triggerTarget, new Set())
       const triggerSet = triggerMap.get(triggerTarget)
       triggerSet.add(key)
-    })
+      ef = efs.next({ triggerMap, triggerSet })
+    }
+  }
+
+  function canScheduler(ef, effects, key) {
+    if (
+      triggerType === TRIGGER_TYPE.SET &&
+      ef.hasTrapDeps &&
+      Effect.isOnlyFromHasTrap(ef, effects)
+    )
+      return false
+    const triggerMap = triggerBucket.get(ef)
+    if (!triggerMap) return true
+
+    const triggerSet = triggerMap.get(triggerTarget)
+    if (!triggerSet) return true
+
+    if (!triggerSet.has(triggerPropertyKey) && !triggerSet.has(key)) {
+      return true
+    }
+
+    return false
+
+    // triggerBucket.delete(ef)
+  }
+
+  /** @param {(import('./index.js').EffectFn)[]} effects */
+  function runEffects(effects, key) {
+    trackEffect(key)
     // warn('try scheduler job...')
     // if (effects?.size === 0) return
     // 防止cleanup引发的无限循环,必须实例化一个effects的副本
     new Set(effects).forEach(ef => {
-      if (
-        triggerType === TRIGGER_TYPE.SET &&
-        ef.hasTrapDeps &&
-        Effect.isOnlyFromHasTrap(ef, effects)
-      )
-        return
-
-      const triggerMap = triggerBucket.get(ef)
-      if (triggerMap) {
-        const triggerSet = triggerMap.get(triggerTarget)
-        if (triggerSet) {
-          if (triggerSet.has(triggerPropertyKey)) {
-            return
-          }
-          if (triggerSet.has(key)) {
-            return
-          }
-        }
-        triggerBucket.delete(ef)
-      }
-      return Effect.scheduler(ef)
+      if (canScheduler(ef, effects, key)) Effect.scheduler(ef)
     })
   }
 
@@ -120,14 +135,16 @@ function getTrigger(options = {}) {
     triggerPropertyKey = key
     // tryCall(() => {
     depsMap = bucket.get(target)
-    if (!depsMap) return
+    if (!depsMap || depsMap.size === 0) return
 
     triggerType = type
     newPropertyVal = newVal
-    tryRun(key)
+    const deps = depsMap.get(key)
+    if (deps && deps.size > 0) tryRun(key, false, deps)
 
     if (type === TRIGGER_TYPE.ADD || type === TRIGGER_TYPE.DELETE) {
-      tryRun(ITERATE_KEY)
+      const deps = depsMap.get(ITERATE_KEY)
+      if (deps && deps.size > 0) tryRun(ITERATE_KEY, false, deps)
     }
 
     if (_isCommonArrayPropertySet) {
