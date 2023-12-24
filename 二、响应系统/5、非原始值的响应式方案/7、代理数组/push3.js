@@ -17,6 +17,7 @@ effect(
 effect(
   () => {
     state1.length
+    // debugger
     state2.name = `liuyifei${i++}`
     console.log('副作用2')
   },

@@ -42,4 +42,4 @@ function scheduler(effectFnScheduler) {
   flushJob()
 }
 
-export { scheduler }
+export { scheduler, isFlushingQueue }

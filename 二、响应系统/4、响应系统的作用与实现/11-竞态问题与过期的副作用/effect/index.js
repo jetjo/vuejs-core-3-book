@@ -3,6 +3,7 @@
 /* @4-6 避免effect递归死循环 */
 /* @4-7 副作用的调度执行 */
 
+import { isFlushingQueue } from '../../8-计算属性与lazy/3-scheduler.js'
 import { throwErr, warn } from '../utils/log.js'
 import { FN_EFFECT_MAP_KEY } from './convention.js'
 import { scheduler } from './scheduler.js'
@@ -106,6 +107,7 @@ Effect.scheduler = function (efn, cb) {
  * @property {!(!Set<EFn>)[]} deps - 包含此EFn的集合们, 没有去重
  * @property {(!Set<EFn>)[]} [hasTrapDeps] - 当这个副作用只依赖于相应的属性的有无时, 包含此副作用的集合会存入这里, 没有去重
  * @property {!Set<!Set<string>>} triggers - 包含此EFn修改过的属性的集合
+ * @property {function(): void} popSelfOutFromEffectStack
  * @typedef EFnOptions
  * @property {boolean} [lazy]
  * @property {boolean} [queueJob = true]
@@ -146,6 +148,7 @@ Effect.applyWithoutEffect = function (cb, ...args) {
 }
 
 function runEffect(fn, enableEffect = true) {
+  /**@type {EFn|undefined} */
   const eFn = enableEffect ? fn[FN_EFFECT_MAP_KEY] : undefined
   eFn && cleanup(eFn)
   activeEffect = eFn
@@ -153,12 +156,13 @@ function runEffect(fn, enableEffect = true) {
   try {
     return fn()
   } finally {
-    effectStack.pop()
-    activeEffect = effectStack[effectStack.length - 1]
+    if (eFn === undefined) return popEffectOutFromEffectStack()
+    eFn.popSelfOutFromEffectStack()
   }
 }
 
 function applyEffect(fn, enableEffect = true, thisArg, ...args) {
+  /**@type {EFn|undefined} */
   const eFn = enableEffect ? fn[FN_EFFECT_MAP_KEY] : undefined
   eFn && cleanup(eFn)
   activeEffect = eFn
@@ -166,12 +170,17 @@ function applyEffect(fn, enableEffect = true, thisArg, ...args) {
   try {
     return fn.apply(thisArg, args)
   } finally {
-    effectStack.pop()
-    activeEffect = effectStack[effectStack.length - 1]
+    if (eFn === undefined) return popEffectOutFromEffectStack()
+    eFn.popSelfOutFromEffectStack()
   }
 }
 
 Effect.run = runEffect
+
+function popEffectOutFromEffectStack() {
+  effectStack.pop()
+  activeEffect = effectStack[effectStack.length - 1]
+}
 /**
  * @param {EFnOptions} [options]
  * @returns {EFn} */
@@ -184,6 +193,16 @@ function effect(fn, options = {}) {
   eFn.deps = []
   eFn.triggers = new Set()
   eFn.options = options
+  /**每一个`eFn`的`popSelfOutFromEffectStack`必须新建一个,不能共用 */
+  const popSelfOutFromEffectStack = () => {
+    popEffectOutFromEffectStack()
+  }
+  eFn.popSelfOutFromEffectStack = () => {
+    if (!isFlushingQueue() || effectStack.at(-1) === undefined) {
+      return popSelfOutFromEffectStack()
+    }
+    scheduler(popSelfOutFromEffectStack)
+  }
   const { scheduler: run, lazy, queueJob: qj } = options
 
   if (!lazy) (run || eFn)(eFn)
