@@ -73,8 +73,8 @@ function getTrigger(options = {}) {
 
   function trackEffect(key) {
     const efs = Effect.trackTriggers({ triggerBucket })
-    let ef = efs.next()
-    while (!ef.done) {
+    let { done: noEff, value: ef } = efs.next()
+    while (!noEff) {
       const triggerMap = triggerBucket.get(ef) || new WeakMap()
       if (!triggerMap.has(triggerTarget))
         triggerMap.set(triggerTarget, new Set())
