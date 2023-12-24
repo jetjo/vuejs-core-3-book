@@ -3,10 +3,9 @@
 /* @4-6 避免effect递归死循环 */
 /* @4-7 副作用的调度执行 */
 
-import { isFlushingQueue } from '../../8-计算属性与lazy/3-scheduler.js'
 import { throwErr, warn } from '../utils/log.js'
 import { FN_EFFECT_MAP_KEY } from './convention.js'
-import { scheduler } from './scheduler.js'
+import { scheduler, isFlushingQueue } from './scheduler.js'
 
 /**@template T */
 /**@callback CB */
@@ -156,8 +155,10 @@ function runEffect(fn, enableEffect = true) {
   try {
     return fn()
   } finally {
-    if (eFn === undefined) return popEffectOutFromEffectStack()
-    eFn.popSelfOutFromEffectStack()
+    // NOTE: finally中的return会覆盖try中的return!!!
+    // if (eFn === undefined) return popEffectOutFromEffectStack()
+    if (eFn === undefined) popEffectOutFromEffectStack()
+    else eFn.popSelfOutFromEffectStack()
   }
 }
 
@@ -170,8 +171,10 @@ function applyEffect(fn, enableEffect = true, thisArg, ...args) {
   try {
     return fn.apply(thisArg, args)
   } finally {
-    if (eFn === undefined) return popEffectOutFromEffectStack()
-    eFn.popSelfOutFromEffectStack()
+    // NOTE: finally中的return会覆盖try中的return!!!
+    // if (eFn === undefined) return popEffectOutFromEffectStack()
+    if (eFn === undefined) popEffectOutFromEffectStack()
+    else eFn.popSelfOutFromEffectStack()
   }
 }
 
@@ -180,6 +183,7 @@ Effect.run = runEffect
 function popEffectOutFromEffectStack() {
   effectStack.pop()
   activeEffect = effectStack[effectStack.length - 1]
+  // return 'test finally return'
 }
 /**
  * @param {EFnOptions} [options]

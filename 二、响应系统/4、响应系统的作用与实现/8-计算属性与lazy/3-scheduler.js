@@ -20,6 +20,10 @@ function isFlushingQueue() {
   return jobArray.length > 1
 }
 
+function hasSchedulerTask() {
+  return jobArray.length > 0
+}
+
 function flushJob() {
   if (isFlushingQueue()) return
   microTasker.then(() => {
@@ -42,4 +46,4 @@ function scheduler(effectFnScheduler) {
   flushJob()
 }
 
-export { scheduler, isFlushingQueue }
+export { scheduler, hasSchedulerTask as isFlushingQueue }
