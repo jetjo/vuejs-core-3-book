@@ -1,5 +1,12 @@
 import { Effect } from '../effect/index.js'
-import { isValidArrayIndex, tryCall, warn } from '../../index.js'
+import {
+  isValidArrayIndex,
+  tryCall,
+  warn,
+  log,
+  error,
+  throwErr
+} from '../../index.js'
 import { isHasTrap } from './traps/helper.js'
 import { ITERATE_KEY, TRIGGER_TYPE } from './traps/convention.js'
 
@@ -18,10 +25,37 @@ function getTrigger(options = {}) {
   let triggerTarget
   let triggerPropertyKey
 
+  const SceneProtectedFlag = Symbol('SceneProtectedFlag')
+
+  function withSceneStatus(cb) {
+    const bak = {
+      __proto__: null,
+      get [SceneProtectedFlag]() {
+        return true
+      },
+      depsMap,
+      triggerType,
+      newPropertyVal,
+      triggerTarget,
+      triggerPropertyKey
+    }
+    try {
+      return cb.apply(bak)
+    } finally {
+      depsMap = bak.depsMap
+      triggerType = bak.triggerType
+      newPropertyVal = bak.newPropertyVal
+      triggerTarget = bak.triggerTarget
+      triggerPropertyKey = bak.triggerPropertyKey
+    }
+  }
+
   function run(key, deps) {
     const effects = deps || depsMap?.get(key)
     if (!(effects?.size > 0)) return
-    runEffects(effects, key)
+    withSceneStatus(function () {
+      runEffects.call(this, effects, key)
+    })
   }
   function tryRun(key, tr = false, deps = undefined) {
     if (tr) {
@@ -94,6 +128,7 @@ function getTrigger(options = {}) {
       warn('The trigger maybe from has trap, so skip scheduler job.')
       return false
     }
+    // return true
     const triggerMap = triggerBucket.get(ef)
     if (!triggerMap) return true
 
@@ -114,8 +149,11 @@ function getTrigger(options = {}) {
 
   /** @param {(import('./index.js').EffectFn)[]} effects */
   function runEffects(effects, key) {
+    if (!this[SceneProtectedFlag]) {
+      throwErr('runEffects must be called with `withSceneStatus`')
+    }
     trackEffect(key)
-    // warn('try scheduler job...')
+    error(`try scheduler ${effects.size} job...`)
     // if (effects?.size === 0) return
     // 防止cleanup引发的无限循环,必须实例化一个effects的副本
     new Set(effects).forEach(ef => {
@@ -137,6 +175,10 @@ function getTrigger(options = {}) {
     newVal,
     _isCommonArrayPropertySet
   ) {
+    const id = Math.random().toFixed(10).split('.')[1]
+    log(
+      `effect: ${Effect.latestActiveEffect?.__number_id}: trigger ${id} ${key} ${type.description} ${newVal}`
+    )
     triggerTarget = target
     triggerPropertyKey = key
     // tryCall(() => {
@@ -156,6 +198,8 @@ function getTrigger(options = {}) {
     if (_isCommonArrayPropertySet) {
       handleArray()
     }
+
+    log(`effect: ${Effect.latestActiveEffect?.__number_id}: trigger ${id} done`)
     // })
     // depsMap = undefined
     // triggerType = undefined

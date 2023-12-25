@@ -3,9 +3,14 @@
 /* @4-6 避免effect递归死循环 */
 /* @4-7 副作用的调度执行 */
 
-import { throwErr, warn } from '../utils/log.js'
+import { Array_MaxLen } from '../utils/array.js'
+import { error, throwErr, warn } from '../utils/log.js'
 import { FN_EFFECT_MAP_KEY } from './convention.js'
-import { scheduler, isFlushingQueue } from './scheduler.js'
+import {
+  scheduler,
+  isFlushingQueue,
+  schedulerEffectEnder
+} from './scheduler.js'
 
 /**@template T */
 /**@callback CB */
@@ -47,7 +52,7 @@ Effect.track = function ({ deps, isFromHasTrap }) {
  * @param {Object} args
  * @param {WeakMap<EFn, WeakMap<, Set<string>>>} args.triggerBucket */
 Effect.trackTriggers = function* ({ triggerBucket }) {
-  const afs = effectStack.filter(ef => ef !== undefined)
+  const afs = effectStack.filter(ef => ef !== undefined && !ef.isConvergence)
   for (const ef of afs) {
     /**
      * @type {{
@@ -63,6 +68,7 @@ Effect.trackTriggers = function* ({ triggerBucket }) {
   }
 }
 
+/**@description effectStack栈顶的effect不是undefined */
 Object.defineProperty(Effect, 'hasActive', {
   get() {
     return !!activeEffect
@@ -87,17 +93,82 @@ Effect.isOnlyFromHasTrap = function (efn, deps) {
   )
 }
 
+// [Vue warn]: Maximum recursive updates exceeded
+const MAX_RECURSIVE_UPDATES = 10240
+
+function overMaxRecursiveLimit(efn) {
+  if (efn === undefined) return false
+  const i = effectStack.reduce((i, e) => {
+    if (efn === e) i++
+    return i
+  }, 0)
+  if (i > MAX_RECURSIVE_UPDATES) {
+    error('over max recursive limit')
+    return true
+  }
+  return false
+}
+
+const schedulerJobs = new Set()
+
+setInterval(() => {
+  schedulerJobs.forEach(ef => {
+    if (ef === undefined) return
+    ef.recursiveCounter = 0
+  })
+  schedulerJobs.clear()
+  warn('clear schedulerJobs')
+}, 1000)
+
+/**@description 离effectStack栈顶最近的不是undefined的effect */
+let latestActiveEffect = undefined
+
+Object.defineProperty(Effect, 'latestActiveEffect', {
+  get() {
+    return latestActiveEffect
+  }
+})
+
+function getLatestActiveEffect() {
+  latestActiveEffect = undefined
+  let i = -1
+  while (-1 * i <= effectStack.length) {
+    const e = effectStack.at(i--)
+    if (e === undefined) continue
+    latestActiveEffect = e
+    return
+  }
+}
+function isCurrentActive(efn) {
+  getLatestActiveEffect()
+  return latestActiveEffect === efn
+}
+
 /**@param {EFn} efn */
 Effect.scheduler = function (efn, cb) {
-  if (efn === activeEffect || effectStack.includes(efn)) return
-  const { scheduler: run, mustSynCallPre } = efn.options
-  mustSynCallPre && mustSynCallPre()
-  if (run) scheduler(run)
-  else {
-    warn('run sync job')
-    efn(efn)
+  // if (efn === activeEffect || effectStack.includes(efn)) return
+  // if (efn === activeEffect || overMaxRecursiveLimit(efn)) return
+  if (isCurrentActive(efn)) return
+  efn.recursiveCounter++
+  if (efn.recursiveCounter > MAX_RECURSIVE_UPDATES) {
+    error('over max recursive limit')
+    efn.recursiveCounter = 0
+    return
   }
-  cb && cb()
+  // schedulerJobs.push(efn)
+  schedulerJobs.add(efn)
+  try {
+    const { scheduler: run, mustSynCallPre } = efn.options
+    mustSynCallPre && mustSynCallPre()
+    if (run) scheduler(run)
+    else {
+      warn('run sync job')
+      efn(efn)
+    }
+    cb && cb()
+  } finally {
+    // schedulerJobs.pop()
+  }
 }
 
 /**
@@ -107,6 +178,9 @@ Effect.scheduler = function (efn, cb) {
  * @property {(!Set<EFn>)[]} [hasTrapDeps] - 当这个副作用只依赖于相应的属性的有无时, 包含此副作用的集合会存入这里, 没有去重
  * @property {!Set<!Set<string>>} triggers - 包含此EFn修改过的属性的集合
  * @property {function(): void} popSelfOutFromEffectStack
+ * @property {boolean} isConvergence effect没有修改自己的依赖, 或者修改了自身的依赖项,但是这种修改不会引起无尽的递归(自调用)
+ * @property {BigInt} __number_id
+ * @property {number} recursiveCounter
  * @typedef EFnOptions
  * @property {boolean} [lazy]
  * @property {boolean} [queueJob = true]
@@ -149,9 +223,19 @@ Effect.applyWithoutEffect = function (cb, ...args) {
 function prepareEffect(fn, enableEffect = true) {
   /**@type {EFn|undefined} */
   const eFn = enableEffect ? fn[FN_EFFECT_MAP_KEY] : undefined
-  eFn && cleanup(eFn)
+  if (eFn) {
+    if (
+      (!eFn.isConvergence && overMaxRecursiveLimit(eFn)) ||
+      effectStack.length === Array_MaxLen
+    ) {
+      error('over max recursive limit, or the effectStack is full')
+      return undefined
+    }
+    cleanup(eFn)
+  }
   activeEffect = eFn
   effectStack.push(eFn)
+  getLatestActiveEffect()
   return eFn
 }
 
@@ -161,6 +245,10 @@ function runEffect(fn, enableEffect) {
 
 function applyEffect(fn, enableEffect, thisArg, ...args) {
   const eFn = prepareEffect(fn, enableEffect)
+  if (enableEffect && eFn === undefined) {
+    warn('Prepare the effect failed!!!')
+    return
+  }
   try {
     return fn.apply(thisArg, args)
   } finally {
@@ -177,21 +265,27 @@ function popEffectOutFromEffectStack(eFn) {
   if (effectStack.at(-1) !== eFn)
     throwErr('effectStack中的最后一个不是参数指定的eFn!')
   effectStack.pop()
+  getLatestActiveEffect()
   activeEffect = effectStack[effectStack.length - 1]
   // return 'test finally return'
 }
+
+let _allEffectCounter = 0n
 /**
  * @param {EFnOptions} [options]
  * @returns {EFn} */
 function effect(fn, options = {}) {
   /**@type {EFn} */
   const eFn = () => runEffect(fn)
+  eFn.__number_id = options._id || ++_allEffectCounter
   fn[FN_EFFECT_MAP_KEY] = eFn
   eFn[FN_EFFECT_MAP_KEY] = fn
 
   eFn.deps = []
   eFn.triggers = new Set()
   eFn.options = options
+  eFn.isConvergence = true
+  eFn.recursiveCounter = 0
   /**每一个`eFn`的`popSelfOutFromEffectStack`必须新建一个,不能共用 */
   const popSelfOutFromEffectStack = () => {
     if (effectStack.at(-1) !== eFn)
@@ -202,7 +296,7 @@ function effect(fn, options = {}) {
     if (!isFlushingQueue()) {
       return popSelfOutFromEffectStack()
     }
-    scheduler(popSelfOutFromEffectStack)
+    schedulerEffectEnder(popSelfOutFromEffectStack)
   }
   const { scheduler: run, lazy, queueJob: qj } = options
 

@@ -2,6 +2,7 @@ import { error, throwErr } from './log.js'
 
 const INDEX_MAX = Math.pow(2, 32) - 2
 const INDEX_MIN = 0
+const Array_MaxLen = INDEX_MAX + 1
 
 const REG_RULE = /^[1-9]\d{0,}$/
 
@@ -25,4 +26,4 @@ function isValidArrayIndex(key, thr = false) {
   return true
 }
 
-export { isValidArrayIndex }
+export { isValidArrayIndex, Array_MaxLen }
