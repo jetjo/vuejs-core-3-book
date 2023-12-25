@@ -146,28 +146,21 @@ Effect.applyWithoutEffect = function (cb, ...args) {
   return applyEffect(cb, false, this, ...args)
 }
 
-function runEffect(fn, enableEffect = true) {
+function prepareEffect(fn, enableEffect = true) {
   /**@type {EFn|undefined} */
   const eFn = enableEffect ? fn[FN_EFFECT_MAP_KEY] : undefined
   eFn && cleanup(eFn)
   activeEffect = eFn
   effectStack.push(eFn)
-  try {
-    return fn()
-  } finally {
-    // NOTE: finally中的return会覆盖try中的return!!!
-    // if (eFn === undefined) return popEffectOutFromEffectStack()
-    if (eFn === undefined) popEffectOutFromEffectStack()
-    else eFn.popSelfOutFromEffectStack()
-  }
+  return eFn
 }
 
-function applyEffect(fn, enableEffect = true, thisArg, ...args) {
-  /**@type {EFn|undefined} */
-  const eFn = enableEffect ? fn[FN_EFFECT_MAP_KEY] : undefined
-  eFn && cleanup(eFn)
-  activeEffect = eFn
-  effectStack.push(eFn)
+function runEffect(fn, enableEffect) {
+  return applyEffect(fn, enableEffect, undefined)
+}
+
+function applyEffect(fn, enableEffect, thisArg, ...args) {
+  const eFn = prepareEffect(fn, enableEffect)
   try {
     return fn.apply(thisArg, args)
   } finally {
@@ -180,7 +173,9 @@ function applyEffect(fn, enableEffect = true, thisArg, ...args) {
 
 Effect.run = runEffect
 
-function popEffectOutFromEffectStack() {
+function popEffectOutFromEffectStack(eFn) {
+  if (effectStack.at(-1) !== eFn)
+    throwErr('effectStack中的最后一个不是参数指定的eFn!')
   effectStack.pop()
   activeEffect = effectStack[effectStack.length - 1]
   // return 'test finally return'
@@ -199,10 +194,12 @@ function effect(fn, options = {}) {
   eFn.options = options
   /**每一个`eFn`的`popSelfOutFromEffectStack`必须新建一个,不能共用 */
   const popSelfOutFromEffectStack = () => {
-    popEffectOutFromEffectStack()
+    if (effectStack.at(-1) !== eFn)
+      throwErr('effectStack中的最后一个不是当前的eFn!')
+    popEffectOutFromEffectStack(eFn)
   }
   eFn.popSelfOutFromEffectStack = () => {
-    if (!isFlushingQueue() || effectStack.at(-1) === undefined) {
+    if (!isFlushingQueue()) {
       return popSelfOutFromEffectStack()
     }
     scheduler(popSelfOutFromEffectStack)

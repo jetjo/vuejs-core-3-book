@@ -86,7 +86,7 @@ function _getProxyHandler(trapOption) {
 
 /**
  * @returns {{
- * (internalCall?: boolean): (target: any) => any;
+ * (internalCall?: boolean): Reactive
  * addTrapBeforeCall(trapGetter: ProxyTrapGetter): void;
  * setTrapOption?: (opt?: ProxyTrapOption | undefined) => void;
  * }}

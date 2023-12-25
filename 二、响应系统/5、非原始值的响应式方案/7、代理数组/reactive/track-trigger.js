@@ -1,5 +1,5 @@
 import { Effect } from '../effect/index.js'
-import { isValidArrayIndex, tryCall } from '../../index.js'
+import { isValidArrayIndex, tryCall, warn } from '../../index.js'
 import { isHasTrap } from './traps/helper.js'
 import { ITERATE_KEY, TRIGGER_TYPE } from './traps/convention.js'
 
@@ -71,18 +71,17 @@ function getTrigger(options = {}) {
     if (handler) handler()
   }
 
+  const opt = { triggerBucket }
   function trackEffect(key) {
-    const efs = Effect.trackTriggers({ triggerBucket })
-    let { done: noEff, value: ef } = efs.next()
-    while (!noEff) {
-      const triggerMap = triggerBucket.get(ef) || new WeakMap()
+    const efs = Effect.trackTriggers(opt)
+    let efi = efs.next()
+    while (!efi.done) {
+      const triggerMap = triggerBucket.get(efi.value) || new WeakMap()
       if (!triggerMap.has(triggerTarget))
         triggerMap.set(triggerTarget, new Set())
       const triggerSet = triggerMap.get(triggerTarget)
       triggerSet.add(key)
-      const efi = efs.next({ triggerMap, triggerSet })
-      noEff = efi.done
-      ef = efi.value
+      efi = efs.next({ triggerMap, triggerSet })
     }
   }
 
@@ -91,8 +90,10 @@ function getTrigger(options = {}) {
       triggerType === TRIGGER_TYPE.SET &&
       ef.hasTrapDeps &&
       Effect.isOnlyFromHasTrap(ef, effects)
-    )
+    ) {
+      warn('The trigger maybe from has trap, so skip scheduler job.')
       return false
+    }
     const triggerMap = triggerBucket.get(ef)
     if (!triggerMap) return true
 
@@ -103,6 +104,9 @@ function getTrigger(options = {}) {
       return true
     }
 
+    warn(
+      'You have a reactive effect that is mutating its own dependencies. Possible sources include component template, render function, updated hook or watcher source function.'
+    )
     return false
 
     // triggerBucket.delete(ef)
