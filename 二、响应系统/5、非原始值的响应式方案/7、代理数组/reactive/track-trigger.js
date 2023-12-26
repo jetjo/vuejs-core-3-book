@@ -43,16 +43,27 @@ function getTrigger(options = {}) {
       triggerPropertyKey,
       callContext
     }
-    if (!restore) return cb.apply(bak, args)
+    let print = true
+    // if (newVal != '4') print = false
+    const id = Math.random().toFixed(10).split('.')[1]
+    const __number_id = Effect.latestActiveEffect?.__number_id
     try {
+      print &&
+        warn(
+          `effect: ${__number_id}: trigger ${id} ${triggerPropertyKey} ${triggerType.description} ${newPropertyVal}`
+        )
+      if (!restore) return cb.apply(bak, args)
       return cb.apply(bak, args)
     } finally {
-      depsMap = bak.depsMap
-      triggerType = bak.triggerType
-      newPropertyVal = bak.newPropertyVal
-      triggerTarget = bak.triggerTarget
-      triggerPropertyKey = bak.triggerPropertyKey
-      callContext = bak.callContext
+      if (restore) {
+        depsMap = bak.depsMap
+        triggerType = bak.triggerType
+        newPropertyVal = bak.newPropertyVal
+        triggerTarget = bak.triggerTarget
+        triggerPropertyKey = bak.triggerPropertyKey
+        callContext = bak.callContext
+      }
+      print && warn(`effect: ${__number_id}: trigger ${id} done`)
     }
   }
 
@@ -187,10 +198,7 @@ function getTrigger(options = {}) {
       throwErr('trigger must be called with `withSceneStatus`')
     }
     callContext = this
-    const id = Math.random().toFixed(10).split('.')[1]
-    log(
-      `effect: ${Effect.latestActiveEffect?.__number_id}: trigger ${id} ${key} ${type.description} ${newVal}`
-    )
+
     triggerTarget = target
     triggerPropertyKey = key
     // tryCall(() => {
@@ -210,8 +218,6 @@ function getTrigger(options = {}) {
     if (_isCommonArrayPropertySet) {
       handleArray()
     }
-
-    log(`effect: ${Effect.latestActiveEffect?.__number_id}: trigger ${id} done`)
     // })
     // depsMap = undefined
     // triggerType = undefined

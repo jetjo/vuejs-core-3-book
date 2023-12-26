@@ -26,4 +26,17 @@ function isValidArrayIndex(key, thr = false) {
   return true
 }
 
-export { isValidArrayIndex, Array_MaxLen }
+function createArray(len, fill = i => i, remainEmpty = false) {
+  const arr = Array(len)
+  if (remainEmpty) return arr
+  if (typeof fill !== 'function') {
+    arr.fill(fill)
+    return arr
+  }
+  for (let i = 0; i < len; i++) {
+    arr[i] = fill(i)
+  }
+  return arr
+}
+
+export { isValidArrayIndex, Array_MaxLen, createArray }

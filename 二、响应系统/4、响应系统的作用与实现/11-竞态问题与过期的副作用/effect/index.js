@@ -4,7 +4,7 @@
 /* @4-7 副作用的调度执行 */
 
 import { Array_MaxLen } from '../utils/array.js'
-import { error, throwErr, warn } from '../utils/log.js'
+import { error, throwErr, warn, log } from '../utils/log.js'
 import { FN_EFFECT_MAP_KEY } from './convention.js'
 import {
   scheduler,
@@ -29,6 +29,14 @@ Object.setPrototypeOf(Effect, null)
 // console.log(Effect())
 // console.log(new Effect())
 
+/**@param {EFn} [eFn]  */
+function __lazyTrack(eFn) {
+  if (eFn !== undefined) {
+    return !eFn.options.queueJob
+  }
+  return !latestActiveEffect?.options.queueJob
+}
+
 /**@typedef {typeof Effect} EffectM */
 function isEfn(eFn) {
   return (
@@ -45,6 +53,7 @@ function isEfn(eFn) {
  * */
 function track({ deps, isFromHasTrap, effectJustPopOutFromStack }) {
   if (isEfn(effectJustPopOutFromStack)) {
+    // if (__lazy Track && isEfn(effectJustPopOutFromStack)) {
     const eFn = effectJustPopOutFromStack
     eFn.deps.forEach(s => s.add(eFn))
     if (typeof eFn.hasTrapDeps !== 'undefined') {
@@ -53,11 +62,12 @@ function track({ deps, isFromHasTrap, effectJustPopOutFromStack }) {
     return
   }
   if (!activeEffect || !deps) throwErr('activeEffect不应该是空!')
-  // deps.add(activeEffect)
+  const isLazyTrack = __lazyTrack(activeEffect)
+  !isLazyTrack && deps.add(activeEffect)
   if (isFromHasTrap) {
     if (typeof activeEffect.hasTrapDeps === 'undefined')
       activeEffect.hasTrapDeps = []
-    // activeEffect.hasTrapDeps.push(deps)
+    !isLazyTrack && activeEffect.hasTrapDeps.push(deps)
     return
   }
   activeEffect.deps.push(deps)
@@ -76,6 +86,7 @@ Object.defineProperty(Effect, 'track', {
  *  */
 function* trackTriggers({ triggerBucket, effectJustPopOutFromStack }) {
   if (isEfn(effectJustPopOutFromStack)) {
+    // if (__lazy Track && isEfn(effectJustPopOutFromStack)) {
     const eFn = effectJustPopOutFromStack
     eFn.__triggers.forEach(s => eFn.triggers.add(s))
     eFn.__triggers.clear()
@@ -83,17 +94,21 @@ function* trackTriggers({ triggerBucket, effectJustPopOutFromStack }) {
   }
   if (!triggerBucket) throwErr('triggerBucket不应该是空!')
   const afs = effectStack.filter(ef => ef !== undefined && !ef.isConvergence)
+  if (afs.length === 0) return
+  /**
+   * @type {{
+   * triggerMap: WeakMap<, Set<string>>
+   * triggerSet: Set<string>}}
+   */
+  let map_set
+  /**@type {(ef: EFn) => void} */
+  const triggerTacker = __lazyTrack()
+    ? ef => ef.__triggers.add(map_set.triggerSet)
+    : ef => ef.triggers.add(map_set.triggerSet)
   for (const ef of afs) {
-    /**
-     * @type {{
-     * triggerMap: WeakMap<, Set<string>>
-     * triggerSet: Set<string>}}
-     */
-    const { triggerMap, triggerSet } = yield ef
-    triggerBucket.set(ef, triggerMap)
-    afs.forEach(ef => {
-      ef.__triggers.add(triggerSet)
-    })
+    map_set = yield ef
+    triggerBucket.set(ef, map_set.triggerMap)
+    afs.forEach(triggerTacker)
     // return 0
   }
 }
@@ -130,7 +145,11 @@ Effect.isOnlyFromHasTrap = function (efn, deps) {
 }
 
 // [Vue warn]: Maximum recursive updates exceeded
-const MAX_RECURSIVE_UPDATES = 202
+// const MAX_RECURSIVE_UPDATES = 202
+// const MAX_RECURSIVE_UPDATES = 118 //最多递归嵌套110左右层, 再多就会报错
+const MAX_RECURSIVE_UPDATES = 100
+// const MAX_SYNC_CALL_UPDATES = 202 // vue???
+const MAX_SYNC_CALL_UPDATES = 200
 
 function overMaxRecursiveLimit(efn) {
   if (efn === undefined) return false
@@ -145,12 +164,13 @@ function overMaxRecursiveLimit(efn) {
   return false
 }
 
+/**@type {Set<EFn>} */
 const schedulerJobs = new Set()
 
 setInterval(() => {
   schedulerJobs.forEach(ef => {
     if (ef === undefined) return
-    ef.recursiveCounter = 0
+    ef.syncCallCounter = 0
   })
   schedulerJobs.clear()
   warn('clear schedulerJobs')
@@ -185,11 +205,13 @@ Effect.scheduler = function (efn, cb) {
   // if (efn === activeEffect || effectStack.includes(efn)) return
   // if (efn === activeEffect || overMaxRecursiveLimit(efn)) return
   if (isCurrentActive(efn)) return
-  efn.recursiveCounter++
-  // if (efn.recursiveCounter === MAX_RECURSIVE_UPDATES) debugger
-  if (efn.recursiveCounter > MAX_RECURSIVE_UPDATES) {
-    error('over max recursive limit')
-    // efn.recursiveCounter = 0
+  efn.syncCallCounter++
+  log(`scheduler: ${efn.__number_id}: ${efn.syncCallCounter}`)
+  // if (efn.syncCallCounter === MAX_SYNC_CALL_UPDATES) debugger
+  if (efn.syncCallCounter > MAX_SYNC_CALL_UPDATES) {
+    error(`scheduler: ${efn.__number_id}: ${efn.syncCallCounter}`)
+    error('over max sync call limit')
+    // efn.syncCallCounter = 0
     return
   }
   // schedulerJobs.push(efn)
@@ -218,7 +240,7 @@ Effect.scheduler = function (efn, cb) {
  * @property {function(): void} popSelfOutFromEffectStack
  * @property {boolean} isConvergence effect没有修改自己的依赖, 或者修改了自身的依赖项,但是这种修改不会引起无尽的递归(自调用)
  * @property {BigInt} __number_id
- * @property {number} recursiveCounter
+ * @property {number} syncCallCounter
  * @typedef EFnOptions
  * @property {boolean} [lazy]
  * @property {boolean} [queueJob = true]
@@ -239,6 +261,7 @@ function cleanup(eFn) {
   }
   eFn.triggers.forEach(s => s.clear())
   eFn.triggers.clear()
+  eFn.isConvergence = true
 }
 // 外部依赖她
 Effect.cleanup = cleanup
@@ -261,11 +284,12 @@ Effect.applyWithoutEffect = function (cb, ...args) {
 function prepareEffect(fn, enableEffect = true) {
   /**@type {EFn|undefined} */
   const eFn = enableEffect ? fn[FN_EFFECT_MAP_KEY] : undefined
+  if (enableEffect && eFn === undefined) {
+    throwErr('fn没有对应的eFn!')
+    return undefined
+  }
   if (eFn) {
-    if (
-      (!eFn.isConvergence && overMaxRecursiveLimit(eFn)) ||
-      effectStack.length === Array_MaxLen
-    ) {
+    if (overMaxRecursiveLimit(eFn) || effectStack.length === Array_MaxLen) {
       error('over max recursive limit, or the effectStack is full')
       return undefined
     }
@@ -277,11 +301,12 @@ function prepareEffect(fn, enableEffect = true) {
   return eFn
 }
 
-function runEffect(fn, enableEffect) {
+function runEffect(fn, enableEffect = true) {
   return applyEffect(fn, enableEffect, undefined)
 }
 
 function applyEffect(fn, enableEffect, thisArg, ...args) {
+  if (enableEffect === undefined) throwErr('enableEffect不能是undefined')
   const eFn = prepareEffect(fn, enableEffect)
   if (enableEffect && eFn === undefined) {
     warn('Prepare the effect failed!!!')
@@ -299,17 +324,22 @@ function applyEffect(fn, enableEffect, thisArg, ...args) {
 
 Effect.run = runEffect
 
+Effect.setConvergenceFlag = f => {
+  if (activeEffect === undefined) return
+  activeEffect.isConvergence = !!f
+}
+
 function popEffectOutFromEffectStack(eFn) {
   if (effectStack.at(-1) !== eFn)
     throwErr('effectStack中的最后一个不是参数指定的eFn!')
   effectStack.pop()
   getLatestActiveEffect()
   activeEffect = effectStack[effectStack.length - 1]
-  if (isEfn(eFn)) {
+  if (isEfn(eFn) && __lazyTrack(eFn)) {
     track({ effectJustPopOutFromStack: eFn })
     trackTriggers({ effectJustPopOutFromStack: eFn })
   }
-  // eFn && eFn.recursiveCounter > 0 && eFn.recursiveCounter--
+  // eFn && eFn.syncCallCounter > 0 && eFn.syncCallCounter--
   // return 'test finally return'
 }
 
@@ -329,7 +359,7 @@ function effect(fn, options = {}) {
   eFn.__triggers = new Set()
   eFn.options = options
   eFn.isConvergence = true
-  eFn.recursiveCounter = 0
+  eFn.syncCallCounter = 0
   /**每一个`eFn`的`popSelfOutFromEffectStack`必须新建一个,不能共用 */
   const popSelfOutFromEffectStack = () => {
     if (effectStack.at(-1) !== eFn)

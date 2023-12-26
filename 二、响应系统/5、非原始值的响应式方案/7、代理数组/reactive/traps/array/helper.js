@@ -54,6 +54,7 @@ function getRewriter(options = {}) {
 
     return function (...args) {
       const targetRawM = getTarget(this, true)[name]
+      Effect.setConvergenceFlag(false)
       if (targetRawM !== methodOrigin) {
         // vue也是这样,如果有实例方法,则优先调用实例方法
         return Effect.applyWithoutEffect.apply(this, [targetRawM, ...args])

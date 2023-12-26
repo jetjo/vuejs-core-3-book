@@ -41,16 +41,16 @@ function flushJob() {
     warn('micro effect job done')
   })
 }
-// [Vue warn]: Maximum recursive updates exceeded
-const MAX_RECURSIVE_UPDATES = 102400
 
-function overMaxRecursiveLimit(efn) {
+const MAX_SYNC_CALL_UPDATES = 200
+
+function overMaxSyncCallLimit(efn) {
   const i = jobArray.reduce((i, e) => {
     if (efn === e) i++
     return i
   }, 0)
-  if (i > MAX_RECURSIVE_UPDATES) {
-    error('over max recursive limit')
+  if (i > MAX_SYNC_CALL_UPDATES) {
+    error('over max sync call limit')
     return true
   }
   return false
@@ -61,7 +61,7 @@ function scheduler(effectFnScheduler) {
   // function scheduler(effectFn) {
   // 这样Set的自动去重不起作用了
   // jobQueue.add(() => effectFn.options.scheduler(effectFn))
-  // if (overMaxRecursiveLimit(effectFnScheduler)) return
+  if (overMaxSyncCallLimit(effectFnScheduler)) return
   if (jobArray.length === Array_MaxLen) {
     error('job queue is full')
     return
