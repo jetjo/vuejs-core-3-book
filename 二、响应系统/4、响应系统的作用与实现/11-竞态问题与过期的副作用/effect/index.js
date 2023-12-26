@@ -30,28 +30,58 @@ Object.setPrototypeOf(Effect, null)
 // console.log(new Effect())
 
 /**@typedef {typeof Effect} EffectM */
-
+function isEfn(eFn) {
+  return (
+    eFn !== undefined &&
+    eFn[FN_EFFECT_MAP_KEY] !== undefined &&
+    eFn[FN_EFFECT_MAP_KEY][FN_EFFECT_MAP_KEY] === eFn
+  )
+}
 /**
  * 收集副作用的依赖项
  * @param {Object} args
  * @param {!Set<EFn>} args.deps
+ * @param {EFn} [args.effectJustPopOutFromStack]
  * */
-Effect.track = function ({ deps, isFromHasTrap }) {
-  if (!activeEffect) throwErr('activeEffect不应该是空!')
-  deps.add(activeEffect)
+function track({ deps, isFromHasTrap, effectJustPopOutFromStack }) {
+  if (isEfn(effectJustPopOutFromStack)) {
+    const eFn = effectJustPopOutFromStack
+    eFn.deps.forEach(s => s.add(eFn))
+    if (typeof eFn.hasTrapDeps !== 'undefined') {
+      eFn.hasTrapDeps.forEach(s => s.add(eFn))
+    }
+    return
+  }
+  if (!activeEffect || !deps) throwErr('activeEffect不应该是空!')
+  // deps.add(activeEffect)
   if (isFromHasTrap) {
     if (typeof activeEffect.hasTrapDeps === 'undefined')
       activeEffect.hasTrapDeps = []
-    activeEffect.hasTrapDeps.push(deps)
+    // activeEffect.hasTrapDeps.push(deps)
     return
   }
   activeEffect.deps.push(deps)
 }
 
+Object.defineProperty(Effect, 'track', {
+  get() {
+    return track
+  }
+})
+
 /**
  * @param {Object} args
- * @param {WeakMap<EFn, WeakMap<, Set<string>>>} args.triggerBucket */
-Effect.trackTriggers = function* ({ triggerBucket }) {
+ * @param {WeakMap<EFn, WeakMap<, Set<string>>>} args.triggerBucket
+ * @param {EFn} [args.effectJustPopOutFromStack]
+ *  */
+function* trackTriggers({ triggerBucket, effectJustPopOutFromStack }) {
+  if (isEfn(effectJustPopOutFromStack)) {
+    const eFn = effectJustPopOutFromStack
+    eFn.__triggers.forEach(s => eFn.triggers.add(s))
+    eFn.__triggers.clear()
+    return
+  }
+  if (!triggerBucket) throwErr('triggerBucket不应该是空!')
   const afs = effectStack.filter(ef => ef !== undefined && !ef.isConvergence)
   for (const ef of afs) {
     /**
@@ -62,11 +92,17 @@ Effect.trackTriggers = function* ({ triggerBucket }) {
     const { triggerMap, triggerSet } = yield ef
     triggerBucket.set(ef, triggerMap)
     afs.forEach(ef => {
-      ef.triggers.add(triggerSet)
+      ef.__triggers.add(triggerSet)
     })
     // return 0
   }
 }
+
+Object.defineProperty(Effect, 'trackTriggers', {
+  get() {
+    return trackTriggers
+  }
+})
 
 /**@description effectStack栈顶的effect不是undefined */
 Object.defineProperty(Effect, 'hasActive', {
@@ -94,7 +130,7 @@ Effect.isOnlyFromHasTrap = function (efn, deps) {
 }
 
 // [Vue warn]: Maximum recursive updates exceeded
-const MAX_RECURSIVE_UPDATES = 10240
+const MAX_RECURSIVE_UPDATES = 202
 
 function overMaxRecursiveLimit(efn) {
   if (efn === undefined) return false
@@ -150,9 +186,10 @@ Effect.scheduler = function (efn, cb) {
   // if (efn === activeEffect || overMaxRecursiveLimit(efn)) return
   if (isCurrentActive(efn)) return
   efn.recursiveCounter++
+  // if (efn.recursiveCounter === MAX_RECURSIVE_UPDATES) debugger
   if (efn.recursiveCounter > MAX_RECURSIVE_UPDATES) {
     error('over max recursive limit')
-    efn.recursiveCounter = 0
+    // efn.recursiveCounter = 0
     return
   }
   // schedulerJobs.push(efn)
@@ -177,6 +214,7 @@ Effect.scheduler = function (efn, cb) {
  * @property {!(!Set<EFn>)[]} deps - 包含此EFn的集合们, 没有去重
  * @property {(!Set<EFn>)[]} [hasTrapDeps] - 当这个副作用只依赖于相应的属性的有无时, 包含此副作用的集合会存入这里, 没有去重
  * @property {!Set<!Set<string>>} triggers - 包含此EFn修改过的属性的集合
+ * @property {!Set<!Set<string>>} __triggers
  * @property {function(): void} popSelfOutFromEffectStack
  * @property {boolean} isConvergence effect没有修改自己的依赖, 或者修改了自身的依赖项,但是这种修改不会引起无尽的递归(自调用)
  * @property {BigInt} __number_id
@@ -192,7 +230,7 @@ Effect.scheduler = function (efn, cb) {
 /**@param {!EFn} eFn */
 function cleanup(eFn) {
   // 外部依赖她, 需要判断
-  if (!eFn || !eFn[FN_EFFECT_MAP_KEY]) return
+  if (!isEfn(eFn)) return
   eFn.deps.forEach(s => s.delete(eFn))
   eFn.deps.length = 0
   if (typeof eFn.hasTrapDeps !== 'undefined') {
@@ -267,6 +305,11 @@ function popEffectOutFromEffectStack(eFn) {
   effectStack.pop()
   getLatestActiveEffect()
   activeEffect = effectStack[effectStack.length - 1]
+  if (isEfn(eFn)) {
+    track({ effectJustPopOutFromStack: eFn })
+    trackTriggers({ effectJustPopOutFromStack: eFn })
+  }
+  // eFn && eFn.recursiveCounter > 0 && eFn.recursiveCounter--
   // return 'test finally return'
 }
 
@@ -283,6 +326,7 @@ function effect(fn, options = {}) {
 
   eFn.deps = []
   eFn.triggers = new Set()
+  eFn.__triggers = new Set()
   eFn.options = options
   eFn.isConvergence = true
   eFn.recursiveCounter = 0

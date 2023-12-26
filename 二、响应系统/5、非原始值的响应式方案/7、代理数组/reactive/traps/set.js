@@ -3,7 +3,8 @@ import {
   TRIGGER_TYPE,
   TRY_PROXY_NO_RESULT,
   isReactive,
-  getTarget
+  getTarget,
+  SceneProtectedFlag
 } from './convention.js'
 
 /**
@@ -30,7 +31,39 @@ function getSetTrap(options = {}) {
   let _target
   let _receiver
   let valAfterSet
-
+  function withSceneStatus(restore = true, cb, ...args) {
+    const bak = {
+      __proto__: null,
+      get [SceneProtectedFlag]() {
+        return true
+      },
+      targetRaw,
+      propertyName,
+      hasProperty,
+      isCommonArrayPropertySet,
+      oldVal,
+      oldLen,
+      getType,
+      _target,
+      _receiver,
+      valAfterSet
+    }
+    if (!restore) return cb.apply(bak, args)
+    try {
+      return cb.apply(bak, args)
+    } finally {
+      targetRaw = bak.targetRaw
+      propertyName = bak.propertyName
+      hasProperty = bak.hasProperty
+      isCommonArrayPropertySet = bak.isCommonArrayPropertySet
+      oldVal = bak.oldVal
+      oldLen = bak.oldLen
+      getType = bak.getType
+      _target = bak._target
+      _receiver = bak._receiver
+      valAfterSet = bak.valAfterSet
+    }
+  }
   const getArrLen = (function () {
     const gl = () => targetRaw.length
     return () => Effect.runWithoutEffect(gl)
@@ -121,6 +154,9 @@ function getSetTrap(options = {}) {
     warn('set2 trap...')
     beforeSet(target, key, receiver)
     const suc = Reflect.set(...arguments)
+    if (key === 'length') {
+      // debugger
+    }
     if (suc && canTrigger()) {
       // #region NOTE: 根据ES语言规范对[[Set]]方法的执行过程描述,
       // 当执行target[key]=xxx的赋值语句时,如果target自身没有key属性,
@@ -138,7 +174,16 @@ function getSetTrap(options = {}) {
       // #endregion
       // const type = set.getType(targetRaw, key, valAfterSet, oldVal)
       // trigger(target, key, type, valAfterSet)
-      trigger(target, key, getType(), valAfterSet, isCommonArrayPropertySet)
+      withSceneStatus(
+        false,
+        trigger,
+        target,
+        key,
+        getType(),
+        valAfterSet,
+        isCommonArrayPropertySet
+      )
+      // trigger(target, key, getType(), valAfterSet, isCommonArrayPropertySet)
       return true
     }
     if (!suc && handleThrow) return Reactive.handleSetFail(...arguments, false)

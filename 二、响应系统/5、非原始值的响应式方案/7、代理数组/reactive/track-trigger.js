@@ -8,7 +8,11 @@ import {
   throwErr
 } from '../../index.js'
 import { isHasTrap } from './traps/helper.js'
-import { ITERATE_KEY, TRIGGER_TYPE } from './traps/convention.js'
+import {
+  ITERATE_KEY,
+  TRIGGER_TYPE,
+  SceneProtectedFlag
+} from './traps/convention.js'
 
 /**@type {WeakMap<, Map<, Set<import('./index.js').EffectFn>>>} */
 const bucket = new WeakMap()
@@ -24,10 +28,9 @@ function getTrigger(options = {}) {
   let newPropertyVal
   let triggerTarget
   let triggerPropertyKey
+  let callContext
 
-  const SceneProtectedFlag = Symbol('SceneProtectedFlag')
-
-  function withSceneStatus(cb) {
+  function withSceneStatus(restore = true, cb, ...args) {
     const bak = {
       __proto__: null,
       get [SceneProtectedFlag]() {
@@ -37,23 +40,26 @@ function getTrigger(options = {}) {
       triggerType,
       newPropertyVal,
       triggerTarget,
-      triggerPropertyKey
+      triggerPropertyKey,
+      callContext
     }
+    if (!restore) return cb.apply(bak, args)
     try {
-      return cb.apply(bak)
+      return cb.apply(bak, args)
     } finally {
       depsMap = bak.depsMap
       triggerType = bak.triggerType
       newPropertyVal = bak.newPropertyVal
       triggerTarget = bak.triggerTarget
       triggerPropertyKey = bak.triggerPropertyKey
+      callContext = bak.callContext
     }
   }
 
   function run(key, deps) {
     const effects = deps || depsMap?.get(key)
     if (!(effects?.size > 0)) return
-    withSceneStatus(function () {
+    withSceneStatus(true, function () {
       runEffects.call(this, effects, key)
     })
   }
@@ -153,11 +159,13 @@ function getTrigger(options = {}) {
       throwErr('runEffects must be called with `withSceneStatus`')
     }
     trackEffect(key)
-    error(`try scheduler ${effects.size} job...`)
+    warn(`try scheduler ${effects.size} job...`)
     // if (effects?.size === 0) return
     // 防止cleanup引发的无限循环,必须实例化一个effects的副本
     new Set(effects).forEach(ef => {
-      if (canScheduler(ef, effects, key)) Effect.scheduler(ef)
+      if (canScheduler(ef, effects, key)) {
+        Effect.scheduler.call(this, ef)
+      }
     })
   }
 
@@ -175,6 +183,10 @@ function getTrigger(options = {}) {
     newVal,
     _isCommonArrayPropertySet
   ) {
+    if (!this[SceneProtectedFlag]) {
+      throwErr('trigger must be called with `withSceneStatus`')
+    }
+    callContext = this
     const id = Math.random().toFixed(10).split('.')[1]
     log(
       `effect: ${Effect.latestActiveEffect?.__number_id}: trigger ${id} ${key} ${type.description} ${newVal}`
