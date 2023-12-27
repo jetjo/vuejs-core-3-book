@@ -17,23 +17,7 @@ let activeEffect = undefined
 /**@type {EFn[]} */
 const effectStack = []
 
-function Effect() {
-  if (new.target) return effect
-}
-
-// NOTE: class模式下是只读的???
-Effect.prototype = null
-Object.setPrototypeOf(Effect, null)
-// console.log(Effect())
-// console.log(new Effect())
-
-/**@param {EFn} [eFn]  */
-function __lazyTrack(eFn) {
-  if (eFn !== undefined) {
-    return !eFn.options.queueJob
-  }
-  return !latestActiveEffect?.options.queueJob
-}
+function Effect() {}
 
 /**@typedef {typeof Effect} EffectM */
 function isEfn(eFn) {
@@ -63,46 +47,6 @@ function track({ deps, effectJustPopOutFromStack }) {
 
 Effect.track = track
 
-/**
- * @param {Object} args
- * @param {WeakMap<EFn, WeakMap<, Set<string>>>} args.triggerBucket
- * @param {EFn} [args.effectJustPopOutFromStack]
- *  */
-function* trackTriggers({ triggerBucket, effectJustPopOutFromStack }) {
-  if (isEfn(effectJustPopOutFromStack)) {
-    // if (__lazy Track && isEfn(effectJustPopOutFromStack)) {
-    const eFn = effectJustPopOutFromStack
-    eFn.__triggers.forEach(s => eFn.triggers.add(s))
-    eFn.__triggers.clear()
-    return
-  }
-  if (!triggerBucket) throwErr('triggerBucket不应该是空!')
-  const afs = effectStack.filter(ef => ef !== undefined && !ef.isConvergence)
-  if (afs.length === 0) return
-  /**
-   * @type {{
-   * triggerMap: WeakMap<, Set<string>>
-   * triggerSet: Set<string>}}
-   */
-  let map_set
-  /**@type {(ef: EFn) => void} */
-  const triggerTacker = __lazyTrack()
-    ? ef => ef.__triggers.add(map_set.triggerSet)
-    : ef => ef.triggers.add(map_set.triggerSet)
-  for (const ef of afs) {
-    map_set = yield ef
-    triggerBucket.set(ef, map_set.triggerMap)
-    afs.forEach(triggerTacker)
-    // return 0
-  }
-}
-
-Object.defineProperty(Effect, 'trackTriggers', {
-  get() {
-    return trackTriggers
-  }
-})
-
 /**@description effectStack栈顶的effect不是undefined */
 Object.defineProperty(Effect, 'hasActive', {
   get() {
@@ -123,7 +67,7 @@ const MAX_RECURSIVE_UPDATES = 100
 const MAX_SYNC_CALL_UPDATES = 200
 
 function overMaxRecursiveLimit(efn) {
-  if (efn === undefined) return false
+  if (efn === undefined || efn.options.queueJob) return false
   const i = effectStack.reduce((i, e) => {
     if (efn === e) i++
     return i
@@ -230,13 +174,6 @@ function cleanup(eFn) {
 Effect.cleanup = cleanup
 
 Effect.runWithoutEffect = function (cb) {
-  /* const bk = activeEffect
-  activeEffect = undefined
-  try {
-    cb()
-  } finally {
-    activeEffect = bk
-  } */
   return runEffect(cb, false)
 }
 
