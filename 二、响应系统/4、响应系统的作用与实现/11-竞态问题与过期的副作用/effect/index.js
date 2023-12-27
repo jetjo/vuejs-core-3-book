@@ -101,6 +101,10 @@ Object.defineProperty(Effect, 'latestActiveEffect', {
 })
 
 function getLatestActiveEffect() {
+  if (typeof Array.prototype.findLast === 'function') {
+    latestActiveEffect = effectStack.findLast(e => e !== undefined)
+    return
+  }
   latestActiveEffect = undefined
   let i = -1
   while (-1 * i <= effectStack.length) {
