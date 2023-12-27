@@ -1,10 +1,6 @@
 /* 跳过响应性数据的中间态 */
 
-import {
-  warn,
-  Array_MaxLen,
-  error
-} from '../11-竞态问题与过期的副作用/utils/index.js'
+import { warn, error } from '../11-竞态问题与过期的副作用/utils/index.js'
 
 let jobQueue
 const jobArray = []
@@ -22,10 +18,6 @@ function isFlushingQueue() {
   // 会先将任务插入`jobArray`,
   // 所以这么判断
   return jobArray.length > 1
-}
-
-function hasSchedulerTask() {
-  return jobArray.length > 0
 }
 
 function flushJob() {
@@ -62,35 +54,8 @@ function scheduler(effectFnScheduler) {
   // 这样Set的自动去重不起作用了
   // jobQueue.add(() => effectFn.options.scheduler(effectFn))
   if (overMaxSyncCallLimit(effectFnScheduler)) return
-  if (jobArray.length === Array_MaxLen) {
-    error('job queue is full')
-    return
-  }
   jobArray.push(effectFnScheduler)
   flushJob()
 }
 
-const effectCleaners = []
-const microTaskerForEffectCleaner = Promise.resolve()
-function flushJobCleaner() {
-  if (effectCleaners.length > 1) return
-  microTaskerForEffectCleaner.then(() => {
-    warn('run micro clean job')
-    const cleaners = [...effectCleaners]
-    effectCleaners.length = 0
-    cleaners.forEach(job => job())
-    warn('micro clean job done')
-  })
-}
-function schedulerEffectEnder(effectCleaner) {
-  warn('queue micro effect cleaner...')
-  if (effectCleaners.length === Array_MaxLen) {
-    error('cleaner queue is full')
-    effectCleaner()
-    return
-  }
-  effectCleaners.unshift(effectCleaner)
-  flushJobCleaner()
-}
-
-export { scheduler, hasSchedulerTask as isFlushingQueue, schedulerEffectEnder }
+export { scheduler }
