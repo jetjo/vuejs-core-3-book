@@ -3,7 +3,6 @@
 /* @4-6 避免effect递归死循环 */
 /* @4-7 副作用的调度执行 */
 
-import { Array_MaxLen } from '../utils/array.js'
 import { error, throwErr, warn, log } from '../utils/log.js'
 import { FN_EFFECT_MAP_KEY } from './convention.js'
 import { scheduler } from './scheduler.js'
@@ -20,6 +19,7 @@ const effectStack = []
 function Effect() {}
 
 /**@typedef {typeof Effect} EffectM */
+
 function isEfn(eFn) {
   return (
     eFn !== undefined &&
@@ -110,39 +110,27 @@ function getLatestActiveEffect() {
     return
   }
 }
-function isCurrentActive(efn) {
-  getLatestActiveEffect()
-  return latestActiveEffect === efn
-}
 
 /**@param {EFn} efn */
-Effect.scheduler = function (efn, cb) {
-  // if (efn === activeEffect || effectStack.includes(efn)) return
-  // if (efn === activeEffect || overMaxRecursiveLimit(efn)) return
-  if (isCurrentActive(efn)) return
-  efn.syncCallCounter++
-  log(`scheduler: ${efn.__number_id}: ${efn.syncCallCounter}`)
-  // if (efn.syncCallCounter === MAX_SYNC_CALL_UPDATES) debugger
-  if (efn.syncCallCounter > MAX_SYNC_CALL_UPDATES) {
-    error(`scheduler: ${efn.__number_id}: ${efn.syncCallCounter}`)
-    error('over max sync call limit')
-    // efn.syncCallCounter = 0
+Effect.scheduler = function (efn) {
+  if (latestActiveEffect === efn) return
+  const { scheduler: run, mustSynCallPre, queueJob } = efn.options
+  if (queueJob) {
+    efn.syncCallCounter++
+    if (efn.syncCallCounter > MAX_SYNC_CALL_UPDATES) {
+      error(`scheduler: ${efn.__number_id}: ${efn.syncCallCounter}`)
+      error('over max sync call limit')
+      return
+    }
+    mustSynCallPre && mustSynCallPre()
+    scheduler(run)
+    schedulerJobs.add(efn)
     return
   }
-  // schedulerJobs.push(efn)
-  schedulerJobs.add(efn)
-  try {
-    const { scheduler: run, mustSynCallPre } = efn.options
-    mustSynCallPre && mustSynCallPre()
-    if (run) scheduler(run)
-    else {
-      warn('run sync job')
-      efn(efn)
-    }
-    cb && cb()
-  } finally {
-    // schedulerJobs.pop()
-  }
+  if (overMaxRecursiveLimit(efn)) return
+  warn('run sync job')
+  mustSynCallPre && mustSynCallPre()
+  run()
 }
 
 /**
@@ -150,7 +138,6 @@ Effect.scheduler = function (efn, cb) {
  * @typedef EFnConf
  * @property {!(!Set<EFn>)[]} deps - 包含此EFn的集合们, 没有去重
  * @property {!Set<!Set<string>>} triggers - 包含此EFn修改过的属性的集合
- * @property {!Set<!Set<string>>} __triggers
  * @property {BigInt} __number_id
  * @property {number} syncCallCounter
  * @typedef EFnOptions
@@ -167,51 +154,29 @@ function cleanup(eFn) {
   if (!isEfn(eFn)) return
   eFn.deps.forEach(s => s.delete(eFn))
   eFn.deps.length = 0
-  eFn.triggers.forEach(s => s.clear())
-  eFn.triggers.clear()
+  // eFn.triggers.forEach(s => s.clear())
+  // eFn.triggers.clear()
 }
 // 外部依赖她
 Effect.cleanup = cleanup
 
 Effect.runWithoutEffect = function (cb) {
-  return runEffect(cb, false)
+  return applyEffect(cb, false, undefined)
 }
 
 Effect.applyWithoutEffect = function (cb, ...args) {
   return applyEffect(cb, false, this, ...args)
 }
 
-function prepareEffect(fn, enableEffect = true) {
-  /**@type {EFn|undefined} */
-  const eFn = enableEffect ? fn[FN_EFFECT_MAP_KEY] : undefined
-  if (enableEffect && eFn === undefined) {
-    throwErr('fn没有对应的eFn!')
-    return undefined
-  }
-  if (eFn) {
-    if (overMaxRecursiveLimit(eFn) || effectStack.length === Array_MaxLen) {
-      error('over max recursive limit, or the effectStack is full')
-      return undefined
-    }
-  }
-  return eFn
-}
-
-function runEffect(fn, enableEffect = true) {
-  return applyEffect(fn, enableEffect, undefined)
-}
-
 function applyEffect(fn, enableEffect, thisArg, ...args) {
-  if (enableEffect === undefined) throwErr('enableEffect不能是undefined')
-  const eFn = prepareEffect(fn, enableEffect)
-  if (enableEffect && eFn === undefined) {
-    warn('Prepare the effect failed!!!')
-    return
+  const eFn = (enableEffect && fn[FN_EFFECT_MAP_KEY]) || undefined
+  if (enableEffect && !isEfn(eFn)) {
+    throwErr('Prepare the effect failed!!!')
   }
   activeEffect = eFn
   effectStack.push(eFn)
   getLatestActiveEffect()
-  eFn && cleanup(eFn)
+  enableEffect && cleanup(eFn)
   try {
     return fn.apply(thisArg, args)
   } finally {
@@ -219,33 +184,40 @@ function applyEffect(fn, enableEffect, thisArg, ...args) {
     effectStack.pop()
     activeEffect = effectStack.at(-1)
     getLatestActiveEffect()
-    eFn && track({ effectJustPopOutFromStack: eFn })
+    enableEffect && track({ effectJustPopOutFromStack: eFn })
   }
 }
-
-Effect.run = runEffect
 
 let _allEffectCounter = 0n
 /**
  * @param {EFnOptions} [options]
  * @returns {EFn} */
 function effect(fn, options = {}) {
+  if (options.queueJob === undefined) options.queueJob = true
   /**@type {EFn} */
-  const eFn = () => runEffect(fn)
-  eFn.__number_id = options._id || ++_allEffectCounter
-  fn[FN_EFFECT_MAP_KEY] = eFn
-  eFn[FN_EFFECT_MAP_KEY] = fn
+  const eFn = () => applyEffect(fn, true, undefined)
+
+  Object.defineProperty(eFn, '__number_id', {
+    value: options._id || ++_allEffectCounter
+  })
+  Object.defineProperty(eFn, FN_EFFECT_MAP_KEY, {
+    value: fn,
+    enumerable: false
+  })
+  Object.defineProperty(fn, FN_EFFECT_MAP_KEY, {
+    value: eFn,
+    enumerable: false
+  })
 
   eFn.deps = []
-  eFn.triggers = new Set()
-  eFn.__triggers = new Set()
+  // eFn.triggers = new Set()
   eFn.options = options
   eFn.syncCallCounter = 0
 
-  const { scheduler: run, lazy, queueJob: qj } = options
-
-  if (!lazy) (run || eFn)(eFn)
-  if (qj || undefined === qj) options.scheduler = run ? () => run(eFn) : eFn
+  const { scheduler: bakRun, queueJob } = options
+  if (queueJob) options.scheduler = bakRun ? () => bakRun(eFn) : () => eFn()
+  if (!options.scheduler) options.scheduler = () => eFn()
+  if (!options.lazy) options.scheduler()
   return eFn
 }
 
