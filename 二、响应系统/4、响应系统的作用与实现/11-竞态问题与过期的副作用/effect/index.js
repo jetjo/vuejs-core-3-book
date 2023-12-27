@@ -6,11 +6,7 @@
 import { Array_MaxLen } from '../utils/array.js'
 import { error, throwErr, warn, log } from '../utils/log.js'
 import { FN_EFFECT_MAP_KEY } from './convention.js'
-import {
-  scheduler,
-  isFlushingQueue,
-  schedulerEffectEnder
-} from './scheduler.js'
+import { scheduler } from './scheduler.js'
 
 /**@template T */
 /**@callback CB */
@@ -295,9 +291,6 @@ function prepareEffect(fn, enableEffect = true) {
     }
     cleanup(eFn)
   }
-  activeEffect = eFn
-  effectStack.push(eFn)
-  getLatestActiveEffect()
   return eFn
 }
 
@@ -312,13 +305,16 @@ function applyEffect(fn, enableEffect, thisArg, ...args) {
     warn('Prepare the effect failed!!!')
     return
   }
+  activeEffect = eFn
+  effectStack.push(eFn)
+  getLatestActiveEffect()
   try {
     return fn.apply(thisArg, args)
   } finally {
     // NOTE: finally中的return会覆盖try中的return!!!
-    // if (eFn === undefined) return popEffectOutFromEffectStack()
-    if (eFn === undefined) popEffectOutFromEffectStack()
-    else eFn.popSelfOutFromEffectStack()
+    effectStack.pop()
+    activeEffect = effectStack.at(-1)
+    getLatestActiveEffect()
   }
 }
 
@@ -327,20 +323,6 @@ Effect.run = runEffect
 Effect.setConvergenceFlag = f => {
   if (activeEffect === undefined) return
   activeEffect.isConvergence = !!f
-}
-
-function popEffectOutFromEffectStack(eFn) {
-  if (effectStack.at(-1) !== eFn)
-    throwErr('effectStack中的最后一个不是参数指定的eFn!')
-  effectStack.pop()
-  getLatestActiveEffect()
-  activeEffect = effectStack[effectStack.length - 1]
-  if (isEfn(eFn) && __lazyTrack(eFn)) {
-    track({ effectJustPopOutFromStack: eFn })
-    trackTriggers({ effectJustPopOutFromStack: eFn })
-  }
-  // eFn && eFn.syncCallCounter > 0 && eFn.syncCallCounter--
-  // return 'test finally return'
 }
 
 let _allEffectCounter = 0n
@@ -360,18 +342,7 @@ function effect(fn, options = {}) {
   eFn.options = options
   eFn.isConvergence = true
   eFn.syncCallCounter = 0
-  /**每一个`eFn`的`popSelfOutFromEffectStack`必须新建一个,不能共用 */
-  const popSelfOutFromEffectStack = () => {
-    if (effectStack.at(-1) !== eFn)
-      throwErr('effectStack中的最后一个不是当前的eFn!')
-    popEffectOutFromEffectStack(eFn)
-  }
-  eFn.popSelfOutFromEffectStack = () => {
-    if (!isFlushingQueue()) {
-      return popSelfOutFromEffectStack()
-    }
-    schedulerEffectEnder(popSelfOutFromEffectStack)
-  }
+
   const { scheduler: run, lazy, queueJob: qj } = options
 
   if (!lazy) (run || eFn)(eFn)
