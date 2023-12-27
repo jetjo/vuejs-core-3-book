@@ -25,8 +25,6 @@ function getTrigger(options = {}) {
     if (effects) {
       // 防止cleanup引发的无限循环,必须实例化一个effects的副本
       new Set(effects).forEach(ef => {
-        if (type === TRIGGER_TYPE.SET && Effect.isOnlyFromHasTrap(ef, effects))
-          return
         Effect.scheduler(ef)
       })
     }
@@ -66,7 +64,7 @@ function getTrigger(options = {}) {
 
 // function getTracker(options = {}) {
 /**@param {string} key 属性名 */
-function track(target, key, trap) {
+function track(target, key) {
   if (!Effect.hasActive) return
 
   let depsMap = bucket.get(target)
@@ -74,11 +72,7 @@ function track(target, key, trap) {
   let deps = depsMap.get(key)
   if (!deps) depsMap.set(key, (deps = new Set()))
 
-  let isFromHasTrap
-  if (typeof trap === 'function') {
-    isFromHasTrap = isHasTrap(trap)
-  }
-  Effect.track({ deps, isFromHasTrap })
+  Effect.track({ deps })
 }
 // }
 

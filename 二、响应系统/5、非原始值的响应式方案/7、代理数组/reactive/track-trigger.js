@@ -124,6 +124,7 @@ function getTrigger(options = {}) {
 
   const opt = { triggerBucket }
   function trackEffect(key) {
+    return
     const efs = Effect.trackTriggers(opt)
     let efi = efs.next()
     while (!efi.done) {
@@ -137,15 +138,7 @@ function getTrigger(options = {}) {
   }
 
   function canScheduler(ef, effects, key) {
-    if (
-      triggerType === TRIGGER_TYPE.SET &&
-      ef.hasTrapDeps &&
-      Effect.isOnlyFromHasTrap(ef, effects)
-    ) {
-      warn('The trigger maybe from has trap, so skip scheduler job.')
-      return false
-    }
-    // return true
+    return true
     const triggerMap = triggerBucket.get(ef)
     if (!triggerMap) return true
 
@@ -229,7 +222,7 @@ function getTrigger(options = {}) {
 
 // function getTracker(options = {}) {
 /**@param {string} key 属性名 */
-function track(target, key, trap) {
+function track(target, key) {
   if (!Effect.hasActive) return
 
   let depsMap = bucket.get(target)
@@ -237,11 +230,7 @@ function track(target, key, trap) {
   let deps = depsMap.get(key)
   if (!deps) depsMap.set(key, (deps = new Set()))
 
-  let isFromHasTrap
-  if (typeof trap === 'function') {
-    isFromHasTrap = isHasTrap(trap)
-  }
-  Effect.track({ deps, isFromHasTrap })
+  Effect.track({ deps })
 }
 // }
 

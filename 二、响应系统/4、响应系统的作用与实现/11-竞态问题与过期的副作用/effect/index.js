@@ -10,8 +10,10 @@ import { scheduler } from './scheduler.js'
 
 /**@template T */
 /**@callback CB */
-/**@type {EFn} */
-let activeEffect
+/**
+ * 栈顶的effect
+ * @type {EFn} */
+let activeEffect = undefined
 /**@type {EFn[]} */
 const effectStack = []
 
@@ -45,35 +47,21 @@ function isEfn(eFn) {
  * 收集副作用的依赖项
  * @param {Object} args
  * @param {!Set<EFn>} args.deps
- * @param {EFn} [args.effectJustPopOutFromStack]
  * */
-function track({ deps, isFromHasTrap, effectJustPopOutFromStack }) {
-  if (isEfn(effectJustPopOutFromStack)) {
-    // if (__lazy Track && isEfn(effectJustPopOutFromStack)) {
+function track({ deps, effectJustPopOutFromStack }) {
+  if (effectJustPopOutFromStack !== undefined) {
+    /**@type {EFn} */
     const eFn = effectJustPopOutFromStack
     eFn.deps.forEach(s => s.add(eFn))
-    if (typeof eFn.hasTrapDeps !== 'undefined') {
-      eFn.hasTrapDeps.forEach(s => s.add(eFn))
-    }
     return
   }
-  if (!activeEffect || !deps) throwErr('activeEffect不应该是空!')
-  const isLazyTrack = __lazyTrack(activeEffect)
-  !isLazyTrack && deps.add(activeEffect)
-  if (isFromHasTrap) {
-    if (typeof activeEffect.hasTrapDeps === 'undefined')
-      activeEffect.hasTrapDeps = []
-    !isLazyTrack && activeEffect.hasTrapDeps.push(deps)
-    return
-  }
+  if (!deps) throwErr('deps不应该是空!')
+  if (!activeEffect) throwErr('activeEffect不应该是空!')
+  // deps.add(activeEffect)
   activeEffect.deps.push(deps)
 }
 
-Object.defineProperty(Effect, 'track', {
-  get() {
-    return track
-  }
-})
+Effect.track = track
 
 /**
  * @param {Object} args
@@ -126,19 +114,6 @@ Object.defineProperty(Effect, 'activeEffects', {
     return effectStack.filter(ef => ef !== undefined)
   }
 })
-
-/**
- * @param {EFn} efn
- * @param {!Set<EFn>} deps
- */
-Effect.isOnlyFromHasTrap = function (efn, deps) {
-  return (
-    deps?.size > 0 &&
-    efn.hasTrapDeps?.length > 0 &&
-    !efn.deps.includes(deps) &&
-    efn.hasTrapDeps.includes(deps)
-  )
-}
 
 // [Vue warn]: Maximum recursive updates exceeded
 // const MAX_RECURSIVE_UPDATES = 202
@@ -230,11 +205,8 @@ Effect.scheduler = function (efn, cb) {
  * 副作用函数
  * @typedef EFnConf
  * @property {!(!Set<EFn>)[]} deps - 包含此EFn的集合们, 没有去重
- * @property {(!Set<EFn>)[]} [hasTrapDeps] - 当这个副作用只依赖于相应的属性的有无时, 包含此副作用的集合会存入这里, 没有去重
  * @property {!Set<!Set<string>>} triggers - 包含此EFn修改过的属性的集合
  * @property {!Set<!Set<string>>} __triggers
- * @property {function(): void} popSelfOutFromEffectStack
- * @property {boolean} isConvergence effect没有修改自己的依赖, 或者修改了自身的依赖项,但是这种修改不会引起无尽的递归(自调用)
  * @property {BigInt} __number_id
  * @property {number} syncCallCounter
  * @typedef EFnOptions
@@ -251,13 +223,8 @@ function cleanup(eFn) {
   if (!isEfn(eFn)) return
   eFn.deps.forEach(s => s.delete(eFn))
   eFn.deps.length = 0
-  if (typeof eFn.hasTrapDeps !== 'undefined') {
-    eFn.hasTrapDeps.forEach(s => s.delete(eFn))
-    eFn.hasTrapDeps.length = 0
-  }
   eFn.triggers.forEach(s => s.clear())
   eFn.triggers.clear()
-  eFn.isConvergence = true
 }
 // 外部依赖她
 Effect.cleanup = cleanup
@@ -289,7 +256,6 @@ function prepareEffect(fn, enableEffect = true) {
       error('over max recursive limit, or the effectStack is full')
       return undefined
     }
-    cleanup(eFn)
   }
   return eFn
 }
@@ -308,6 +274,7 @@ function applyEffect(fn, enableEffect, thisArg, ...args) {
   activeEffect = eFn
   effectStack.push(eFn)
   getLatestActiveEffect()
+  eFn && cleanup(eFn)
   try {
     return fn.apply(thisArg, args)
   } finally {
@@ -315,15 +282,11 @@ function applyEffect(fn, enableEffect, thisArg, ...args) {
     effectStack.pop()
     activeEffect = effectStack.at(-1)
     getLatestActiveEffect()
+    eFn && track({ effectJustPopOutFromStack: eFn })
   }
 }
 
 Effect.run = runEffect
-
-Effect.setConvergenceFlag = f => {
-  if (activeEffect === undefined) return
-  activeEffect.isConvergence = !!f
-}
 
 let _allEffectCounter = 0n
 /**
@@ -340,7 +303,6 @@ function effect(fn, options = {}) {
   eFn.triggers = new Set()
   eFn.__triggers = new Set()
   eFn.options = options
-  eFn.isConvergence = true
   eFn.syncCallCounter = 0
 
   const { scheduler: run, lazy, queueJob: qj } = options
