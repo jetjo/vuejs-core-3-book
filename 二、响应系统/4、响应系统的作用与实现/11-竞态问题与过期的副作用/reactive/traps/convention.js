@@ -29,10 +29,19 @@ const isReactive = obj =>
   (typeof obj === 'object' || typeof obj === 'function') &&
   true === obj[REACTIVE_FLAG]
 
-const isShallowReactive = (obj, internalCall = false) =>
-  (internalCall || isReactive(obj)) && true === obj[SHALLOW_REACTIVE_FLAG]
+const isShallowReactive = (obj, hasReactiveFlag = false) =>
+  (hasReactiveFlag || isReactive(obj)) && true === obj[SHALLOW_REACTIVE_FLAG]
+
+const READONLY_REACTIVE_FLAG = Symbol('readonly_flag')
+function isReadonlyReactive(target, hasReactiveFlag = false) {
+  return (
+    (hasReactiveFlag || isReactive(target)) &&
+    target[READONLY_REACTIVE_FLAG] === true
+  )
+}
 
 const ITERATE_KEY = Symbol('ITERATE_KEY')
+const ITERATE_KEY_VAL = Symbol('ITERATE_KEY_VAL')
 
 const TRY_PROXY_NO_RESULT = Symbol('TRY_PROXY_NO_RESULT')
 
@@ -44,6 +53,9 @@ export {
   SHALLOW_REACTIVE_FLAG,
   isReactive,
   isShallowReactive,
+  READONLY_REACTIVE_FLAG,
+  isReadonlyReactive,
   ITERATE_KEY,
-  TRY_PROXY_NO_RESULT
+  TRY_PROXY_NO_RESULT,
+  ITERATE_KEY_VAL
 }

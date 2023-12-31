@@ -3,7 +3,7 @@ import {
   requireWeakItem,
   throwErr
 } from '../../utils/index.js'
-import { isReactive } from './convention.js'
+import { isReactive, isReadonlyReactive } from './convention.js'
 
 /**
  * @description 要求是合法有效的代理目标
@@ -12,9 +12,16 @@ import { isReactive } from './convention.js'
  * @returns { boolean|never }
  * @throws */
 const requireTarget = (v, f = true) =>
-  v && requireWeakItem(v, f) && requireProxyTarget(v, f)
+  v &&
+  // typeof v !== 'function' &&
+  // typeof v === 'object' &&
+  (typeof v === 'object' || typeof v === 'function') &&
+  requireWeakItem(v, f) &&
+  requireProxyTarget(v, f)
 
 const canReactive = v => v && requireTarget(v, false) && !isReactive(v)
+
+const canReadonly = v => requireTarget(v, false) && !isReadonlyReactive(v)
 
 /**@typedef {import('../index.js').ProxyTrapOption} ProxyTrapOption */
 
@@ -96,6 +103,7 @@ function isSetTrap(trap) {
 export {
   requireTarget as requireReactiveTarget,
   canReactive,
+  canReadonly,
   getProxyHandler,
   doWithAllTrapGetter,
   isHasTrap,

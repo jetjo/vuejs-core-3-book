@@ -82,13 +82,16 @@ function overMaxRecursiveLimit(efn) {
 /**@type {Set<EFn>} */
 const schedulerJobs = new Set()
 
+const is = []
 setInterval(() => {
   schedulerJobs.forEach(ef => {
     if (ef === undefined) return
-    ef.syncCallCounter = 0
+    is.push(ef.microTaskLen)
+    ef.microTaskLen = 0
   })
   schedulerJobs.clear()
-  warn('clear schedulerJobs')
+  warn('clear schedulerJobs: ', is.join())
+  is.length = 0
 }, 1000)
 
 /**@description 离effectStack栈顶最近的不是undefined的effect */
@@ -120,10 +123,10 @@ Effect.scheduler = function (efn) {
   if (latestActiveEffect === efn) return
   const { scheduler: run, mustSynCallPre, queueJob } = efn.options
   if (queueJob) {
-    efn.syncCallCounter++
-    if (efn.syncCallCounter > MAX_SYNC_CALL_UPDATES) {
-      error(`scheduler: ${efn.__number_id}: ${efn.syncCallCounter}`)
-      error('over max sync call limit')
+    efn.microTaskLen++
+    if (efn.microTaskLen > MAX_SYNC_CALL_UPDATES) {
+      error(`scheduler: ${efn.__number_id}: ${efn.microTaskLen}`)
+      error('over max queue jobs limit')
       return
     }
     mustSynCallPre && mustSynCallPre()
@@ -143,7 +146,7 @@ Effect.scheduler = function (efn) {
  * @property {!(!Set<EFn>)[]} deps - 包含此EFn的集合们, 没有去重
  * @property {!Set<!Set<string>>} triggers - 包含此EFn修改过的属性的集合
  * @property {BigInt} __number_id
- * @property {number} syncCallCounter
+ * @property {number} microTaskLen
  * @typedef EFnOptions
  * @property {boolean} [lazy]
  * @property {boolean} [queueJob = true]
@@ -183,6 +186,8 @@ function applyEffect(fn, enableEffect, thisArg, ...args) {
   enableEffect && cleanup(eFn)
   try {
     return fn.apply(thisArg, args)
+  } catch (e) {
+    error(e)
   } finally {
     // NOTE: finally中的return会覆盖try中的return!!!
     effectStack.pop()
@@ -216,7 +221,7 @@ function effect(fn, options = {}) {
   eFn.deps = []
   // eFn.triggers = new Set()
   eFn.options = options
-  eFn.syncCallCounter = 0
+  eFn.microTaskLen = 0
 
   const { scheduler: bakRun, queueJob } = options
   if (queueJob) options.scheduler = bakRun ? () => bakRun(eFn) : () => eFn()
