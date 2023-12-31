@@ -1,44 +1,46 @@
 export * from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/convention.js'
 import {
   isReactive,
-  isShallowReactive
+  isShallowReactive,
+  isReadonlyReactive,
+  READONLY_REACTIVE_FLAG
 } from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用//reactive/traps/convention.js'
 
-const READONLY_REACTIVE_FLAG = Symbol('readonly_flag')
+// const READONLY_REACTIVE_FLAG = Symbol('readonly_flag')
 
-function isReadonlyReactive(target, internalCall = false) {
+// function isReadonlyReactive(target, hasReactiveFlag = false) {
+//   return (
+//     (hasReactiveFlag || isReactive(target)) &&
+//     target[READONLY_REACTIVE_FLAG] === true
+//   )
+// }
+
+function isReactiveDeep(target, hasReactiveFlag = false) {
   return (
-    (internalCall || isReactive(target)) &&
-    target[READONLY_REACTIVE_FLAG] === true
+    (hasReactiveFlag || isReactive(target)) &&
+    !isShallowReactive(target, true) &&
+    !isReadonlyReactive(target, true)
   )
 }
 
-function isReactiveDeep(target, internalCall = false) {
+function isReactiveShallow(target, hasReactiveFlag = false) {
   return (
-    isReactive(target) &&
-    !isShallowReactive(target, internalCall) &&
-    !isReadonlyReactive(target, internalCall)
+    isShallowReactive(target, hasReactiveFlag) &&
+    !isReadonlyReactive(target, true)
   )
 }
 
-function isReactiveShallow(target, internalCall = false) {
+function isReadonlyDeep(target, hasReactiveFlag = false) {
   return (
-    isShallowReactive(target, internalCall) &&
-    !isReadonlyReactive(target, internalCall)
+    isReadonlyReactive(target, hasReactiveFlag) &&
+    !isShallowReactive(target, true)
   )
 }
 
-function isReadonlyDeep(target, internalCall = false) {
+function isReadonlyShallow(target, hasReactiveFlag = false) {
   return (
-    isReadonlyReactive(target, internalCall) &&
-    !isShallowReactive(target, internalCall)
-  )
-}
-
-function isReadonlyShallow(target, internalCall = false) {
-  return (
-    isReadonlyReactive(target, internalCall) &&
-    isShallowReactive(target, internalCall)
+    isReadonlyReactive(target, hasReactiveFlag) &&
+    isShallowReactive(target, true)
   )
 }
 
@@ -47,7 +49,7 @@ function isExpectedReactiveFlag(
   reactive,
   isShallow,
   isReadonly,
-  internalCall = false
+  hasReactiveFlag = false
 ) {
   const isExpectedFlag = isShallow
     ? isReadonly
@@ -57,7 +59,7 @@ function isExpectedReactiveFlag(
       ? isReadonlyDeep
       : isReactiveDeep
 
-  return isExpectedFlag(reactive, internalCall)
+  return isExpectedFlag(reactive, hasReactiveFlag)
 }
 
 /**
@@ -70,9 +72,9 @@ function isExpectedReactive(
   reactive,
   isShallow,
   isReadonly,
-  internalCall = false
+  hasReactiveFlag = false
 ) {
-  if (!internalCall && !isReactive(reactive)) return false
+  if (!hasReactiveFlag && !isReactive(reactive)) return false
   if (!isReadonly) return true
   const isExpectedFlag = isReadonlyReactive
   return isExpectedFlag(reactive, true)
@@ -90,4 +92,12 @@ Object.assign(reactiveFlagChecker, {
 
 Object.freeze(reactiveFlagChecker)
 
-export { READONLY_REACTIVE_FLAG, reactiveFlagChecker }
+const SceneProtectedFlag = Symbol('SceneProtectedFlag')
+
+export {
+  READONLY_REACTIVE_FLAG,
+  reactiveFlagChecker,
+  SceneProtectedFlag,
+  isReadonlyDeep,
+  isReadonlyReactive
+}

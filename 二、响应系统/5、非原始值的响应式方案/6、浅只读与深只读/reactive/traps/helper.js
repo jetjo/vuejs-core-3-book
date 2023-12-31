@@ -1,6 +1,7 @@
 import {
   requireReactiveTarget,
   canReactive,
+  canReadonly,
   doWithAllTrapGetter,
   isHasTrap,
   isGetTrap,
@@ -40,6 +41,8 @@ function getTrapName(trap) {
   return trap.name
 }
 
+getTrapName.Names = ProxyHandlerNames
+
 /**
  * @param {(PH[keyof PH])[]} traps
  * @returns {PH} */
@@ -57,6 +60,7 @@ function getProxyHandler(traps) {
 export {
   requireReactiveTarget,
   canReactive,
+  canReadonly,
   doWithAllTrapGetter,
   isHasTrap,
   isGetTrap,

@@ -156,7 +156,7 @@ function createReactive(isShallow = false, isReadonly = false) {
     }
   }
 
-  __getApi.getTrapOption = function (trapOption = {}) {
+  function _getTrapOption(trapOption = {}) {
     trapOption = Object.assign(
       Object.create(null),
       _trapOption,
@@ -166,8 +166,9 @@ function createReactive(isShallow = false, isReadonly = false) {
     trapOption.Reactive = trapOption.getReactive(trapOption)
     return trapOption
   }
+  __getApi.getTrapOption = _getTrapOption
   __getApi.getProxyHandler = function (trapOption = {}) {
-    trapOption = __getApi.getTrapOption(trapOption)
+    trapOption = _getTrapOption(trapOption)
     const traps = []
     trapGetters.forEach(getter => traps.push(getter(trapOption)))
     return getProxyHandler(traps)
@@ -184,6 +185,21 @@ function createReactive(isShallow = false, isReadonly = false) {
     isReadonly,
     reactive: !isReadonly ? __getApi(true) : undefined,
     readonly: isReadonly ? __getApi(true) : undefined
+  })
+
+  Object.defineProperty(__getApi, 'trapGetters', {
+    get() {
+      return [...trapGetters]
+    },
+    enumerable: true
+  })
+  Object.defineProperty(__getApi, 'reactiveMap', {
+    value: reactiveMap,
+    enumerable: true
+  })
+  Object.defineProperty(__getApi, 'isExpectedReactive', {
+    value: isExpectedReactive,
+    enumerable: true
   })
 
   return __getApi

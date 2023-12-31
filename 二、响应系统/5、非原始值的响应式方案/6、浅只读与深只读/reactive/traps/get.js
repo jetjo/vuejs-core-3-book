@@ -1,6 +1,6 @@
-import { error, warn } from '../../../index.js'
+import { error, isValidArrayIndex, warn } from '../../../index.js'
 import { TRY_PROXY_NO_RESULT } from './convention.js'
-import { canReactive } from './helper.js'
+import { canReactive, canReadonly } from './helper.js'
 
 // function reactive() {
 //   // return reactive[INTERNAL_IMPL_KEY](...arguments)
@@ -15,17 +15,23 @@ function getGetTrap(options = {}) {
     options
   if (isReadonly) {
     return function get(target, key, receiver) {
-      const tryRes = Reactive.tryGet(target, key, receiver)
-      if (tryRes !== TRY_PROXY_NO_RESULT) return tryRes
+      // prettier-ignore
+      if (typeof key === 'symbol' || key !== 'length' && !isValidArrayIndex(key, false)) {
+        const tryRes = Reactive.tryGet(target, key, receiver)
+        if (tryRes !== TRY_PROXY_NO_RESULT) return tryRes
+      }
       warn('get trap...')
       const res = Reflect.get(...arguments)
-      if (!isShallow && canReactive(res)) return readonly(res)
+      if (!isShallow && canReadonly(res)) return readonly(res)
       return res
     }
   }
   return function get(target, key, receiver) {
-    const tryRes = Reactive.tryGet(target, key, receiver)
-    if (tryRes !== TRY_PROXY_NO_RESULT) return tryRes
+    // prettier-ignore
+    if (typeof key === 'symbol' || key !== 'length' && !isValidArrayIndex(key, false)) {
+      const tryRes = Reactive.tryGet(target, key, receiver)
+      if (tryRes !== TRY_PROXY_NO_RESULT) return tryRes
+    }
     warn('get trap...')
     if (Effect.hasActive) track(target, key, get)
     const res = Reflect.get(...arguments)

@@ -1,4 +1,10 @@
-import { error, warn } from '../../../index.js'
+import {
+  error,
+  warn,
+  throwErr,
+  canReactive,
+  canReadonly
+} from '../../../index.js'
 import {
   RAW,
   REACTIVE_FLAG,
@@ -7,13 +13,71 @@ import {
   TRY_PROXY_NO_RESULT
 } from './convention.js'
 
+const lastCallRecord = {
+  __proto__: null,
+  reactive: Object.create(null),
+  readonly: Object.create(null),
+  shallowReactive: Object.create(null),
+  shallowReadonly: Object.create(null)
+  // reactive, isShallow, isReadonly, readonly, Reactive
+}
+
 /**
  * getReactive
  * @param {import('../index.js').ProxyTrapOption} [options={}]
  * */
 function getReactive(options = {}) {
   const { isShallow, handleProto, isReadonly } = options
-  const reactive = isReadonly ? options.readonly : options.reactive
+
+  function regularOption() {
+    if (isShallow) {
+      delete options.reactive
+      delete options.readonly
+      return
+    }
+
+    if (isReadonly) {
+      delete options.reactive
+      return
+    }
+
+    delete options.readonly
+  }
+
+  function requiredApi() {
+    if (isShallow) return
+
+    if (isReadonly) {
+      if (readonly == null) throwErr('缺少必需的readonly API!')
+      return
+    }
+
+    if (reactive == null) throwErr('缺少必需的reactive API!')
+  }
+
+  regularOption()
+
+  const { reactive, readonly } = options
+
+  requiredApi()
+
+  const [reactiveApi, canReactiveApi] =
+    !isShallow && isReadonly ? [readonly, canReadonly] : [reactive, canReactive]
+
+  const _lastCallRecord = isShallow
+    ? isReadonly
+      ? lastCallRecord.shallowReadonly
+      : lastCallRecord.shallowReactive
+    : isReadonly
+      ? lastCallRecord.readonly
+      : lastCallRecord.reactive
+  const isSameCall =
+    reactive === _lastCallRecord.reactive &&
+    readonly === _lastCallRecord.readonly
+
+  if (isSameCall) return _lastCallRecord.Reactive
+  Object.assign(_lastCallRecord, options)
+
   class Reactive {
     /* readonly */
     static get [SHALLOW_REACTIVE_FLAG]() {
@@ -27,8 +91,10 @@ function getReactive(options = {}) {
       const proto = Reflect.getPrototypeOf(target)
       const isExt = Reflect.isExtensible(target)
       if (!isExt) return proto
-      if (proto !== null) return reactive(proto)
-      return null
+      if (!isShallow && proto !== null && canReactiveApi(proto))
+        return reactiveApi(proto)
+      // return null
+      return proto
     }
 
     static needProto(target, key) {
@@ -96,6 +162,8 @@ function getReactive(options = {}) {
   // console.log(new Reactive()) //OK
 
   // return Object.freeze(Reactive)
+
+  _lastCallRecord.Reactive = Reactive
   return Reactive
 }
 
