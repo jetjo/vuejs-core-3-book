@@ -11,7 +11,8 @@ import { isHasTrap } from './traps/helper.js'
 import {
   ITERATE_KEY,
   TRIGGER_TYPE,
-  SceneProtectedFlag
+  SceneProtectedFlag,
+  ITERATE_KEY_VAL
 } from './traps/convention.js'
 
 /**@type {WeakMap<, Map<, Set<import('./index.js').EffectFn>>>} */
@@ -117,6 +118,8 @@ function getTrigger(options = {}) {
   ])
 
   function handleArray() {
+    const deps = depsMap.get(ITERATE_KEY_VAL)
+    if (deps && deps.size > 0) tryRun(ITERATE_KEY_VAL, false, deps)
     // 从handlers中查找出handler,然后处理
     const handler = arrayHandlers.get(triggerType)
     if (handler) handler()

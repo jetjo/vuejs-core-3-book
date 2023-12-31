@@ -1,3 +1,4 @@
+import { isReactive } from '../convention.js'
 /**@type {{
  * name: FindsName;
  * }[]} */
@@ -5,17 +6,20 @@ const arrayFindMethods = [
   {
     name: 'indexOf',
     isInvalidRes: res => res === -1,
-    protoImpl: Array.prototype.indexOf
+    protoImpl: Array.prototype.indexOf,
+    isReactiveArg: args => isReactive(args[0])
   },
   {
     name: 'lastIndexOf',
     isInvalidRes: res => res === -1,
-    protoImpl: Array.prototype.lastIndexOf
+    protoImpl: Array.prototype.lastIndexOf,
+    isReactiveArg: args => isReactive(args[0])
   },
   {
     name: 'includes',
     isInvalidRes: res => res !== true,
-    protoImpl: Array.prototype.includes
+    protoImpl: Array.prototype.includes,
+    isReactiveArg: args => isReactive(args[0])
   }
 ]
 

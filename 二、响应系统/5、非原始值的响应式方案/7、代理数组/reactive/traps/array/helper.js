@@ -1,15 +1,34 @@
 import { throwErr } from '../../../../index.js'
 import finds from './find.js'
 import changeLens from './changeStackLength.js'
+import { ITERATE_KEY_VAL } from '../convention.js'
 
 /**@typedef {import('./changeStackLength.js').ChangeLensType} ChangeLensType */
 /**@typedef {import('./find.js').FindsType} FindsType */
 /**@typedef {keyof FindsType} FindsName */
 /**@typedef {keyof ChangeLensType} ChangeLensName */
 
+const lastCallRecord = {
+  __proto__: null
+  // Effect,
+  // getTarget,
+  // track,
+  // rewriter
+}
+
 /**@param {import('../../index.js').ProxyTrapOption} [options={}]  */
 function getRewriter(options = {}) {
-  const { Effect, getTarget } = options
+  const { Effect, getTarget, track } = options
+
+  // debugger
+  if (
+    lastCallRecord.Effect === Effect &&
+    lastCallRecord.getTarget === getTarget &&
+    lastCallRecord.track === track
+  )
+    return lastCallRecord.rewriter
+
+  Object.assign(lastCallRecord, { Effect, getTarget, track })
 
   /**
    * @param {{name: FindsName}} [method = {}]
@@ -17,26 +36,29 @@ function getRewriter(options = {}) {
    * @--returns {FindsType[FindsName]}
    */
   function rewriteArrayProtoFindMethod(method = {}) {
-    const { name, isInvalidRes, protoImpl } = method
+    const { name, isInvalidRes, protoImpl, isReactiveArg } = method
     const methodOrigin = protoImpl || Array.prototype[name]
     if (!methodOrigin) throwErr(`${name} is not a array prototype function`)
 
     return function (...args) {
       const targetRaw = getTarget(this, true)
-      if (
-        Object.prototype.hasOwnProperty.call(targetRaw, name) &&
-        targetRaw[name] !== methodOrigin
-      ) {
-        throwErr(
-          `can not ${name} with ${args}; 不允许数组实例覆盖其原型链上的${name}方法!!!`
-        )
-      }
-      const res = methodOrigin.apply(this, args)
-      if (isInvalidRes(res)) {
-        // throwErr(`can not ${name} with ${args}`)
+      // if (Object.hasOwn(targetRaw, name) && targetRaw[name] !== methodOrigin) {
+      //   throwErr(
+      //     `can not ${name} with ${args}; 不允许数组实例覆盖其原型链上的${name}方法!!!`
+      //   )
+      // }
+      if (Effect.hasActive) track(targetRaw, ITERATE_KEY_VAL)
+      return Effect.runWithoutEffect(() => {
+        if (isReactiveArg && isReactiveArg(args)) {
+          return methodOrigin.apply(this, args)
+        }
+        // const res = methodOrigin.apply(this, args)
+        // if (isInvalidRes(res)) {
+        //   // throwErr(`can not ${name} with ${args}`)
         return methodOrigin.apply(targetRaw, args)
-      }
-      return res
+        // }
+        // return res
+      })
     }
   }
   rewriteArrayProtoFindMethod.arrayMethods = finds
@@ -75,6 +97,8 @@ function getRewriter(options = {}) {
     rewriteArrayProtoFindMethod,
     rewriteArrayStackMethod
   })
+
+  lastCallRecord.rewriter = rewriter
   return rewriter
 }
 

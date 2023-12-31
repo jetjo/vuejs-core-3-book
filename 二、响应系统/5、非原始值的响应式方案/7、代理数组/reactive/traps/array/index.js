@@ -24,12 +24,22 @@ function _getArrayInstrumentations(options = {}) {
   return arrayInstrumentations
 }
 
+const lastCallRecord = {
+  __proto__: null
+  // rewriter,
+  // arrayInstrumentations
+}
+
 /**
  * @returns {ChangeLensType & FindsType}
  */
 function getArrayInstrumentations(options = {}) {
   // const { Effect } = options
   const rewriter = getRewriter(options)
+  if (lastCallRecord.rewriter === rewriter)
+    return lastCallRecord.arrayInstrumentations
+
+  lastCallRecord.rewriter = rewriter
 
   const arrayInstrumentations = Object.create(null)
   for (const rewrite of Object.values(rewriter)) {
@@ -40,6 +50,7 @@ function getArrayInstrumentations(options = {}) {
     })
     Object.assign(arrayInstrumentations, methods)
   }
+  lastCallRecord.arrayInstrumentations = arrayInstrumentations
 
   return arrayInstrumentations
 }

@@ -4,6 +4,7 @@ const arrayCopyMethods = [
     protoImpl: Array.prototype.with,
     // vue并没有对with返回的结果做代理, 所以目前看不需要重写;
     // 况且`with`是个纯函数
+    // 但是这样的话,经过代理调用此方法得到的结果却不是代理了
     needRewrite: false
   },
   {

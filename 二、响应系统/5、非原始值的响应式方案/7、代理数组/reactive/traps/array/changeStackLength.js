@@ -1,3 +1,7 @@
+import {
+  log,
+  warn
+} from '../../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/utils/log.js'
 import { ACT_AS_ARRAY_FLAG } from './convention.js'
 
 /**@type {{
@@ -43,14 +47,25 @@ const arrayStackMethods = [
  * }} ChangeLensType */
 /**@typedef {keyof ChangeLensType} ChangeLensName */
 
-arrayStackMethods.forEach(({ name, protoImpl }) => {
-  if (Object.prototype[name] !== undefined) return
-  Object.prototype[name] = function (...args) {
-    this[ACT_AS_ARRAY_FLAG] = true
-    const res = protoImpl.apply(this, args)
-    // delete this[ACT_AS_ARRAY_FLAG]
-    return res
-  }
-})
+// setTimeout(() => {
+//   arrayStackMethods.forEach(({ name, protoImpl }) => {
+//     // return
+//     // 下面的做法与`vuetify`库冲突
+//     if (Object.prototype[name] !== undefined) {
+//       warn(
+//         `Object.prototype.${name} is already defined.`,
+//         Object.prototype[name]
+//       )
+//       return
+//     }
+//     Object.prototype[name] = function (...args) {
+//       this[ACT_AS_ARRAY_FLAG] = true
+//       const res = protoImpl.apply(this, args)
+//       // delete this[ACT_AS_ARRAY_FLAG]
+//       return res
+//     }
+//   })
+// }, 0)
+
 export default arrayStackMethods
 // export {arrayProto as changeLensProto}

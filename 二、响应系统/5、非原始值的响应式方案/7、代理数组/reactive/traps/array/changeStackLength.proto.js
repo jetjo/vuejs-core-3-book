@@ -16,7 +16,7 @@ const arrayLike = {
   unrelated: 'foo',
   2: 4
 }
-debugger
+// debugger
 // Array.prototype.push.call(arrayLike, 1, 2)
 // pushProxy.call(Array.prototype.push, arrayLike, 1, 2)
 const proxyBoundToPush = pushProxy.bind(Array.prototype.push)
