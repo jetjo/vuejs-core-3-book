@@ -1,10 +1,4 @@
-import {
-  error,
-  warn,
-  throwErr,
-  canReactive,
-  canReadonly
-} from '../../../index.js'
+import { error, warn, log } from '../../../index.js'
 import {
   RAW,
   REACTIVE_FLAG,
@@ -13,70 +7,30 @@ import {
   TRY_PROXY_NO_RESULT
 } from './convention.js'
 
-const lastCallRecord = {
-  __proto__: null,
-  reactive: Object.create(null),
-  readonly: Object.create(null),
-  shallowReactive: Object.create(null),
-  shallowReadonly: Object.create(null)
-  // reactive, isShallow, isReadonly, readonly, Reactive
-}
+import {
+  getLastCallRecord,
+  requireRegularOption,
+  saveRecord
+} from './options/helper.js'
 
 /**
  * getReactive
  * @param {import('../index.js').ProxyTrapOption} [options={}]
  * */
 function getReactive(options = {}) {
-  const { isShallow, handleProto, isReadonly } = options
+  const { lastCallRecord, isSameCall } = getLastCallRecord(options, getReactive)
 
-  function regularOption() {
-    if (isShallow) {
-      delete options.reactive
-      delete options.readonly
-      return
-    }
+  // log(lastCallRecord.type, isSameCall, 'getReactive, 6')
 
-    if (isReadonly) {
-      delete options.reactive
-      return
-    }
-
-    delete options.readonly
+  if (isSameCall) return lastCallRecord.result
+  // prettier-ignore
+  const { isShallow, isReadonly, reactiveApi, canReactive } = requireRegularOption(options)
+  const requiredOptions = {
+    __proto__: null,
+    isShallow,
+    isReadonly,
+    reactiveApi
   }
-
-  function requiredApi() {
-    if (isShallow) return
-
-    if (isReadonly) {
-      if (readonly == null) throwErr('缺少必需的readonly API!')
-      return
-    }
-
-    if (reactive == null) throwErr('缺少必需的reactive API!')
-  }
-
-  regularOption()
-
-  const { reactive, readonly } = options
-
-  requiredApi()
-
-  const [reactiveApi, canReactiveApi] =
-    !isShallow && isReadonly ? [readonly, canReadonly] : [reactive, canReactive]
-
-  const _lastCallRecord = isShallow
-    ? isReadonly
-      ? lastCallRecord.shallowReadonly
-      : lastCallRecord.shallowReactive
-    : isReadonly
-      ? lastCallRecord.readonly
-      : lastCallRecord.reactive
-  const isSameCall =
-    reactive === _lastCallRecord.reactive &&
-    readonly === _lastCallRecord.readonly
-
-  if (isSameCall) return _lastCallRecord.Reactive
-  Object.assign(_lastCallRecord, options)
 
   class Reactive {
     /* readonly */
@@ -91,7 +45,7 @@ function getReactive(options = {}) {
       const proto = Reflect.getPrototypeOf(target)
       const isExt = Reflect.isExtensible(target)
       if (!isExt) return proto
-      if (!isShallow && proto !== null && canReactiveApi(proto))
+      if (!isShallow && proto !== null && canReactive(proto))
         return reactiveApi(proto)
       // return null
       return proto
@@ -156,14 +110,10 @@ function getReactive(options = {}) {
   // Reactive.prototype = null
   Object.setPrototypeOf(Reactive, null)
 
-  // console.log(Reactive)
   // TypeError: Class constructor Reactive cannot be invoked without 'new'
   // console.log(Reactive())
-  // console.log(new Reactive()) //OK
-
-  // return Object.freeze(Reactive)
-
-  _lastCallRecord.Reactive = Reactive
+  Object.freeze(Reactive)
+  saveRecord(requiredOptions, Reactive, getReactive)
   return Reactive
 }
 

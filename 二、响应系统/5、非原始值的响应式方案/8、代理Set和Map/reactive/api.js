@@ -22,6 +22,7 @@ import {
   throwErr,
   warn
 } from '../../../4、响应系统的作用与实现/index.js'
+import { getReactive } from './traps/Reactive.js'
 
 /**@param {typeof reactive} api  */
 function configApi(api) {
@@ -99,7 +100,7 @@ function configApi(api) {
 
 const apis = [reactive, shallowReactive, readonly, shallowReadonly]
 
-apis.forEach(configApi)
+// apis.forEach(configApi)
 
 doWithAllTrapGetter(trapsModule, getter => {
   apis.forEach(api => {
@@ -138,7 +139,7 @@ function wrapApi(isShallow = false, isReadonly = false) {
 
   Object.assign(__getApi, api)
   __getApi.reactiveInfo = reactiveInfo
-  __getApi.setTrapOption({ reactiveInfo })
+  __getApi.setTrapOption({ reactiveInfo, getReactive })
   if (!isShallow) {
     const opt = {
       reactive: !isReadonly ? __getApi(true) : undefined,
@@ -146,6 +147,8 @@ function wrapApi(isShallow = false, isReadonly = false) {
     }
     __getApi.setTrapOption(opt)
   }
+
+  configApi(__getApi)
   return __getApi
 }
 

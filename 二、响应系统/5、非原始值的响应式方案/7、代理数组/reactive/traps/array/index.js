@@ -1,3 +1,9 @@
+import { log } from '../../../../../4、响应系统的作用与实现/index.js'
+import {
+  getLastCallRecord,
+  requireRegularOption,
+  saveRecord
+} from '../../../../6、浅只读与深只读/reactive/traps/options/helper.js'
 import { getRewriter } from './helper.js'
 
 /**@typedef {import('./changeStackLength.js').ChangeLensType} ChangeLensType */
@@ -24,20 +30,26 @@ function _getArrayInstrumentations(options = {}) {
   return arrayInstrumentations
 }
 
-const lastCallRecord = {
-  __proto__: null
-  // rewriter,
-  // arrayInstrumentations
-}
-
 /**
  * @returns {ChangeLensType & FindsType}
  */
 function getArrayInstrumentations(options = {}) {
-  // const { Effect } = options
   const rewriter = getRewriter(options)
-  if (lastCallRecord.rewriter === rewriter)
-    return lastCallRecord.arrayInstrumentations
+  const _options = { __proto__: null, rewriter, ...options }
+  const { lastCallRecord, isSameCall } = getLastCallRecord(
+    _options,
+    getArrayInstrumentations
+  )
+  // log(lastCallRecord.type, isSameCall, 'getArrayInstrumentations')
+  if (isSameCall) return lastCallRecord.result
+  const { isShallow, isReadonly, reactiveApi } = requireRegularOption(_options)
+  const requiredOptions = {
+    __proto__: null,
+    isShallow,
+    isReadonly,
+    reactiveApi,
+    rewriter
+  }
 
   lastCallRecord.rewriter = rewriter
 
@@ -50,7 +62,7 @@ function getArrayInstrumentations(options = {}) {
     })
     Object.assign(arrayInstrumentations, methods)
   }
-  lastCallRecord.arrayInstrumentations = arrayInstrumentations
+  saveRecord(requiredOptions, arrayInstrumentations, getArrayInstrumentations)
 
   return arrayInstrumentations
 }

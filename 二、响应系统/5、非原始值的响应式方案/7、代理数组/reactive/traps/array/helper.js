@@ -1,34 +1,33 @@
-import { throwErr } from '../../../../index.js'
+import { log, throwErr } from '../../../../index.js'
 import finds from './find.js'
 import changeLens from './changeStackLength.js'
-import { ITERATE_KEY_VAL } from '../convention.js'
+import { ITERATE_KEY_VAL, getTarget } from '../convention.js'
+import {
+  getLastCallRecord,
+  requireRegularOption,
+  saveRecord
+} from '../../../../6、浅只读与深只读/reactive/traps/options/helper.js'
 
 /**@typedef {import('./changeStackLength.js').ChangeLensType} ChangeLensType */
 /**@typedef {import('./find.js').FindsType} FindsType */
 /**@typedef {keyof FindsType} FindsName */
 /**@typedef {keyof ChangeLensType} ChangeLensName */
 
-const lastCallRecord = {
-  __proto__: null
-  // Effect,
-  // getTarget,
-  // track,
-  // rewriter
-}
-
 /**@param {import('../../index.js').ProxyTrapOption} [options={}]  */
 function getRewriter(options = {}) {
-  const { Effect, getTarget, track } = options
-
-  // debugger
-  if (
-    lastCallRecord.Effect === Effect &&
-    lastCallRecord.getTarget === getTarget &&
-    lastCallRecord.track === track
-  )
-    return lastCallRecord.rewriter
-
-  Object.assign(lastCallRecord, { Effect, getTarget, track })
+  const { lastCallRecord, isSameCall } = getLastCallRecord(options, getRewriter)
+  // log(lastCallRecord.type, isSameCall, 'getRewriter')
+  if (isSameCall) return lastCallRecord.result
+  // prettier-ignore
+  const { Effect, track, isShallow, isReadonly, reactiveApi } = requireRegularOption(options)
+  const requiredOptions = {
+    __proto__: null,
+    isShallow,
+    isReadonly,
+    reactiveApi,
+    Effect,
+    track
+  }
 
   /**
    * @param {{name: FindsName}} [method = {}]
@@ -98,7 +97,7 @@ function getRewriter(options = {}) {
     rewriteArrayStackMethod
   })
 
-  lastCallRecord.rewriter = rewriter
+  saveRecord(requiredOptions, rewriter, getRewriter)
   return rewriter
 }
 
