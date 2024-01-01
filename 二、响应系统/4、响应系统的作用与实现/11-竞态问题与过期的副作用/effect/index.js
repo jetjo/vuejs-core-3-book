@@ -121,7 +121,7 @@ function getLatestActiveEffect() {
 /**@param {EFn} efn */
 Effect.scheduler = function (efn) {
   if (latestActiveEffect === efn) return
-  const { scheduler: run, mustSynCallPre, queueJob } = efn.options
+  const { scheduler: run, syncJob, queueJob } = efn.options
   if (queueJob) {
     efn.microTaskLen++
     if (efn.microTaskLen > MAX_SYNC_CALL_UPDATES) {
@@ -129,14 +129,13 @@ Effect.scheduler = function (efn) {
       error('over max queue jobs limit')
       return
     }
-    mustSynCallPre && mustSynCallPre()
     scheduler(run)
     schedulerJobs.add(efn)
+    syncJob && syncJob()
     return
   }
   if (overMaxRecursiveLimit(efn)) return
   warn('run sync job')
-  mustSynCallPre && mustSynCallPre()
   run()
 }
 
@@ -177,9 +176,8 @@ Effect.applyWithoutEffect = function (cb, ...args) {
 
 function applyEffect(fn, enableEffect, thisArg, ...args) {
   const eFn = (enableEffect && fn[FN_EFFECT_MAP_KEY]) || undefined
-  if (enableEffect && !isEfn(eFn)) {
-    throwErr('Prepare the effect failed!!!')
-  }
+  if (enableEffect && !isEfn(eFn)) throwErr('Prepare the effect failed!!!')
+
   activeEffect = eFn
   effectStack.push(eFn)
   getLatestActiveEffect()

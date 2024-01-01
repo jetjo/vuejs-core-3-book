@@ -40,17 +40,20 @@ function watchFn(fn, cb, options = {}) {
     cleanExpiredEffect = cb
   }
   function runCleanExpired() {
-    cleanExpiredEffect()
+    if (cleanExpiredEffect) cleanExpiredEffect()
   }
-  function mustSynCallPre() {
-    if (cleanExpiredEffect) {
-      Effect.runWithoutEffect(runCleanExpired)
-    }
-  }
+  // function syncJob() {
+  //   if (cleanExpiredEffect) {
+  //     Effect.runWithoutEffect(runCleanExpired)
+  //   }
+  // }
   function runCB() {
     return cb(newVal, oldVal, registerExpiredCleaner)
   }
   function job() {
+    if (cleanExpiredEffect) {
+      Effect.runWithoutEffect(runCleanExpired)
+    }
     newVal = finalValWithCanceled || efn()
     Effect.runWithoutEffect(runCB)
     oldVal = newVal
@@ -62,8 +65,8 @@ function watchFn(fn, cb, options = {}) {
   const efn = effect(fn, {
     lazy: true,
     queueJob: isQueueJob(),
-    scheduler: job,
-    mustSynCallPre
+    scheduler: job
+    // syncJob
   })
 
   if (options.immediate) job()
