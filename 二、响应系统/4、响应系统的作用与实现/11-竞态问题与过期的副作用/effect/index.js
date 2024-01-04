@@ -18,8 +18,6 @@ const effectStack = []
 
 function Effect() {}
 
-/**@typedef {typeof Effect} EffectM */
-
 function isEfn(eFn) {
   return (
     eFn !== undefined &&
@@ -229,4 +227,6 @@ function effect(fn, options = {}) {
 }
 
 Object.freeze(Effect)
+/**@typedef {typeof Effect} EffectM */
+
 export { activeEffect, Effect, effect }

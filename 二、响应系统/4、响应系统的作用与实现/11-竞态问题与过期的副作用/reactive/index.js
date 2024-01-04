@@ -26,6 +26,8 @@ export * from './traps/helper.js'
  * @property {boolean} isShallow
  * @property {import('./traps/Reactive.js').ReactiveCtor} Reactive
  * @property {(target:any) => any} reactive
+ * @property {(target:any) => any} reactiveApi
+ * @property {(target:any) => boolean} canReactive
  * @property {boolean} handleProto
  */
 /**@typedef {(opt: ProxyTrapOption) => ProxyTrap} ProxyTrapGetter */

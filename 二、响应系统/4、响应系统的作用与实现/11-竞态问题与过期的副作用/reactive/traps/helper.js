@@ -19,9 +19,10 @@ const requireTarget = (v, f = true) =>
   requireWeakItem(v, f) &&
   requireProxyTarget(v, f)
 
-const canReactive = v => v && requireTarget(v, false) && !isReactive(v)
+const canReactive = v => !!v && requireTarget(v, false) && !isReactive(v)
 
-const canReadonly = v => requireTarget(v, false) && !isReadonlyReactive(v)
+const canReadonly = v =>
+  !!v && requireTarget(v, false) && !isReadonlyReactive(v)
 
 /**@typedef {import('../index.js').ProxyTrapOption} ProxyTrapOption */
 
