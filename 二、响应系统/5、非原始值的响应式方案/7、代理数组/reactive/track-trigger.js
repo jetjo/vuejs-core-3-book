@@ -191,7 +191,7 @@ function getTrigger(options = {}) {
     _isCommonArrayPropertySet
   ) {
     if (!this[SceneProtectedFlag]) {
-      throwErr('trigger must be called with `withSceneStatus`')
+      warn('trigger must be called with `withSceneStatus`')
     }
     callContext = this
 

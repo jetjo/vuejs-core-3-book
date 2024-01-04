@@ -2,22 +2,24 @@ import { throwErr } from '../../utils/index.js'
 
 const RAW = Symbol('raw')
 
-function getTarget(reactive, internalCall = false) {
-  if (!internalCall && !isReactive(reactive))
+function getTarget(reactive, hasReactiveFlag = false) {
+  if (!hasReactiveFlag && !isReactive(reactive))
     throwErr('参数必须是reactive返回值类型, 继续执行可能出错!')
   return reactive[RAW]
 }
 
 /**@typedef {typeof getTarget} GetTarget*/
 
-const TRIGGER_TYPE = {
-  ADD: Symbol('TRIGGER_TYPE.ADD'),
-  SET: Symbol('TRIGGER_TYPE.SET'),
-  DELETE: Symbol('TRIGGER_TYPE.DELETE'),
-  CLEAR: Symbol('TRIGGER_TYPE.CLEAR'),
-  EmptySlotSet: Symbol('TRIGGER_TYPE.EmptySlotSet'),
-  LengthSubtract: Symbol('TRIGGER_TYPE.LengthSubtract')
-}
+/**@type {TRIGGER_TYPE_TD} */
+const TRIGGER_TYPE = Object.freeze({
+  __proto__: null,
+  ADD: 'TRIGGER_TYPE.ADD',
+  SET: 'TRIGGER_TYPE.SET',
+  DELETE: 'TRIGGER_TYPE.DELETE',
+  CLEAR: 'TRIGGER_TYPE.CLEAR',
+  EmptySlotSet: 'TRIGGER_TYPE.EmptySlotSet',
+  LengthSubtract: 'TRIGGER_TYPE.LengthSubtract'
+})
 
 /**@typedef {typeof TRIGGER_TYPE} TriggerType */
 
@@ -43,7 +45,7 @@ function isReadonlyReactive(target, hasReactiveFlag = false) {
 const ITERATE_KEY = Symbol('ITERATE_KEY')
 const ITERATE_KEY_VAL = Symbol('ITERATE_KEY_VAL')
 
-const TRY_PROXY_NO_RESULT = Symbol('TRY_PROXY_NO_RESULT')
+const TRY_PROXY_NO_RESULT = 'TRY_PROXY_NO_RESULT' // Symbol('TRY_PROXY_NO_RESULT')
 
 export {
   RAW,
