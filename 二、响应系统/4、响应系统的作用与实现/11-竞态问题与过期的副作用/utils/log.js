@@ -16,13 +16,13 @@ function log(...messages) {
 
 function warn(...messages) {
   if (_LogLevel === 'error' || _LogLevel === 'none') return
-  console.warn(`[${logBrand} warn]`, ...messages)
+  console.warn(`[${logBrand}]`, ...messages)
 }
 
 function errorLog(isThrow = true, ...messages) {
   if (isThrow) throw new Error(messages.join())
   if (_LogLevel === 'none') return
-  console.error(`[${logBrand} error]`, ...messages)
+  console.error(`[${logBrand}]`, ...messages)
 }
 
 function error(...messages) {

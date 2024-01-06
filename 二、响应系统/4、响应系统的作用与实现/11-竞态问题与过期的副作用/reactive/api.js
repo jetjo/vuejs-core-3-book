@@ -4,7 +4,7 @@
 /* @4-7-1 [副作用列队与中间态] */
 /* @4-9 [深度响应] */
 /* @4-9-1 [对象成员遍历、添加、删除时依赖收集与effect触发] */
-import { runWithoutProto, warn } from '../utils/index.js'
+import { warn } from '../utils/index.js'
 import { Effect } from '../effect/index.js'
 import * as trapsModule from './traps/index.js'
 import { isReactive } from './traps/convention.js'
@@ -26,19 +26,19 @@ let handleProto = false
 const _trapOption = {
   __proto__: null,
   Effect,
-  track: function () {
-    // NOTE: 如果不使用runWithoutProto包裹track函数,
-    // 在调试时,假如在track内部设置断点,
-    // 当在浏览器开发者工具中在track内部中断后,
-    // 把鼠标移到track的第一个参数target上,
-    // 浏览器的开发者工具会展开target内容及其原型链上的内容,
-    // 假如target的原型链上有被代理的原型(即reactive)
-    // 这会导致target的原型的代理的ownKeys trap被执行,
-    // 从而将当前被中断的effect作为对target原型的遍历操作(ITERATE_KEY)的被依赖者
-    // 被收集到bucket中,给调试带来困惑😖
-    runWithoutProto(arguments[0], () => track(...arguments))
-  },
-  // track,
+  // track: function () {
+  //   // NOTE: 如果不使用runWithoutProto包裹track函数,
+  //   // 在调试时,假如在track内部设置断点,
+  //   // 当在浏览器开发者工具中在track内部中断后,
+  //   // 把鼠标移到track的第一个参数target上,
+  //   // 浏览器的开发者工具会展开target内容及其原型链上的内容,
+  //   // 假如target的原型链上有被代理的原型(即reactive)
+  //   // 这会导致target的原型的代理的ownKeys trap被执行,
+  //   // 从而将当前被中断的effect作为对target原型的遍历操作(ITERATE_KEY)的被依赖者
+  //   // 被收集到bucket中,给调试带来困惑😖
+  //   runWithoutProto(arguments[0], () => track(...arguments))
+  // },
+  track,
   trigger,
   handleThrow,
   handleProto

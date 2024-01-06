@@ -1,3 +1,5 @@
+import { error } from './log'
+
 function isPrototypeOfRuntime(o, inTrap = false) {
   const getProto = inTrap ? Reflect.getPrototypeOf : Object.getPrototypeOf
   const proto = getProto(o)
@@ -82,26 +84,4 @@ const protoInRuntime = [
   // Reflect
 ]
 
-const runWithoutProto = (target, cb) => {
-  const protoBak = Object.getPrototypeOf(target)
-  Object.setPrototypeOf(target, null)
-  try {
-    return cb()
-  } finally {
-    Object.setPrototypeOf(target, protoBak)
-  }
-}
-
-function runWithoutArg0Proto(fn, ...args) {
-  const target = args[0]
-  if (typeof target !== 'object' || target === null) return fn(...args)
-  const protoBak = Object.getPrototypeOf(target)
-  Object.setPrototypeOf(target, null)
-  try {
-    return fn(...args)
-  } finally {
-    Object.setPrototypeOf(target, protoBak)
-  }
-}
-
-export { runWithoutProto, runWithoutArg0Proto }
+export {}

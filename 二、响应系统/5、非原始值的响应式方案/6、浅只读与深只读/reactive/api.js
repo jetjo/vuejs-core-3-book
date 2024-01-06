@@ -10,20 +10,15 @@ import {
   trigger,
   track
 } from '../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/track-trigger.js'
-import { runWithoutProto, warn } from '../../index.js'
+import { warn } from '../../index.js'
 import {
   requireReactiveTarget,
   doWithAllTrapGetter,
-  // getTrapName,
   getProxyHandler
 } from './traps/helper.js'
 import * as trapsModule from './traps/index.js'
-import {
-  getTarget,
-  isReactive,
-  reactiveFlagChecker
-} from './traps/convention.js'
-import { getReactive } from './traps/Reactive.js'
+import { isReactive, reactiveFlagChecker } from './traps/convention.js'
+import getReactive from './traps/Reactive.js'
 
 let handleThrow = false
 let handleProto = false
@@ -35,19 +30,7 @@ let handleProto = false
 const _trapOption = {
   __proto__: null,
   Effect,
-  track: function () {
-    // NOTE: 如果不使用runWithoutProto包裹track函数,
-    // 在调试时,假如在track内部设置断点,
-    // 当在浏览器开发者工具中在track内部中断后,
-    // 把鼠标移到track的第一个参数target上,
-    // 浏览器的开发者工具会展开target内容及其原型链上的内容,
-    // 假如target的原型链上有被代理的原型(即reactive)
-    // 这会导致target的原型的代理的ownKeys trap被执行,
-    // 从而将当前被中断的effect作为对target原型的遍历操作(ITERATE_KEY)的被依赖者
-    // 被收集到bucket中,给调试带来困惑😖
-    runWithoutProto(arguments[0], () => track(...arguments))
-  },
-  // track,
+  track,
   trigger,
   handleThrow,
   handleProto,

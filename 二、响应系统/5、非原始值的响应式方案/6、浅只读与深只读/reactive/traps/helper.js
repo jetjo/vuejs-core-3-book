@@ -36,9 +36,10 @@ function getTrapName(trap) {
   // 当`ProxyTrapOption.handleProto`设置为false时, `getGetProtoTrap`返回的`getPrototypeOf`trap是undefined
   if (typeof trap === 'undefined') return
   if (typeof trap !== 'function') throwErr('数组元素必须是函数!')
-  if (!ProxyHandlerNames.includes(trap.name))
+  const trapName = trap.name.split(' ').at(-1)
+  if (!ProxyHandlerNames.includes(trapName))
     throwErr('函数的名称必须是ProxyHandler成员名之一!')
-  return trap.name
+  return trapName
 }
 
 getTrapName.Names = ProxyHandlerNames

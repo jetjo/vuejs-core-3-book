@@ -1,5 +1,5 @@
 import { warn } from '../../../index.js'
-import { TRIGGER_TYPE, SceneProtectedFlag } from './convention.js'
+import { TRIGGER_TYPE } from './convention.js'
 
 /**
  * @param {import('../index.js').ProxyTrapOption} [options]
@@ -8,21 +8,6 @@ import { TRIGGER_TYPE, SceneProtectedFlag } from './convention.js'
 function getDeleteTrap(options = {}) {
   const { trigger, isReadonly } = options
 
-  function withSceneStatus(restore = true, ...args) {
-    const cb = trigger
-    const bak = {
-      __proto__: null,
-      get [SceneProtectedFlag]() {
-        return true
-      }
-    }
-    if (!restore) return cb.apply(bak, args)
-    try {
-      return cb.apply(bak, args)
-    } finally {
-    }
-  }
-
   /**@type {ProxyHandler['deleteProperty']} */
   const deleteProperty = function deleteProperty(target, p) {
     if (isReadonly) {
@@ -30,12 +15,11 @@ function getDeleteTrap(options = {}) {
       return true
     }
     const desc = Reflect.getOwnPropertyDescriptor(target, p)
+    // delete 操作符只能删除对象自身的成员,不能删除原型链上的成员
     if (typeof desc === 'undefined') return true
     const suc = Reflect.deleteProperty(target, p)
-    if (suc) {
-      withSceneStatus(false, target, p, TRIGGER_TYPE.DELETE)
-      // trigger(target, p, TRIGGER_TYPE.DELETE)
-    }
+    // if (suc)
+    trigger(target, p, TRIGGER_TYPE.DELETE)
     return suc
   }
   return deleteProperty
