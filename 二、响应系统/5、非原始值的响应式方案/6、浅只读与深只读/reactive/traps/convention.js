@@ -92,12 +92,9 @@ Object.assign(reactiveFlagChecker, {
 
 Object.freeze(reactiveFlagChecker)
 
-const SceneProtectedFlag = Symbol('SceneProtectedFlag')
-
 export {
   READONLY_REACTIVE_FLAG,
   reactiveFlagChecker,
-  SceneProtectedFlag,
   isReadonlyDeep,
   isReadonlyReactive
 }

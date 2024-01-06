@@ -1,10 +1,5 @@
-import { warn, error, notNaN } from '../../utils/index.js'
-import {
-  TRIGGER_TYPE,
-  TRY_PROXY_NO_RESULT,
-  isReactive,
-  getTarget
-} from './convention.js'
+import { warn, notNaN } from '../../utils/index.js'
+import { TRIGGER_TYPE, TRY_PROXY_NO_RESULT, getTarget } from './convention.js'
 
 /**
  * @param {import('../index.js').ProxyTrapOption} [options]
@@ -18,9 +13,6 @@ function getSetTrap(options = {}) {
 
   function getTargetPropertyVal(target, key, targetRaw) {
     if (!targetRaw) {
-      while (isReactive(target)) {
-        target = getTarget(target, true)
-      }
       targetRaw = target
     }
     return { targetRaw, val: Effect.runWithoutEffect(() => targetRaw[key]) }

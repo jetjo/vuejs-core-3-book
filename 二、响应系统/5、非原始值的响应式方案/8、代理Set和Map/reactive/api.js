@@ -11,15 +11,8 @@ import {
   readonly,
   shallowReadonly
 } from '../../7、代理数组/reactive/api.js'
-import {
-  isMap,
-  isSet,
-  isWeakMap,
-  isWeakSet,
-  throwErr,
-  warn
-} from '../../../4、响应系统的作用与实现/index.js'
-import { getReactive } from './traps/Reactive.js'
+import { throwErr } from '../../../4、响应系统的作用与实现/index.js'
+import getReactive from './traps/Reactive.js'
 
 function MakeProxySafe(target, proto) {
   const keys = []

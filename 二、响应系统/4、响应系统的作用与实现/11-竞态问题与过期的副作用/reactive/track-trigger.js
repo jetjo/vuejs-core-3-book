@@ -10,9 +10,10 @@ const bucket = new WeakMap()
 function getTrigger(options = {}) {
   /**@type {Map<, Set<import('./index.js').EffectFn>> | undefined} */
   let depsMap
-  function run(key, type) {
+  let effectsToRun = []
+  function run(key) {
     const effects = depsMap?.get(key)
-    if (effects && effects.size > 0) trigger.runEffects(effects, type)
+    if (effects && effects.size > 0) effectsToRun.push(...effects)
   }
 
   // ReferenceError: Cannot access 'trigger' before initialization
@@ -20,11 +21,11 @@ function getTrigger(options = {}) {
    * @param {(import('./index.js').EffectFn)[]} effects
    * @param {import('./index.js').TriggerType} type 属性操作类型
    * */
-  trigger.runEffects = function (effects, type) {
+  function runEffects() {
     warn('try scheduler job...')
-    if (effects) {
+    if (effectsToRun?.length > 0) {
       // 防止cleanup引发的无限循环,必须实例化一个effects的副本
-      new Set(effects).forEach(ef => {
+      new Set(effectsToRun).forEach(ef => {
         Effect.scheduler(ef)
       })
     }
@@ -40,24 +41,18 @@ function getTrigger(options = {}) {
    * @param {string} key 属性名称
    * @param {import('./index.js').TriggerType} type 属性操作类型
    * */
-  function trigger(target, key, type) {
+  return function trigger(target, key, type) {
     depsMap = bucket.get(target)
     if (!depsMap) return
 
-    const { findEffects, runEffects } = trigger
-    if (findEffects && runEffects) {
-      runEffects(findEffects(...arguments))
-      return
-    }
-
+    effectsToRun = []
     run(key, type)
     if (type === TRIGGER_TYPE.ADD || type === TRIGGER_TYPE.DELETE) {
       run(ITERATE_KEY, type)
     }
-    depsMap = undefined
-  }
 
-  return trigger
+    runEffects()
+  }
 }
 
 /**@typedef {ReturnType<getTrigger>} Trigger */
