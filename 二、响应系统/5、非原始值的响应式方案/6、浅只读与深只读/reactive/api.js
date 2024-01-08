@@ -10,7 +10,7 @@ import {
   trigger,
   track
 } from '../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/track-trigger.js'
-import { warn } from '../../index.js'
+import { log, warn } from '../../index.js'
 import {
   requireReactiveTarget,
   doWithAllTrapGetter,
@@ -19,6 +19,7 @@ import {
 import * as trapsModule from './traps/index.js'
 import { isReactive, reactiveFlagChecker } from './traps/convention.js'
 import getReactive from './traps/Reactive.js'
+import { withRecordTrapOption } from '../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
 
 let handleThrow = false
 let handleProto = false
@@ -37,8 +38,8 @@ const _trapOption = {
   getReactive
 }
 
-/**@type {ProxyTrapGetter[]} */
-const _trapGetters = []
+// /**@type {ProxyTrapGetter[]} */
+// const _trapGetters = []
 
 // /**@param {ProxyTrapGetter} trapGetter */
 // _getApi.addTrapGetter = function (trapGetter) {
@@ -54,27 +55,21 @@ function _getProxyHandler(trapOption) {
   }
   trapOption.Reactive = getReactive(trapOption)
   const trapGetters = []
-  const traps = []
   const handleGetter = getter => {
-    traps.push(getter(trapOption))
+    // traps.push(getter(trapOption))
     trapGetters.push(getter)
   }
   doWithAllTrapGetter(trapsModule, handleGetter)
-  _trapGetters.forEach(handleGetter)
   return {
-    /* proxyHandler: getProxyHandler(traps), */ trapOption,
+    /* proxyHandler: getProxyHandler(traps), */
+    trapOption,
     trapGetters
   }
 }
 
-/**
- * @returns {{
- * (internalCall?: boolean): Reactive
- * addTrapBeforeCall(trapGetter: ProxyTrapGetter): void;
- * setTrapOption?: (opt?: ProxyTrapOption | undefined) => void;
- * }}
- */
-function createReactive(isShallow = false, isReadonly = false) {
+/**@type {CreateReactive} */
+function factory(isShallow = false, isReadonly = false) {
+  // log('createReactive 5-6', isShallow, isReadonly, 'factory')
   // if (!isReadonly) return !isShallow ? api : shallowApi
 
   /** @NOTE: 
@@ -95,9 +90,9 @@ function createReactive(isShallow = false, isReadonly = false) {
     )
   }
 
-  const __getApi = function (internalCall = false) {
+  const __getApi = function (callFromSelfTrap = false) {
     return function (target) {
-      if (!internalCall) {
+      if (!callFromSelfTrap) {
         requireReactiveTarget(target)
         if (isReactive(target)) {
           warn('参数target不能是reactive的返回值类型!')
@@ -135,7 +130,7 @@ function createReactive(isShallow = false, isReadonly = false) {
   /**@param {ProxyTrapOption} [opt] */
   __getApi.setTrapOption = function (opt = {}) {
     for (const [key, value] of Object.entries(opt)) {
-      trapOpt[key] = value
+      options[key] = value
     }
   }
 
@@ -143,13 +138,14 @@ function createReactive(isShallow = false, isReadonly = false) {
     trapOption = Object.assign(
       Object.create(null),
       _trapOption,
-      trapOpt,
+      options,
       trapOption
     )
     trapOption.Reactive = trapOption.getReactive(trapOption)
     return trapOption
   }
   __getApi.getTrapOption = _getTrapOption
+
   __getApi.getProxyHandler = function (trapOption = {}) {
     trapOption = _getTrapOption(trapOption)
     const traps = []
@@ -157,13 +153,7 @@ function createReactive(isShallow = false, isReadonly = false) {
     return getProxyHandler(traps)
   }
 
-  // provideMethodToModule(reactive, reactiveReceivor)
-
-  const {
-    proxyHandler: handler,
-    trapOption: trapOpt,
-    trapGetters
-  } = _getProxyHandler({
+  const { trapOption: options, trapGetters } = _getProxyHandler({
     isShallow,
     isReadonly,
     reactive: !isReadonly ? __getApi(true) : undefined,
@@ -186,6 +176,12 @@ function createReactive(isShallow = false, isReadonly = false) {
   })
 
   return __getApi
+}
+
+/**@type {CreateReactive} */
+function createReactive(isShallow = false, isReadonly = false) {
+  // log('createReactive 5-6', isShallow, isReadonly)
+  return withRecordTrapOption({ factory, isShallow, isReadonly })
 }
 
 export { createReactive }

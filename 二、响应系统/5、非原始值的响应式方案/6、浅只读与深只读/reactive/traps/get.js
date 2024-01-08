@@ -1,18 +1,15 @@
-import { error, isValidArrayIndex, warn } from '../../../index.js'
+import { withRecordTrapOption } from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
+import { isValidArrayIndex, log } from '../../../index.js'
 import { TRY_PROXY_NO_RESULT } from './convention.js'
 import { canReactive, canReadonly } from './helper.js'
 
-// function reactive() {
-//   // return reactive[INTERNAL_IMPL_KEY](...arguments)
-// }
-/**
- * @param {import('../index.js').ProxyTrapOption} [options]
- * @returns {ProxyHandler['get']}
- */
-function getGetTrap(options = {}) {
-  // warn('get get trap...')
-  const { reactive, isShallow, Effect, track, Reactive, isReadonly, readonly } =
-    options
+/**@type {TrapFactory<'get'>} */
+function factory(
+  isShallow,
+  isReadonly,
+  { reactive, Effect, track, Reactive, readonly }
+) {
+  // log('getGetTrap 5-6', isShallow, isReadonly, 'factory')
   if (isReadonly) {
     return function get(target, key, receiver) {
       // prettier-ignore
@@ -20,8 +17,7 @@ function getGetTrap(options = {}) {
         const tryRes = Reactive.tryGet(target, key, receiver)
         if (tryRes !== TRY_PROXY_NO_RESULT) return tryRes
       }
-      warn('get trap...')
-      const res = Reflect.get(...arguments)
+      const res = Reflect.get(target, key, receiver)
       if (!isShallow && canReadonly(res)) return readonly(res)
       return res
     }
@@ -32,13 +28,35 @@ function getGetTrap(options = {}) {
       const tryRes = Reactive.tryGet(target, key, receiver)
       if (tryRes !== TRY_PROXY_NO_RESULT) return tryRes
     }
-    warn('get trap...')
     if (Effect.hasActive) track(target, key, get)
-    const res = Reflect.get(...arguments)
+    const res = Reflect.get(target, key, receiver)
     if (!isShallow && canReactive(res)) return reactive(res)
     return res
   }
 }
 
-// export { reactive as reactiveReceivor, getGetTrap }
-export { getGetTrap }
+/**@param {ProxyTrapOption}  */
+export default function ({
+  isShallow,
+  isReadonly,
+  readonly,
+  reactive,
+  Reactive,
+  Effect,
+  track
+}) {
+  // log('getGetTrap 5-6', isShallow, isReadonly)
+  const options = isShallow
+    ? isReadonly
+      ? { __proto__: null, Reactive }
+      : { __proto__: null, Reactive, Effect, track }
+    : isReadonly
+      ? { __proto__: null, Reactive, readonly }
+      : { __proto__: null, Reactive, Effect, track, reactive }
+  return withRecordTrapOption({
+    factory,
+    options,
+    isShallow,
+    isReadonly
+  })
+}

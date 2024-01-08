@@ -6,11 +6,11 @@ export * from '../../6、浅只读与深只读/reactive/index.js'
 /**@typedef {import('./traps/convention.js').GetTarget} GetTarget */
 /**@typedef {Omit<ProxyTrapOptionBase, 'trigger'|'track'> & {trigger: Trigger, track: Track, getTarget:GetTarget}} ProxyTrapOption */
 
-// import * as getApi from './api.js'
+// import { createReactive } from './api.js'
 
-// const reactive = getApi.reactive()
-// const shallowReactive = getApi.shallowReactive()
-// const readonly = getApi.readonly()
-// const shallowReadonly = getApi.shallowReadonly()
+// const reactive = createReactive()()
+// const shallowReactive = createReactive(true)()
+// const readonly = createReactive(false, true)()
+// const shallowReadonly = createReactive(true, true)()
 
 // export { reactive, shallowReactive, readonly, shallowReadonly }

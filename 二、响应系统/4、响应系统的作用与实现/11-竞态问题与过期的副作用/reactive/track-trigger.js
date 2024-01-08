@@ -22,7 +22,7 @@ function getTrigger(options = {}) {
    * @param {import('./index.js').TriggerType} type 属性操作类型
    * */
   function runEffects() {
-    warn('try scheduler job...')
+    // warn('try scheduler job...')
     if (effectsToRun?.length > 0) {
       // 防止cleanup引发的无限循环,必须实例化一个effects的副本
       new Set(effectsToRun).forEach(ef => {

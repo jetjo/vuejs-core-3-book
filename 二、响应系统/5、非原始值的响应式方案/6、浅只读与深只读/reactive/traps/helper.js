@@ -2,7 +2,6 @@ import {
   requireReactiveTarget,
   canReactive,
   canReadonly,
-  doWithAllTrapGetter,
   isHasTrap,
   isGetTrap,
   isSetTrap
@@ -47,7 +46,7 @@ getTrapName.Names = ProxyHandlerNames
 /**
  * @param {(PH[keyof PH])[]} traps
  * @returns {PH} */
-function getProxyHandler(traps) {
+function createProxyHandler(traps) {
   if (!Array.isArray(traps)) throwErr('参数必须是数组!')
   const res = Object.create(null)
   traps.forEach(trap => {
@@ -62,10 +61,9 @@ export {
   requireReactiveTarget,
   canReactive,
   canReadonly,
-  doWithAllTrapGetter,
   isHasTrap,
   isGetTrap,
   isSetTrap,
   getTrapName,
-  getProxyHandler
+  createProxyHandler
 }

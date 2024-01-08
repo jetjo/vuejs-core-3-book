@@ -1,1 +1,3 @@
-export * from './set.js'
+import getSetTrap from './set.js'
+
+export const trapGetters = [getSetTrap]

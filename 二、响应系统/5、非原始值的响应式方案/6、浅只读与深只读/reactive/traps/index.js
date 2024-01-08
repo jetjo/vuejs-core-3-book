@@ -1,5 +1,13 @@
-export * from './get.js'
-export * from './set.js'
-export * from './ownKeys.js'
-export * from './has.js'
-export * from './deleteProperty.js'
+import getGetTrap from './get.js'
+import getSetTrap from './set.js'
+import getOwnKeysTrap from './ownKeys.js'
+import getHasTrap from './has.js'
+import getDeleteTrap from './deleteProperty.js'
+
+export const trapGetters = [
+  getGetTrap,
+  getSetTrap,
+  getOwnKeysTrap,
+  getHasTrap,
+  getDeleteTrap
+]
