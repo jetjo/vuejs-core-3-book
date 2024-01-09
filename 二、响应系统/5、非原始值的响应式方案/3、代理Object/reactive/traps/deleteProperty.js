@@ -1,8 +1,8 @@
 import { TRIGGER_TYPE } from '../../../convention.js'
 
-/**@param {import('../../../index.js').ProxyTrapOption} [options]  */
-function getDeleteTrap(options = {}) {
-  const { trigger } = options
+/**@param {import('../../../index.js').ProxyTrapOption} [option]  */
+function getDeleteTrap(option = {}) {
+  const { trigger } = option
   /**@type {ProxyHandler['deleteProperty']} */
   const deleteProperty = function deleteProperty(target, p) {
     const desc = Reflect.getOwnPropertyDescriptor(target, p)
