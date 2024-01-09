@@ -1,10 +1,9 @@
 import { withRecordTrapOption } from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
-import { warn, notNaN, log } from '../../../index.js'
+import { warn, notNaN } from '../../../index.js'
 import { RAW, TRIGGER_TYPE, TRY_PROXY_NO_RESULT } from './convention.js'
 
 /**@type {TrapFactory<'set'>} */
-function factory(isShallow, isReadonly, { trigger, Reactive }) {
-  log('getSetTrap 5-6', isShallow, isReadonly, 'factory')
+function factory({ isReadonly, trigger, Reactive, version }) {
   if (isReadonly) {
     return function set() {
       warn(`不能更改只读对象的属性值!`)
@@ -52,13 +51,19 @@ function factory(isShallow, isReadonly, { trigger, Reactive }) {
 }
 
 /**@param {ProxyTrapOption} */
-export default function ({ isShallow, isReadonly, trigger, Reactive }) {
-  log('getSetTrap 5-6', isShallow, isReadonly)
-  const options = isReadonly ? {} : { trigger, Reactive }
+export default function ({
+  isShallow,
+  isReadonly,
+  trigger,
+  Reactive,
+  version
+}) {
   return withRecordTrapOption({
     factory,
-    options,
     isShallow,
-    isReadonly
+    isReadonly,
+    version,
+    factoryName: 'getSetTrap',
+    option: isReadonly ? undefined : { __proto__: null, trigger, Reactive }
   })
 }

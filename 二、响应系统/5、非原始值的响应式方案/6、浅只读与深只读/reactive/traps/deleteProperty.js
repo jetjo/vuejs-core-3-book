@@ -1,10 +1,9 @@
 import { withRecordTrapOption } from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
-import { log, warn } from '../../../index.js'
+import { warn } from '../../../index.js'
 import { TRIGGER_TYPE } from './convention.js'
 
 /**@type {TrapFactory<'defineProperty'>} */
-function factory(isShallow, isReadonly, { trigger }) {
-  // log('getDeleteTrap 5-6', isShallow, isReadonly, 'factory')
+function factory({ isReadonly, trigger, version }) {
   return function deleteProperty(target, p) {
     if (isReadonly) {
       warn(`不能删除只读状态对象的属性!`)
@@ -21,12 +20,13 @@ function factory(isShallow, isReadonly, { trigger }) {
 }
 
 /**@param {ProxyTrapOption} */
-export default function ({ isShallow, isReadonly, trigger }) {
-  // log('getDeleteTrap 5-6', isShallow, isReadonly)
+export default function ({ isShallow, isReadonly, trigger, version }) {
   return withRecordTrapOption({
     factory,
-    options: isReadonly ? {} : { trigger },
     isShallow,
-    isReadonly
+    isReadonly,
+    version,
+    factoryName: 'getDeleteTrap',
+    option: isReadonly ? undefined : { __proto__: null, trigger }
   })
 }

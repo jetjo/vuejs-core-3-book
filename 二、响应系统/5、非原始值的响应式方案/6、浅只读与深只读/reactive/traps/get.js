@@ -1,15 +1,19 @@
 import { withRecordTrapOption } from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
-import { isValidArrayIndex, log } from '../../../index.js'
+import { isValidArrayIndex } from '../../../index.js'
 import { TRY_PROXY_NO_RESULT } from './convention.js'
 import { canReactive, canReadonly } from './helper.js'
 
 /**@type {TrapFactory<'get'>} */
-function factory(
+function factory({
   isShallow,
   isReadonly,
-  { reactive, Effect, track, Reactive, readonly }
-) {
-  // log('getGetTrap 5-6', isShallow, isReadonly, 'factory')
+  reactive,
+  Effect,
+  track,
+  Reactive,
+  readonly,
+  version
+}) {
   if (isReadonly) {
     return function get(target, key, receiver) {
       // prettier-ignore
@@ -43,10 +47,10 @@ export default function ({
   reactive,
   Reactive,
   Effect,
-  track
+  track,
+  version
 }) {
-  // log('getGetTrap 5-6', isShallow, isReadonly)
-  const options = isShallow
+  const option = isShallow
     ? isReadonly
       ? { __proto__: null, Reactive }
       : { __proto__: null, Reactive, Effect, track }
@@ -55,8 +59,10 @@ export default function ({
       : { __proto__: null, Reactive, Effect, track, reactive }
   return withRecordTrapOption({
     factory,
-    options,
+    option,
     isShallow,
-    isReadonly
+    isReadonly,
+    version,
+    factoryName: 'getGetTrap'
   })
 }

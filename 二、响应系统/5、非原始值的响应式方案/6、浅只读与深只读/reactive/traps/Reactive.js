@@ -1,4 +1,4 @@
-import { log, warn } from '../../../index.js'
+import { warn } from '../../../index.js'
 import {
   RAW,
   REACTIVE_FLAG,
@@ -6,16 +6,13 @@ import {
   READONLY_REACTIVE_FLAG,
   TRY_PROXY_NO_RESULT
 } from './convention.js'
-
-import { runWithRecord } from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/utils/record.js'
 import { withRecordTrapOption } from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
 
 /**@type {ReactiveCtorFactory} */
-function factory(isShallow, isReadonly, {}) {
-  // log('getReactive 5-6', isShallow, isReadonly, 'factory')
+function factory({ isShallow, isReadonly, version }) {
   return class Reactive {
     static tryGet(target, key, receiver) {
-      // log('getReactive 5-6', key, 'tryGet')
+      // log(`getReactive ${version}`, key, 'tryGet')
       if (key === RAW) return target
       if (key === REACTIVE_FLAG) return true
       if (key === SHALLOW_REACTIVE_FLAG) return isShallow
@@ -34,7 +31,10 @@ function factory(isShallow, isReadonly, {}) {
         // warn('getReactive 5-6', `成员${key}是只读的!`)
         // warn('getReactive 5-6', `成员是只读的!`, key)
         // warn('getReactive 5-6', `成员${key.toString()}是只读的!`)
-        warn('getReactive 5-6', `成员Symbol(${key.description})是只读的!`)
+        warn(
+          `getReactive ${version}`,
+          `成员Symbol(${key.description})是只读的!`
+        )
         // global-conf.js:11 TypeError: 'set' on proxy: trap returned falsish for property 'Symbol(raw)'
         // return false
         return true
@@ -75,7 +75,12 @@ function factory(isShallow, isReadonly, {}) {
 }
 
 /**@param {ProxyTrapOption} */
-export default function ({ isShallow, isReadonly }) {
-  // log('getReactive 5-6', isShallow, isReadonly)
-  return withRecordTrapOption({ factory, options: {}, isShallow, isReadonly })
+export default function ({ isShallow, isReadonly, version }) {
+  return withRecordTrapOption({
+    factory,
+    isShallow,
+    isReadonly,
+    version,
+    factoryName: 'getReactive'
+  })
 }
