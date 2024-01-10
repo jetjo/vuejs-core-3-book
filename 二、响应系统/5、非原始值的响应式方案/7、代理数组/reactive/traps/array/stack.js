@@ -65,7 +65,7 @@ function factory({ isReadonly, applyWithoutEffect, trigger }) {
       const [start, deleteCount, ...itemsToAdd] = args
       const _itemsToAdd = this.getRawItems(...itemsToAdd)
       const _args = [start, deleteCount, ..._itemsToAdd]
-      _args.unshift(this[RAW].splice) //TODO:  明天继续,睡觉去了
+      _args.unshift(this[RAW].splice)
       return applyWithoutEffect.apply(this, _args)
     }
   }
