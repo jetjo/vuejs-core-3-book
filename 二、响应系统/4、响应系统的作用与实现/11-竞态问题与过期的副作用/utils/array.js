@@ -13,7 +13,7 @@ const REG_RULE = /^[1-9]\d{0,}$/
 function isValidArrayIndex(key, thr = false) {
   const errLog = thr ? throwErr : error
   if (typeof key !== 'string') {
-    errLog('参数key必须是字符串!')
+    thr && errLog('参数key必须是字符串!')
     // NOTE: 如果key是symbol,将其隐式转换为字符串或数字会抛出异常,
     // 例如`REG_RULE.test(key)`或`Number(key)`
     return false

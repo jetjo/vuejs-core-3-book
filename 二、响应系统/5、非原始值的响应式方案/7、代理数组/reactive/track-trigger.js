@@ -1,17 +1,8 @@
 import { Effect } from '../effect/index.js'
-import {
-  isValidArrayIndex,
-  tryCall,
-  warn,
-  log,
-  error,
-  throwErr
-} from '../../index.js'
-import { isHasTrap } from './traps/helper.js'
+import { isValidArrayIndex, log } from '../../index.js'
 import {
   ITERATE_KEY,
   TRIGGER_TYPE,
-  SceneProtectedFlag,
   ITERATE_KEY_VAL
 } from './traps/convention.js'
 
@@ -21,71 +12,26 @@ const bucket = new WeakMap()
 const triggerBucket = new WeakMap()
 
 /**getTrigger */
-function getTrigger(options = {}) {
+function getTrigger(option = {}) {
   /**@type {Map<, Set<import('./index.js').EffectFn>> | undefined} */
   let depsMap
-  /**@type {import('./index.js').TriggerType} type 属性操作类型 */
-  let triggerType
-  let newPropertyVal
-  let triggerTarget
-  let triggerPropertyKey
-  let callContext
+  let effectsToRun = []
 
-  function withSceneStatus(restore = true, cb, ...args) {
-    const bak = {
-      __proto__: null,
-      get [SceneProtectedFlag]() {
-        return true
-      },
-      depsMap,
-      triggerType,
-      newPropertyVal,
-      triggerTarget,
-      triggerPropertyKey,
-      callContext
-    }
-    let print = true
-    // if (newVal != '4') print = false
-    const id = Math.random().toFixed(10).split('.')[1]
-    const __number_id = Effect.latestActiveEffect?.__number_id
-    try {
-      print &&
-        warn(
-          `effect: ${__number_id}: trigger ${id} ${triggerPropertyKey} ${triggerType.description} ${newPropertyVal}`
-        )
-      if (!restore) return cb.apply(bak, args)
-      return cb.apply(bak, args)
-    } finally {
-      if (restore) {
-        depsMap = bak.depsMap
-        triggerType = bak.triggerType
-        newPropertyVal = bak.newPropertyVal
-        triggerTarget = bak.triggerTarget
-        triggerPropertyKey = bak.triggerPropertyKey
-        callContext = bak.callContext
-      }
-      print && warn(`effect: ${__number_id}: trigger ${id} done`)
-    }
-  }
-
-  function run(key, deps) {
+  function run(key, deps = undefined) {
     const effects = deps || depsMap?.get(key)
     if (!(effects?.size > 0)) return
-    withSceneStatus(true, function () {
-      runEffects.call(this, effects, key)
+    effects.forEach(ef => {
+      // NOTE: 不能在这儿运行effect,因为所以关联的effect还没有找全,
+      // 从这里就运行effect,无法避免重复执行
+      // Effect.scheduler(ef)
+      effectsToRun.push(ef)
     })
   }
-  function tryRun(key, tr = false, deps = undefined) {
-    if (tr) {
-      tryCall(() => run(key, deps))
-    }
-    run(key, deps)
-  }
 
-  function handleLengthSub() {
-    const bak = triggerType
-    triggerType = TRIGGER_TYPE.DELETE
-    tryCall(() => {
+  const handleArray = (() => {
+    let newPropertyVal
+    // 处理数组长度变小时的副作用
+    const handleLengthSub = () => {
       const newLen = Number(newPropertyVal)
       depsMap?.forEach((deps, key) => {
         if (!isValidArrayIndex(key)) return
@@ -94,136 +40,74 @@ function getTrigger(options = {}) {
         if (!(deps?.size > 0)) return
         run(key, deps)
       })
-    })
-    triggerType = bak
-  }
+    }
 
-  const arrayHandlers = new Map([
-    [TRIGGER_TYPE.ADD, () => tryRun('length')],
-    [
-      TRIGGER_TYPE.EmptySlotSet,
-      () => {
-        const deps = depsMap?.get(ITERATE_KEY)
-        if (deps && deps.size > 0) tryRun(ITERATE_KEY, false, deps)
-      }
-    ],
-    [
-      TRIGGER_TYPE.LengthSubtract,
-      () => {
-        const deps = depsMap?.get(ITERATE_KEY)
-        if (deps && deps.size > 0) tryRun(ITERATE_KEY, false, deps)
-        handleLengthSub()
-      }
-    ]
-  ])
+    const arrayHandlers = new Map([
+      [TRIGGER_TYPE.ADD, () => run('length')],
+      [TRIGGER_TYPE.EmptySlotSet, () => run(ITERATE_KEY)],
+      [
+        TRIGGER_TYPE.LengthSubtract,
+        () => {
+          run(ITERATE_KEY)
+          handleLengthSub()
+        }
+      ]
+    ])
 
-  function handleArray() {
-    const deps = depsMap.get(ITERATE_KEY_VAL)
-    if (deps && deps.size > 0) tryRun(ITERATE_KEY_VAL, false, deps)
-    // 从handlers中查找出handler,然后处理
-    const handler = arrayHandlers.get(triggerType)
-    if (handler) handler()
-  }
+    return (triggerType, newVal) => {
+      newPropertyVal = newVal
+      run(ITERATE_KEY_VAL)
+      // 从handlers中查找出handler,然后处理
+      const handler = arrayHandlers.get(triggerType)
+      log('5-7', 'triggerType', triggerType)
+      if (handler) handler()
+    }
+  })()
 
-  const opt = { triggerBucket }
-  function trackEffect(key) {
+  function trackEffect(key, target) {
     return
-    const efs = Effect.trackTriggers(opt)
+    const efs = Effect.trackTriggers({ triggerBucket })
     let efi = efs.next()
     while (!efi.done) {
       const triggerMap = triggerBucket.get(efi.value) || new WeakMap()
-      if (!triggerMap.has(triggerTarget))
-        triggerMap.set(triggerTarget, new Set())
-      const triggerSet = triggerMap.get(triggerTarget)
+      if (!triggerMap.has(target)) triggerMap.set(target, new Set())
+      const triggerSet = triggerMap.get(target)
       triggerSet.add(key)
       efi = efs.next({ triggerMap, triggerSet })
     }
   }
 
-  function canScheduler(ef, effects, key) {
-    return true
-    const triggerMap = triggerBucket.get(ef)
-    if (!triggerMap) return true
-
-    const triggerSet = triggerMap.get(triggerTarget)
-    if (!triggerSet) return true
-
-    if (!triggerSet.has(triggerPropertyKey) && !triggerSet.has(key)) {
-      return true
-    }
-
-    warn(
-      'You have a reactive effect that is mutating its own dependencies. Possible sources include component template, render function, updated hook or watcher source function.'
-    )
-    return false
-
-    // triggerBucket.delete(ef)
-  }
-
-  /** @param {(import('./index.js').EffectFn)[]} effects */
-  function runEffects(effects, key) {
-    if (!this[SceneProtectedFlag]) {
-      throwErr('runEffects must be called with `withSceneStatus`')
-    }
-    trackEffect(key)
-    warn(`try scheduler ${effects.size} job...`)
-    // if (effects?.size === 0) return
-    // 防止cleanup引发的无限循环,必须实例化一个effects的副本
-    new Set(effects).forEach(ef => {
-      if (canScheduler(ef, effects, key)) {
-        Effect.scheduler.call(this, ef)
-      }
-    })
-  }
-
-  /** 抽象: 封装了一段代码的函数; 具体: 一段代码 */
-  // function findEffects () {}
-
   /**
    * @param {string} key 属性名称
    * @param {import('./index.js').TriggerType} type 属性操作类型
    * */
-  return function trigger(
-    target,
-    key,
-    type,
-    newVal,
-    _isCommonArrayPropertySet
-  ) {
-    if (!this[SceneProtectedFlag]) {
-      warn('trigger must be called with `withSceneStatus`')
-    }
-    callContext = this
+  return function trigger(target, key, type, newVal, isArrayProperty) {
+    effectsToRun = []
 
-    triggerTarget = target
-    triggerPropertyKey = key
-    // tryCall(() => {
     depsMap = bucket.get(target)
     if (!depsMap || depsMap.size === 0) return
 
-    triggerType = type
-    newPropertyVal = newVal
-    const deps = depsMap.get(key)
-    if (deps && deps.size > 0) tryRun(key, false, deps)
+    run(key)
 
     if (type === TRIGGER_TYPE.ADD || type === TRIGGER_TYPE.DELETE) {
-      const deps = depsMap.get(ITERATE_KEY)
-      if (deps && deps.size > 0) tryRun(ITERATE_KEY, false, deps)
+      run(ITERATE_KEY)
     }
 
-    if (_isCommonArrayPropertySet) {
-      handleArray()
-    }
+    if (isArrayProperty) handleArray(type, newVal)
+
+    // withSceneStatus(true, function () {
+    // NOTE: 防止cleanup引发的无限循环,必须实例化一个effects的副本
+    // 并利用Set去重
+    new Set(effectsToRun).forEach(ef => {
+      Effect.scheduler(ef)
+    })
     // })
-    // depsMap = undefined
-    // triggerType = undefined
-    // newPropertyVal = undefined
   }
 }
 
 /**@typedef {ReturnType<getTrigger>} Trigger */
 
-// function getTracker(options = {}) {
+// function getTracker(option = {}) {
 /**@param {string} key 属性名 */
 function track(target, key) {
   if (!Effect.hasActive) return

@@ -12,7 +12,6 @@ import { withRecordTrapOption } from '../../../../4、响应系统的作用与�
 function factory({ isShallow, isReadonly, version }) {
   return class Reactive {
     static tryGet(target, key, receiver) {
-      // log(`getReactive ${version}`, key, 'tryGet')
       if (key === RAW) return target
       if (key === REACTIVE_FLAG) return true
       if (key === SHALLOW_REACTIVE_FLAG) return isShallow
@@ -68,7 +67,6 @@ function factory({ isShallow, isReadonly, version }) {
   // Object.setPrototypeOf(Reactive, null)
 
   // // TypeError: Class constructor Reactive cannot be invoked without 'new'
-  // // console.log(Reactive())
   // Object.freeze(Reactive)
   // return Reactive
   // #endregion

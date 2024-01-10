@@ -4,7 +4,6 @@ import { ITERATE_KEY } from './convention.js'
 /**@type {TrapFactory<'ownKeys'>} */
 function factory({ isReadonly, Effect, track, version }) {
   return function ownKeys(target) {
-    // log('getOwnKeysTrap 5-6', target)
     if (!isReadonly && Effect.hasActive) track(target, ITERATE_KEY, ownKeys)
     return Reflect.ownKeys(target)
   }

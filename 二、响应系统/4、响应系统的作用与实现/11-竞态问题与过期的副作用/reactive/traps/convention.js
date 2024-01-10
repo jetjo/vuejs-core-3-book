@@ -8,6 +8,15 @@ function getTarget(reactive, hasReactiveFlag = false) {
   return reactive[RAW]
 }
 
+function getRaw(reactive, hasReactiveFlag = false) {
+  hasReactiveFlag = hasReactiveFlag || isReactive(reactive)
+  if (!hasReactiveFlag) return reactive
+  if (!isReadonlyReactive(reactive, true)) return reactive[RAW]
+  const target = reactive[RAW]
+  if (!isReactive(target)) return target
+  return target[RAW]
+}
+
 /**@typedef {typeof getTarget} GetTarget*/
 
 /**@type {TRIGGER_TYPE_TD} */
@@ -59,5 +68,6 @@ export {
   isReadonlyReactive,
   ITERATE_KEY,
   TRY_PROXY_NO_RESULT,
-  ITERATE_KEY_VAL
+  ITERATE_KEY_VAL,
+  getRaw
 }
