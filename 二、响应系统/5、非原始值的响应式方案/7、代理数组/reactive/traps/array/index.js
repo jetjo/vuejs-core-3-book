@@ -1,70 +1,26 @@
-import { log } from '../../../../../4、响应系统的作用与实现/index.js'
-import {
-  getLastCallRecord,
-  requireRegularOption,
-  saveRecord
-} from '../../../../6、浅只读与深只读/reactive/traps/options/helper.js'
-import { getRewriter } from './helper.js'
+import getFinds from './find.js'
+import getStacks from './stack.js'
+import { withRecordTrapOption } from '../../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
 
-/**@typedef {import('./changeStackLength.js').ChangeLensType} ChangeLensType */
-/**@typedef {import('./find.js').FindsType} FindsType */
-/**@typedef {import('./helper.js').Rewriter} Rewriter */
-/**@typedef {import('./helper.js').RewriterKey} RewriterKey */
-/**@typedef {import('./helper.js').RewriteMethod} RewriteMethod */
-/**
- *
- * @param {Object} [options = {}]
- * @param {Rewriter[RewriterKey]} [options.rewrite]
- * @param {Rewriter[RewriterKey]['arrayMethods']} [options.arrayMethods]
- * @returns {RewriteMethod[RewriterKey]}
- */
-function _getArrayInstrumentations(options = {}) {
-  const { rewrite, arrayMethods } = options
-  const arrayInstrumentations = Object.create(null)
-
-  arrayMethods.reduce((instrumentations, method) => {
-    instrumentations[method.name] = rewrite(method)
-    return instrumentations
-  }, arrayInstrumentations)
-
-  return arrayInstrumentations
+/**@type {ArrayProtoProxyFactory} */
+function factory({ finds, stacks }) {
+  // const findKeys = Object.keys(finds)
+  // const stackKeys = Object.keys(stacks)
+  const res = Object.assign(Object.create(null), finds, stacks)
+  return res
 }
 
-/**
- * @returns {ChangeLensType & FindsType}
- */
-function getArrayInstrumentations(options = {}) {
-  const rewriter = getRewriter(options)
-  const _options = { __proto__: null, rewriter, ...options }
-  const { lastCallRecord, isSameCall } = getLastCallRecord(
-    _options,
-    getArrayInstrumentations
-  )
-  // log(lastCallRecord.type, isSameCall, 'getArrayInstrumentations')
-  if (isSameCall) return lastCallRecord.result
-  const { isShallow, isReadonly, reactiveApi } = requireRegularOption(_options)
-  const requiredOptions = {
-    __proto__: null,
-    isShallow,
-    isReadonly,
-    reactiveApi,
-    rewriter
-  }
-
-  lastCallRecord.rewriter = rewriter
-
-  const arrayInstrumentations = Object.create(null)
-  for (const rewrite of Object.values(rewriter)) {
-    if (!rewrite.arrayMethods) continue
-    const methods = _getArrayInstrumentations({
-      rewrite,
-      arrayMethods: rewrite.arrayMethods
-    })
-    Object.assign(arrayInstrumentations, methods)
-  }
-  saveRecord(requiredOptions, arrayInstrumentations, getArrayInstrumentations)
-
-  return arrayInstrumentations
+/**@param {ProxyTrapOption} option */
+export default function (option) {
+  const finds = getFinds(option)
+  const stacks = getStacks(option)
+  return withRecordTrapOption({
+    factory,
+    isShallow: option.isShallow,
+    isReadonly: option.isReadonly,
+    version: option.version,
+    factoryName: 'getArrayInstrumentations',
+    finds,
+    stacks
+  })
 }
-
-export { getArrayInstrumentations }

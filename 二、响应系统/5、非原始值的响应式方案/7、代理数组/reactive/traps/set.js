@@ -1,163 +1,127 @@
+import { withRecordTrapOption } from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
 import { warn, notNaN, isValidArrayIndex } from '../../../index.js'
-import {
-  TRIGGER_TYPE,
-  TRY_PROXY_NO_RESULT,
-  isReactive,
-  getTarget,
-  SceneProtectedFlag
-} from './convention.js'
+import { TRIGGER_TYPE, TRY_PROXY_NO_RESULT, RAW } from './convention.js'
 
-/**
- * @param {import('../index.js').ProxyTrapOption} [options]
- * @returns {ProxyHandler['set']}
- */
-function getSetTrap(options = {}) {
-  if (options.isReadonly) {
+/**@type {TrapFactory<'set'>} */
+function factory({ isReadonly, trigger, Reactive }) {
+  if (isReadonly) {
     return function set() {
       warn(`不能更改只读对象的属性值!`)
       return true
     }
   }
 
-  const { trigger, handleThrow, Reactive, isReadonly, Effect } = options
-  /**@type {{length: number}} */
-  let targetRaw
-  let propertyName
-  let hasProperty
-  let isCommonArrayPropertySet
-  let oldVal
-  let oldLen
-  let getType
-  let _target
-  let _receiver
-  let valAfterSet
-  function withSceneStatus(restore = true, cb, ...args) {
-    const bak = {
-      __proto__: null,
-      get [SceneProtectedFlag]() {
-        return true
+  let receiverRaw, propertyName
+
+  const arrayGetter = (() => {
+    let oldLen, hasProperty
+    const getArrLengthTriggerType = () => {
+      return receiverRaw.length > oldLen
+        ? TRIGGER_TYPE.SET
+        : TRIGGER_TYPE.LengthSubtract
+    }
+
+    const getArrIndexTriggerType = () => {
+      if (Number(propertyName) >= oldLen) return TRIGGER_TYPE.ADD
+      return hasProperty ? TRIGGER_TYPE.SET : TRIGGER_TYPE.EmptySlotSet
+    }
+
+    const res = () => {
+      oldLen = receiverRaw.length
+      hasProperty = Object.hasOwn(receiverRaw, propertyName)
+      return 'length' === propertyName
+        ? getArrLengthTriggerType
+        : getArrIndexTriggerType
+    }
+
+    Object.defineProperty(res, 'save', {
+      value() {
+        return { __proto__: null, hasProperty, oldLen }
       },
-      targetRaw,
-      propertyName,
-      hasProperty,
-      isCommonArrayPropertySet,
-      oldVal,
-      oldLen,
-      getType,
-      _target,
-      _receiver,
-      valAfterSet
-    }
-    if (!restore) return cb.apply(bak, args)
-    try {
-      return cb.apply(bak, args)
-    } finally {
-      targetRaw = bak.targetRaw
-      propertyName = bak.propertyName
-      hasProperty = bak.hasProperty
-      isCommonArrayPropertySet = bak.isCommonArrayPropertySet
-      oldVal = bak.oldVal
-      oldLen = bak.oldLen
-      getType = bak.getType
-      _target = bak._target
-      _receiver = bak._receiver
-      valAfterSet = bak.valAfterSet
-    }
-  }
-  const getArrLen = (function () {
-    const gl = () => targetRaw.length
-    return () => Effect.runWithoutEffect(gl)
+      enumerable: true
+    })
+    Object.defineProperty(res, 'restore', {
+      value(s) {
+        hasProperty = s.hasProperty
+        oldLen = s.oldLen
+      },
+      enumerable: true
+    })
+    return res
   })()
 
-  const getPropertyVal = (function () {
-    const gv = () => targetRaw[propertyName]
-    return () => Effect.runWithoutEffect(gv)
+  const getTypeGetter = (() => {
+    let hasProperty
+    const getArrayOperateTypeFlag = () =>
+      Array.isArray(receiverRaw) &&
+      ('length' === propertyName || isValidArrayIndex(propertyName))
+
+    const commonGetter = () =>
+      hasProperty ? TRIGGER_TYPE.SET : TRIGGER_TYPE.ADD
+
+    const res = () => {
+      hasProperty = Object.hasOwn(receiverRaw, propertyName)
+      const isArray = getArrayOperateTypeFlag()
+      const getType = isArray ? arrayGetter() : commonGetter
+      return {
+        __proto__: null,
+        isArrayProperty: isArray,
+        getType,
+        s: res.save(isArray)
+      }
+    }
+
+    Object.defineProperty(res, 'save', {
+      value(isArrayProperty) {
+        return {
+          __proto__: null,
+          hasProperty,
+          arrayGetterS: isArrayProperty ? arrayGetter.save() : undefined
+        }
+      },
+      enumerable: true
+    })
+    Object.defineProperty(res, 'restore', {
+      value(s) {
+        hasProperty = s.hasProperty
+        if (s.arrayGetterS !== undefined) arrayGetter.restore(s.arrayGetterS)
+      },
+      enumerable: true
+    })
+
+    return res
   })()
-
-  function checkArrayOperateType() {
-    isCommonArrayPropertySet = false
-    if (!Array.isArray(targetRaw)) return
-    if ('length' === propertyName || isValidArrayIndex(propertyName)) {
-      isCommonArrayPropertySet = true
-    }
-  }
-
-  function getCommonArrLengthTriggerType() {
-    const newLen = getArrLen()
-    return newLen > oldLen ? TRIGGER_TYPE.SET : TRIGGER_TYPE.LengthSubtract
-  }
-
-  function getCommonArrIndexTriggerType() {
-    const index = Number(propertyName)
-    if (index >= oldLen) return TRIGGER_TYPE.ADD
-    return hasProperty ? TRIGGER_TYPE.SET : TRIGGER_TYPE.EmptySlotSet
-  }
-
-  function getCommonTriggerType() {
-    return hasProperty ? TRIGGER_TYPE.SET : TRIGGER_TYPE.ADD
-  }
-
-  function handleArrTriggerType() {
-    oldLen = getArrLen()
-
-    if ('length' === propertyName) {
-      return getCommonArrLengthTriggerType
-    }
-
-    return getCommonArrIndexTriggerType
-  }
-
-  function getTypeGetter() {
-    checkArrayOperateType()
-    if (isCommonArrayPropertySet) {
-      return handleArrTriggerType()
-    }
-    return getCommonTriggerType
-  }
-
-  function setTargetRaw() {
-    let i = 10
-    while (isReactive(_target) && i > 0) {
-      i--
-      _target = getTarget(_target, true)
-    }
-    targetRaw = _target
-  }
-
-  function beforeSet(target, key, receiver) {
-    _target = target
-    setTargetRaw()
-    propertyName = key
-    // hasOwnProperty调用不会被has trap捕获到
-    hasProperty = Object.prototype.hasOwnProperty.call(targetRaw, key)
-    oldVal = getPropertyVal()
-    getType = getTypeGetter()
-    _receiver = receiver
-  }
-
-  function canTrigger() {
-    valAfterSet = getPropertyVal()
-    return (
-      // 考虑到有代理的情况下赋值结果suc并不可靠. 比如target是readonly时
-      // oldVal !== newVal &&
-      // (notNaN(oldVal) || notNaN(newVal)) &&
-      oldVal !== valAfterSet &&
-      (notNaN(oldVal) || notNaN(valAfterSet)) &&
-      getTarget(_receiver, true) === _target
-    )
-  }
 
   /**@type {ProxyHandler['set']} */
   return function set(target, key, newVal, receiver) {
     const trySuc = Reactive.trySet(target, key, newVal, receiver)
     if (trySuc !== TRY_PROXY_NO_RESULT) return trySuc
-    warn('set2 trap...')
-    beforeSet(target, key, receiver)
-    const suc = Reflect.set(...arguments)
-    if (key === 'length') {
-      // debugger
+    receiverRaw = receiver[RAW]
+    propertyName = key
+    const { getType, isArrayProperty, s } = getTypeGetter()
+    // 此方法被调用的前提是receiver是reactive或shallowReactive的返回值
+    // 所以target一定是raw,非响应的
+    const oldVal = target[key]
+    const suc = Reflect.set(target, key, newVal, receiver)
+    // #region 恢复现场
+    receiverRaw = receiver[RAW]
+    propertyName = key
+    getTypeGetter.restore(s)
+    // #endregion
+    const valAfterSet = target[key]
+
+    const canTrigger = () => {
+      return (
+        // 考虑到有代理的情况下赋值结果suc并不可靠. 比如target是readonly时
+        // oldVal !== newVal &&
+        // (notNaN(oldVal) || notNaN(newVal)) &&
+        oldVal !== valAfterSet &&
+        (notNaN(oldVal) || notNaN(valAfterSet)) &&
+        receiver[RAW] === target
+      )
     }
-    if (suc && canTrigger()) {
+
+    if (canTrigger()) {
       // #region NOTE: 根据ES语言规范对[[Set]]方法的执行过程描述,
       // 当执行target[key]=xxx的赋值语句时,如果target自身没有key属性,
       // 那么会执行[[getPrototypeOf]]获取target的原型parent,
@@ -172,23 +136,26 @@ function getSetTrap(options = {}) {
       // 所以需要区分target是receiver的target,还是receiver的target的原型;
       // 如果是原型,则没必要再重复执行副作用;
       // #endregion
-      // const type = set.getType(targetRaw, key, valAfterSet, oldVal)
-      // trigger(target, key, type, valAfterSet)
-      withSceneStatus(
-        false,
-        trigger,
-        target,
-        key,
-        getType(),
-        valAfterSet,
-        isCommonArrayPropertySet
-      )
-      // trigger(target, key, getType(), valAfterSet, isCommonArrayPropertySet)
-      return true
+      trigger(target, key, getType(), valAfterSet, isArrayProperty)
     }
-    if (!suc && handleThrow) return Reactive.handleSetFail(...arguments, false)
     return suc
   }
 }
 
-export { getSetTrap }
+/**@param {ProxyTrapOption} */
+export default function ({
+  isShallow,
+  isReadonly,
+  Reactive,
+  trigger,
+  version
+}) {
+  return withRecordTrapOption({
+    factory,
+    version,
+    isShallow,
+    isReadonly,
+    factoryName: 'getSetTrap',
+    option: isReadonly ? undefined : { __proto__: null, Reactive, trigger }
+  })
+}

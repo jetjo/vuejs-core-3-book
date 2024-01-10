@@ -1,29 +1,33 @@
-import { createReactive } from '../../6、浅只读与深只读/reactive/api.js'
-import { doWithAllTrapGetter } from './traps/helper.js'
-import * as trapsModule from './traps/index.js'
+import { createReactive as baseCreateReactive } from '../../6、浅只读与深只读/reactive/api.js'
+import { trapGetters } from './traps/index.js'
 import { track, trigger } from './track-trigger.js'
 import getReactive from './traps/Reactive.js'
+import { withRecordTrapOption } from '../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
 
-const reactive = createReactive()
-const shallowReactive = createReactive(true)
-const readonly = createReactive(false, true)
-const shallowReadonly = createReactive(true, true)
-
-const trapOption = {
-  track,
-  trigger,
-  getReactive
+function factory({ isShallow, isReadonly, version }) {
+  const api = baseCreateReactive(isShallow, isReadonly, version)
+  const baseTrapOption = { ...api.trapOption, track, trigger, version }
+  api.trapOption = {
+    ...baseTrapOption,
+    Reactive: getReactive(baseTrapOption)
+  }
+  api.trapGetters = trapGetters
+  return api
 }
-reactive.setTrapOption(trapOption)
-shallowReactive.setTrapOption(trapOption)
-readonly.setTrapOption(trapOption)
-shallowReadonly.setTrapOption(trapOption)
 
-doWithAllTrapGetter(trapsModule, getter => {
-  reactive.addTrapBeforeCall(getter)
-  shallowReactive.addTrapBeforeCall(getter)
-  readonly.addTrapBeforeCall(getter)
-  shallowReadonly.addTrapBeforeCall(getter)
-})
+/**@type {CreateReactive} */
+function createReactive(
+  isShallow = false,
+  isReadonly = false,
+  version = '5-7'
+) {
+  return withRecordTrapOption({
+    factory,
+    isShallow,
+    isReadonly,
+    version,
+    factoryName: 'createReactive'
+  })
+}
 
-export { reactive, shallowReactive, readonly, shallowReadonly }
+export { createReactive }
