@@ -56,14 +56,16 @@ function factory({ version, isShallow, isReadonly }) {
       if (!callFromSelfTrap) {
         requireReactiveTarget(target)
         if (isReactive(target)) {
-          warn('参数target不能是reactive的返回值类型!')
           /**
            * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2.vue |GitHub-learn-vue项目 }
            * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2-2.vue |GitHub-learn-vue项目 }
            * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2-3.vue |GitHub-learn-vue项目 }
            * @see {@link https://github.com/jetjo/learn-vue/blob/main/src/响应式数据/index2-4.vue |GitHub-learn-vue项目 }
            */
-          if (isExpectedReactive(target, true)) return target
+          if (isExpectedReactive(target, true)) {
+            warn('参数target不能是reactive的返回值类型!')
+            return target
+          }
           // target可能仍然是响应式数据. v并没有这样, 而是再次包裹了一层Proxy
           // target = getTarget(target, true)
         }

@@ -28,10 +28,14 @@ function factory({
   }
   return function get(target, key, receiver) {
     // prettier-ignore
-    if (typeof key === 'symbol' || key !== 'length' && !isValidArrayIndex(key, false)) {
-      const tryRes = Reactive.tryGet(target, key, receiver)
-      if (tryRes !== TRY_PROXY_NO_RESULT) return tryRes
-    }
+    if (
+      typeof key === 'symbol' ||
+      (key !== 'length' && !isValidArrayIndex(key, false))
+      ) {
+        const tryRes = Reactive.tryGet(target, key, receiver)
+        if (tryRes !== TRY_PROXY_NO_RESULT) return tryRes
+      }
+    // console.warn('key: ', key, target)
     if (Effect.hasActive) track(target, key, get)
     const res = Reflect.get(target, key, receiver)
     if (!isShallow && canReactive(res)) return reactive(res)
