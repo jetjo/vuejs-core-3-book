@@ -37,7 +37,8 @@ const SHALLOW_REACTIVE_FLAG = Symbol('__is_shallow_reactive_return_type')
 
 const isReactive = obj =>
   obj &&
-  (typeof obj === 'object' || typeof obj === 'function') &&
+  typeof obj === 'object' &&
+  // (typeof obj === 'object' || typeof obj === 'function') &&
   true === obj[REACTIVE_FLAG]
 
 const isShallowReactive = (obj, hasReactiveFlag = false) =>

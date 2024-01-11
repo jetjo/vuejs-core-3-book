@@ -1,5 +1,5 @@
 import { Effect } from '../effect/index.js'
-import { isValidArrayIndex, log } from '../../index.js'
+import { effect, isValidArrayIndex, log } from '../../index.js'
 import {
   ITERATE_KEY,
   TRIGGER_TYPE,
@@ -56,7 +56,6 @@ function getTrigger(option = {}) {
 
     return (triggerType, newVal) => {
       newPropertyVal = newVal
-      run(ITERATE_KEY_VAL)
       // 从handlers中查找出handler,然后处理
       const handler = arrayHandlers.get(triggerType)
       log('5-7', 'triggerType', triggerType)
@@ -78,16 +77,30 @@ function getTrigger(option = {}) {
   }
 
   /**
-   * @param {string} key 属性名称
+   * @param {any} key 属性名称
    * @param {import('./index.js').TriggerType} type 属性操作类型
    * */
   return function trigger(target, key, type, newVal, isArrayProperty) {
-    effectsToRun = []
-
     depsMap = bucket.get(target)
     if (!depsMap || depsMap.size === 0) return
 
-    run(key)
+    if (type === TRIGGER_TYPE.CLEAR) {
+      let effectsToRun = new Set()
+      for (const deps of depsMap.values()) {
+        deps.forEach(ef => {
+          effectsToRun.add(ef)
+        })
+      }
+      effectsToRun.forEach(ef => {
+        Effect.scheduler(ef)
+      })
+      return
+    }
+
+    effectsToRun = []
+
+    run(ITERATE_KEY_VAL)
+    key != null && run(key)
 
     if (type === TRIGGER_TYPE.ADD || type === TRIGGER_TYPE.DELETE) {
       run(ITERATE_KEY)

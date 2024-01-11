@@ -4,8 +4,7 @@ import {
   RAW,
   REACTIVE_FLAG,
   SHALLOW_REACTIVE_FLAG,
-  READONLY_REACTIVE_FLAG,
-  ITERATE_KEY_VAL
+  READONLY_REACTIVE_FLAG
 } from './convention.js'
 import getArrayInstrumentations from './array/index.js'
 import { withRecordTrapOption } from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
@@ -33,7 +32,7 @@ function factory({
       // if (!isReadonly && Effect.hasActive) {
       // 移到findProxy中
       //   if (arrayInstrumentations.isFindMethod.call(receiver, key)) {
-      //     track(target, ITERATE_KEY_VAL)
+      //     track(target, ITERATE_ KEY_VAL)
       //   }
       // }
       // 到底target有自身的方法覆盖了原型方法时该如何?交由各自方法的代理去决定

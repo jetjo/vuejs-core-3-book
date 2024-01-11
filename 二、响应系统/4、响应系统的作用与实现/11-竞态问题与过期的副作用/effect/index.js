@@ -181,7 +181,7 @@ function applyEffect(fn, enableEffect, thisArg, ...args) {
   getLatestActiveEffect()
   enableEffect && cleanup(eFn)
   try {
-    return fn.apply(thisArg, args)
+    return fn.apply(thisArg === Effect ? activeEffect : thisArg, args)
   } catch (e) {
     error(e)
   } finally {

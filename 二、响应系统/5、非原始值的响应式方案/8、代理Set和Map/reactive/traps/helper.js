@@ -2,12 +2,11 @@ import {
   requireReactiveTarget,
   canReactive,
   canReadonly,
-  doWithAllTrapGetter,
   isHasTrap,
   isGetTrap,
   isSetTrap,
   getTrapName as _getTrapName,
-  getProxyHandler as _getProxyHandler
+  createProxyHandler as _getProxyHandler
 } from '../../../7、代理数组/reactive/traps/helper.js'
 // import { isReadonlyReactive } from './convention.js'
 
@@ -29,7 +28,7 @@ function getTrapName(trap) {
 /**
  * @param {(PH[keyof PH])[]} traps
  * @returns {PH} */
-function getProxyHandler(traps) {
+function createProxyHandler(traps) {
   if (!Array.isArray(traps)) throwErr('参数必须是数组!')
   const res = Object.create(null)
   traps.forEach(trap => {
@@ -44,10 +43,9 @@ export {
   requireReactiveTarget,
   canReactive,
   canReadonly,
-  doWithAllTrapGetter,
   isHasTrap,
   isGetTrap,
   isSetTrap,
   getTrapName,
-  getProxyHandler
+  createProxyHandler
 }

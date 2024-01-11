@@ -14,8 +14,8 @@ import { isReactive, isReadonlyReactive } from './convention.js'
 const requireTarget = (v, f = true) =>
   v &&
   // typeof v !== 'function' &&
-  // typeof v === 'object' &&
-  (typeof v === 'object' || typeof v === 'function') &&
+  typeof v === 'object' &&
+  // (typeof v === 'object' || typeof v === 'function') &&
   requireWeakItem(v, f) &&
   requireProxyTarget(v, f)
 
