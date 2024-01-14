@@ -6,10 +6,10 @@ import { withRecordTrapOption } from '../../../4、响应系统的作用与实�
 
 function factory({ isShallow, isReadonly, version }) {
   const api = baseCreateReactive(isShallow, isReadonly, version)
-  const baseTrapOption = { ...api.trapOption, track, trigger, version }
+  const _trapOption = { ...api.trapOption, track, trigger, version }
   api.trapOption = {
-    ...baseTrapOption,
-    Reactive: getReactive(baseTrapOption)
+    ..._trapOption,
+    Reactive: getReactive(_trapOption)
   }
   api.trapGetters = trapGetters
   return api

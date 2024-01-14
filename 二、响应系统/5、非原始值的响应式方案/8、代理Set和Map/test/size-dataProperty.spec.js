@@ -35,8 +35,8 @@ const myState = reactive(myRaw)
 
 effect(
   () => {
-    // console.log(myState.size(), 'myState.size()')
-    console.log(myState.mySize(), 'myState.size()')
+    console.log(myState.size(), 'myState.size()')
+    // console.log(myState.mySize(), 'myState.mySize()')
   },
   { queueJob: false }
 )

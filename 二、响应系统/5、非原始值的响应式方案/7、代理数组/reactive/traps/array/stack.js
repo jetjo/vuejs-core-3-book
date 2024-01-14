@@ -13,12 +13,14 @@ const proto = {
 }
 
 /**@type {ArrayProtoProxyFactory} */
-function factory({ isReadonly, applyWithoutEffect, trigger }) {
+function factory({ isReadonly, applyWithoutEffect }) {
   class ArrayProxy extends Array {
     constructor(...args) {
       super(...args)
     }
     getRawItems(...items) {
+      return items
+      // NOTE: 防止污染原始数据,但vue只对Set、Map、WeakSet、WeakMap实施了此策略
       return items.map(item => getRaw(item))
     }
     push(...args) {
