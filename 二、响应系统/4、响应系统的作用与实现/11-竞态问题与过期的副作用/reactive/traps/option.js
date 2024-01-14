@@ -2,6 +2,34 @@ import { runWithRecord } from '../../utils/record'
 
 const factoryMap = new WeakMap()
 
+const initFactoryRecord = (factory, isSetOrMap) => ({
+  __proto__: null,
+  reactive(o) {
+    o.isShallow = false
+    o.isReadonly = false
+    o.isSetOrMap = isSetOrMap
+    return factory(o)
+  },
+  readonly(o) {
+    o.isShallow = false
+    o.isReadonly = true
+    o.isSetOrMap = isSetOrMap
+    return factory(o)
+  },
+  shallowReactive(o) {
+    o.isShallow = true
+    o.isReadonly = false
+    o.isSetOrMap = isSetOrMap
+    return factory(o)
+  },
+  shallowReadonly(o) {
+    o.isShallow = true
+    o.isReadonly = true
+    o.isSetOrMap = isSetOrMap
+    return factory(o)
+  }
+})
+
 /**@type {WithRecordTrapOption} */
 function withRecordTrapOption({
   factory,
@@ -9,6 +37,7 @@ function withRecordTrapOption({
   getDiff,
   isShallow,
   isReadonly,
+  isSetOrMap,
   version,
   option,
   ...otherOption
@@ -21,29 +50,12 @@ function withRecordTrapOption({
       factory,
       (factoryRecord = {
         __proto__: null,
-        reactive(o) {
-          o.isShallow = false
-          o.isReadonly = false
-          return factory(o)
-        },
-        readonly(o) {
-          o.isShallow = false
-          o.isReadonly = true
-          return factory(o)
-        },
-        shallowReactive(o) {
-          o.isShallow = true
-          o.isReadonly = false
-          return factory(o)
-        },
-        shallowReadonly(o) {
-          o.isShallow = true
-          o.isReadonly = true
-          return factory(o)
-        }
+        default: initFactoryRecord(factory),
+        setOrMap: initFactoryRecord(factory, true)
       })
     )
   }
+  factoryRecord = isSetOrMap ? factoryRecord.setOrMap : factoryRecord.default
   const _factory = isShallow
     ? isReadonly
       ? factoryRecord.shallowReadonly

@@ -5,7 +5,7 @@
 /* @4-9 [深度响应] */
 /* @4-9-1 [对象成员遍历、添加、删除时依赖收集与effect触发] */
 // import { api, shallowApi } from '../../3、代理Object/reactive/api.js'
-import { Effect } from '../../../effect/index/4-11..js'
+import { Effect } from '../../../effect/index/4-11.js'
 import { trigger, track } from '../../../reactive/track-trigger/4-11.js'
 import { throwErr, warn } from '../../../utils/index.js'
 import { requireReactiveTarget, createProxyHandler } from './traps/helper.js'

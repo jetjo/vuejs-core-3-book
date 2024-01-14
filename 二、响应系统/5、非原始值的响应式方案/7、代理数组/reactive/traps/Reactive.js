@@ -1,4 +1,4 @@
-import getReactive from '../../../6、浅只读与深只读/reactive/traps/Reactive.js'
+import getReactive from '../../../../reactive/traps/Reactive/5-6.js'
 import {
   TRY_PROXY_NO_RESULT,
   RAW,
@@ -7,8 +7,7 @@ import {
   READONLY_REACTIVE_FLAG
 } from './convention.js'
 import getArrayInstrumentations from './array/index.js'
-import { withRecordTrapOption } from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
-import { warn } from '../../../../4、响应系统的作用与实现/index.js'
+import { withRecordTrapOption } from '../../../../reactive/traps/option.js'
 
 /**@type {ReactiveCtorFactory} */
 function factory({

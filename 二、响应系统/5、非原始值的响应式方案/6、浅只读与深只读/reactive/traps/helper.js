@@ -1,3 +1,4 @@
+export * from '../../../../reactive/traps/helper/4-11.js'
 import {
   requireReactiveTarget,
   canReactive,

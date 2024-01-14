@@ -1,8 +1,8 @@
-import { createReactive as baseCreateReactive } from '../../6、浅只读与深只读/reactive/api.js'
+import { createReactive as baseCreateReactive } from '../../../reactive/api/5-6.js'
 import { trapGetters } from './traps/index.js'
 import { track, trigger } from './track-trigger.js'
 import getReactive from './traps/Reactive.js'
-import { withRecordTrapOption } from '../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
+import { withRecordTrapOption } from '../../../reactive/traps/option.js'
 
 function factory({ isShallow, isReadonly, version }) {
   const api = baseCreateReactive(isShallow, isReadonly, version)

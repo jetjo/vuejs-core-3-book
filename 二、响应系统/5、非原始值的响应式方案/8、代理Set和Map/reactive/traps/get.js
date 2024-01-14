@@ -6,14 +6,18 @@ import { TRY_PROXY_NO_RESULT } from './convention.js'
 function factory({
   isShallow,
   isReadonly,
+  isSetOrMap,
   Reactive,
   Effect,
   track,
   reactive,
-  readonly
+  readonly,
+  get: oldGet
 }) {
-  const _ = function get(isSetOrMap, target, key, receiver) {
-    const tryRes = Reactive.tryGet(target, key, receiver, isSetOrMap)
+  if (!isSetOrMap) return oldGet
+  return function get(target, key, receiver) {
+    // const _ = function get(isSetOrMap, target, key, receiver) {
+    const tryRes = Reactive.tryGet(target, key, receiver, true)
     if (tryRes !== TRY_PROXY_NO_RESULT) return tryRes
     const res = Reflect.get(target, key, receiver)
     if (!isReadonly && Effect.hasActive) track(target, key)
@@ -29,9 +33,9 @@ function factory({
     if (canReactive(res)) return reactive(res)
     return res
   }
-  const get = _.bind(null, false)
-  get.trapForSetAndMap = _.bind(null, true)
-  return get
+  // const get = _.bind(null, false)
+  // get.trapForSetAndMap = _.bind(null, true)
+  // return get
 }
 
 /**@param {ProxyTrapOption}  */
@@ -39,6 +43,8 @@ export default function ({
   isShallow,
   isReadonly,
   readonly,
+  isSetOrMap,
+  get,
   reactive,
   Reactive,
   Effect,
@@ -47,16 +53,17 @@ export default function ({
 }) {
   const option = isShallow
     ? isReadonly
-      ? { __proto__: null, Reactive }
-      : { __proto__: null, Reactive, Effect, track }
+      ? { __proto__: null, get, Reactive }
+      : { __proto__: null, get, Reactive, Effect, track }
     : isReadonly
-      ? { __proto__: null, Reactive, readonly }
-      : { __proto__: null, Reactive, Effect, track, reactive }
+      ? { __proto__: null, get, Reactive, readonly }
+      : { __proto__: null, get, Reactive, Effect, track, reactive }
   return withRecordTrapOption({
     factory,
     option,
     isShallow,
     isReadonly,
+    isSetOrMap,
     version,
     factoryName: 'getGetTrap'
   })

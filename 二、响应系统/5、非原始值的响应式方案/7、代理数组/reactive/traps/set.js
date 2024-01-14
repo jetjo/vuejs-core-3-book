@@ -1,5 +1,5 @@
-import { withRecordTrapOption } from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
-import { warn, notNaN, isValidArrayIndex } from '../../../index.js'
+import { withRecordTrapOption } from '../../../../reactive/traps/option.js'
+import { warn, notNaN, isValidArrayIndex } from '../../../../utils/index.js'
 import { TRIGGER_TYPE, TRY_PROXY_NO_RESULT, RAW } from './convention.js'
 
 /**@type {TrapFactory<'set'>} */

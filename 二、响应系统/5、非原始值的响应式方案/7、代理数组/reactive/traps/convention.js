@@ -1,1 +1,1 @@
-export * from '../../../6、浅只读与深只读/reactive/traps/convention.js'
+export * from '../../../../reactive/traps/convention/5-6.js'

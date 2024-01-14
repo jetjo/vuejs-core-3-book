@@ -106,6 +106,8 @@ type SetWsPrototype = SetWs['prototype']
 
 type SetMapPrototype = SetMap['prototype']
 
+type ProxyTrapOptionKey = keyof ProxyTrapOption
+
 interface WithRecordTrapOption {
   <F>(e: {
     factory: (option?: ProxyTrapOption) => F
@@ -115,7 +117,7 @@ interface WithRecordTrapOption {
     getDiff?: GetDiff<ProxyTrapOption>
     isShallow: boolean
     isReadonly: boolean
-    [key: keyof ProxyTrapOption]: ProxyTrapOption[key]
+    isSetOrMap?: boolean
   }): F
 }
 
@@ -186,7 +188,7 @@ interface CreateReactive {
     version?: string
   ): {
     (callFromSelfTrap?: boolean): Reactive
-    trapGetters?: TrapGetter<K>
+    trapGetters?: TrapGetter<any>
     trapOption?: ProxyTrapOption
     reactiveInfo?: ProxyTrapOption['reactiveInfo']
     getProxyHandler?(target?: object): ProxyHandler<object>

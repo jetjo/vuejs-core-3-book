@@ -1,5 +1,6 @@
-import { withRecordTrapOption } from '../../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option'
-import { PROTOTYPE_OF_SET__MAP, RAW, getRaw, getTarget } from '../convention'
+import { throwErr } from '../../../../../utils/index.js'
+import { withRecordTrapOption } from '../../../../../reactive/traps/option.js'
+import { PROTOTYPE_OF_SET__MAP, RAW, getRaw } from '../convention'
 
 /**
  * @param {ProxyTrapOption}
@@ -45,6 +46,7 @@ export default function ({
     factory,
     isShallow,
     isReadonly,
+    isSetOrMap: true,
     version,
     reactiveInfo,
     factoryName: 'getCommonHasProxy',

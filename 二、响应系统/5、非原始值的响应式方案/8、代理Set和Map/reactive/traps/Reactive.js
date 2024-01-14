@@ -1,17 +1,12 @@
-import { PROTOTYPE_OF_SET__MAP } from './convention.js'
+import { PROTOTYPE_OF_SET__MAP, getRaw } from './convention.js'
 import getReactive from '../../../7、代理数组/reactive/traps/Reactive.js'
 import { TRY_PROXY_NO_RESULT, ITERATE_KEY } from './convention.js'
-import {
-  log,
-  throwErr,
-  warn
-} from '../../../../4、响应系统的作用与实现/index.js'
+import { throwErr, warn } from '../../../../4、响应系统的作用与实现/index.js'
 import getInstrumentations from './instrumentations.js'
 import { withRecordTrapOption } from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
 
 /**@type {ReactiveCtorFactory} */
 function factory({
-  isReadonly,
   ReactiveBase,
   setMapInstrumentations,
   reactiveInfo,
@@ -81,8 +76,8 @@ function factory({
       // #endregion
     }
 
-    static getPropertyBindTo(target, key) {
-      const res = Reflect.get(target, key, target)
+    static getPropertyBindTo(target, key, receiver) {
+      const res = Reflect.get(target, key, receiver || target)
       // NOTE: 防止: TypeError: Method get Set.prototype.size called on incompatible receiver
       // 例如如下Set的子类,当调用子类实例的mySize方法时,如果不bind,就会抛出异常
 
@@ -99,33 +94,25 @@ function factory({
         }
       }
 
-      if (typeof res === 'function') return res.bind(target)
+      if (typeof res === 'function') return res.bind(getRaw(target))
       return res
     }
 
     static tryGetForSetOrMap(target, key, receiver) {
       const proto = reactiveInfo.get(target)[PROTOTYPE_OF_SET__MAP]
-      if (!Object.hasOwn(proto, key)) {
-        // if (typeof key !== 'symbol') return TRY_PROXY_NO_RESULT
-        // return target[key]
-        return this.getPropertyBindTo(target, key)
-      }
-
-      if (key === 'size') {
-        const res = Reflect.get(target, key, target)
-        if (!isReadonly && Effect.hasActive) track(target, ITERATE_KEY)
-        if (typeof res === 'function') return res.bind(target)
-        return res
+      if (!(key in proto)) {
+        return this.getPropertyBindTo(target, key, receiver)
       }
 
       const protoProxy = setMapInstrumentations.get(proto)
-      const res = protoProxy && protoProxy[key]
-      if (typeof res !== 'function') {
-        // throwErr('获取代理失败!', key)
+      if (protoProxy == null || !Object.hasOwn(protoProxy, key)) {
         warn('获取代理失败!', key)
         return this.getPropertyBindTo(target, key)
       }
-      return res
+
+      return Reflect.get(protoProxy, key, receiver)
+      // // 这样的话, protoProxy上的访问器属性无法正常工作
+      // return protoProxy[key]
 
       // #region dead code
       const preRes = Reflect.get(target, key, target)
@@ -165,6 +152,7 @@ export default function (option) {
     factory,
     isShallow,
     isReadonly,
+    isSetOrMap: option.isSetOrMap,
     version: option.version,
     factoryName: 'getReactive',
     ReactiveBase,

@@ -1,5 +1,5 @@
 import { Effect } from '../effect/index.js'
-import { effect, isValidArrayIndex, log } from '../../index.js'
+import { isValidArrayIndex, log } from '../../../utils/index.js'
 import {
   ITERATE_KEY,
   TRIGGER_TYPE,

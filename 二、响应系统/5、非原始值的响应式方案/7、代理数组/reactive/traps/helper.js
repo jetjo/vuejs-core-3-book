@@ -1,1 +1,1 @@
-export * from '../../../6、浅只读与深只读/reactive/traps/helper.js'
+export * from '../../../../reactive/traps/helper/5-6.js'

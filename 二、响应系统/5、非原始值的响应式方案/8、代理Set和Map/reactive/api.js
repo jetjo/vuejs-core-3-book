@@ -1,13 +1,13 @@
-import { trapGetters } from './traps/index.js'
+import { trapGetters as defaultTrapGetters } from './traps/index.js'
 import { isReactive, PROTOTYPE_OF_SET__MAP } from './traps/convention.js'
 import { createProxyHandler, requireReactiveTarget } from './traps/helper.js'
-import { createReactive as baseCreateReactive } from '../../7、代理数组/reactive/api.js'
-import { throwErr } from '../../../4、响应系统的作用与实现/index.js'
+import { createReactive as baseCreateReactive } from '../../../reactive/api/5-7.js'
+import { throwErr } from '../../../utils/index.js'
 import getReactive from './traps/Reactive.js'
-import { withRecordTrapOption } from '../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
+import { withRecordTrapOption } from '../../../reactive/traps/option.js'
 
 /**@param {typeof reactive} api  */
-function configApi(api) {
+function configApi(api, baseApi) {
   const getProtoOfSetOrMap = target => {
     if (Array.isArray(target)) return null
     const proto = Object.getPrototypeOf(target)
@@ -20,30 +20,56 @@ function configApi(api) {
       null
     )
   }
-  api.getProxyHandler = function (target) {
-    if (target === undefined) throwErr('target不能是undefined!')
-    const trapGetters = api.trapGetters
-    const trapOption = api.trapOption
-    const reactiveInfo = trapOption.reactiveInfo
+  const trapOption = api.trapOption
+  const reactiveInfo = trapOption.reactiveInfo
+  const trapGetters = api.trapGetters
+
+  let proxyHandler, proxyHandlerForSetAndMap
+  const res = {
+    get default() {
+      return proxyHandler
+    },
+    get setAndMap() {
+      return proxyHandlerForSetAndMap
+    },
+    get isInitialized() {
+      return (
+        proxyHandler !== undefined || proxyHandlerForSetAndMap !== undefined
+      )
+    }
+  }
+  const _getProxyHandler = () => {
+    Object.assign(trapOption, baseApi.getProxyHandler())
     const traps = []
     trapGetters.forEach(getter => traps.push(getter(trapOption)))
-    const handler = createProxyHandler(traps)
-    const proto = getProtoOfSetOrMap(target)
-    if (proto === null) return handler
-    reactiveInfo.get(target)[PROTOTYPE_OF_SET__MAP] = proto
-    handler.get = handler.get?.trapForSetAndMap
-    return handler
+    return createProxyHandler(traps)
   }
+  api.getProxyHandler = function (target) {
+    if (target == undefined) throwErr('target不能是undefined!')
+    const proto = getProtoOfSetOrMap(target)
+    reactiveInfo.get(target)[PROTOTYPE_OF_SET__MAP] = proto
+    const isSetOrMap = proto !== null
+    trapOption.isSetOrMap = isSetOrMap
+
+    if (!isSetOrMap) return proxyHandler || (proxyHandler = _getProxyHandler())
+
+    return (
+      proxyHandlerForSetAndMap ||
+      (proxyHandlerForSetAndMap = _getProxyHandler())
+    )
+  }
+  return res
 }
 
 function factory({ isShallow, isReadonly, version }) {
-  const baseApi = baseCreateReactive(isShallow, isReadonly, version)
+  const baseApi = baseCreateReactive(isShallow, isReadonly)
 
-  baseApi.trapGetters = trapGetters
+  const baseApiOption = baseApi.trapOption
+  const baseTrapGetters = baseApi.trapGetters
+  const isExpectedReactive = baseApi.isExpectedReactive
 
   const reactiveMap = new WeakMap()
   const reactiveInfo = new WeakMap()
-  const isExpectedReactive = baseApi.isExpectedReactive
 
   let getProxyHandler
   function reactiveApi(callFromSelfTrap = false) {
@@ -66,21 +92,43 @@ function factory({ isShallow, isReadonly, version }) {
   /**@type {ReactiveApiCreator} */
   const getApi = () => {
     if (api !== undefined) return api
+    baseApi()
     getProxyHandler = getApi.getProxyHandler
-    delete getApi.getProxyHandler
     return (api = reactiveApi())
   }
 
-  Object.assign(getApi, baseApi)
-
-  const trapOption = { ...getApi.trapOption, reactiveInfo, version }
-  if (!isShallow) {
-    trapOption[isReadonly ? 'readonly' : 'reactive'] = reactiveApi(true)
+  const _trapOption = {
+    ...baseApiOption,
+    reactiveInfo,
+    version,
+    readonly: !isShallow && isReadonly ? reactiveApi(true) : undefined,
+    reactive: !isShallow && !isReadonly ? reactiveApi(true) : undefined
   }
-  trapOption.Reactive = getReactive(trapOption)
-  getApi.trapOption = trapOption
+  let trapOption = { ..._trapOption, Reactive: getReactive(_trapOption) }
+  let trapGetters = [...baseTrapGetters, ...defaultTrapGetters]
 
-  configApi(getApi)
+  Object.defineProperty(getApi, 'trapGetters', {
+    get() {
+      return [...trapGetters]
+    },
+    set(value) {
+      if (proxyHandler.isInitialized) throwErr('配置异常!')
+      if (!Array.isArray(value)) throwErr('参数必须是数组!')
+      trapGetters = [...trapGetters, ...value]
+    },
+    enumerable: true
+  })
+  Object.defineProperty(getApi, 'trapOption', {
+    get() {
+      return { ...trapOption }
+    },
+    set(value) {
+      if (proxyHandler.isInitialized) throwErr('配置异常!')
+      trapOption = { ...trapOption, ...value }
+    },
+    enumerable: true
+  })
+  const proxyHandler = configApi(getApi, baseApi)
   return getApi
 }
 

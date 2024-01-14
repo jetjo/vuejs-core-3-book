@@ -6,7 +6,8 @@ import {
   isGetTrap,
   isSetTrap,
   getTrapName as _getTrapName,
-  createProxyHandler as _getProxyHandler
+  createProxyHandler as _getProxyHandler,
+  UndefinedTrapName
 } from '../../../7、代理数组/reactive/traps/helper.js'
 // import { isReadonlyReactive } from './convention.js'
 
@@ -34,6 +35,10 @@ function createProxyHandler(traps) {
   traps.forEach(trap => {
     const trapName = getTrapName(trap)
     if (!trapName) return
+    if (trap.isUndefined) {
+      delete res[trapName]
+      return
+    }
     res[trapName] = trap
   })
   return res
@@ -47,5 +52,6 @@ export {
   isGetTrap,
   isSetTrap,
   getTrapName,
-  createProxyHandler
+  createProxyHandler,
+  UndefinedTrapName
 }

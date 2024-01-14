@@ -1,15 +1,17 @@
 import getAdd from './add.js'
 import getDelete from '../Common/delete.js'
 import getHas from '../Common/has.js'
+import getSize from '../Common/size.js'
 import getClear from '../SetMap/clear.js'
-import { withRecordTrapOption } from '../../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
+import { withRecordTrapOption } from '../../../../../reactive/traps/option.js'
+import { assignOwnDescriptors } from '../../../../../utils/index.js'
 
 /**
  * @returns {SetProto}
  */
-function factory({ add, delete: del, has, clear }) {
+function factory({ add, delete: del, has, clear, size }) {
   const res = Object.create(null)
-  Object.assign(res, add, del, has, clear)
+  assignOwnDescriptors(res, add, del, has, clear, size)
   return res
 }
 
@@ -19,15 +21,18 @@ export default function (option) {
   const del = getDelete(option)
   const has = getHas(option)
   const clear = getClear(option)
+  const size = getSize(option)
   return withRecordTrapOption({
     factory,
     isShallow: option.isShallow,
     isReadonly: option.isReadonly,
+    isSetOrMap: true,
     version: option.version,
     factoryName: 'getSetPrototype',
     add,
     delete: del,
     has,
-    clear
+    clear,
+    size
   })
 }

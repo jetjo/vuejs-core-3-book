@@ -1,12 +1,6 @@
-import {
-  PROTOTYPE_OF_SET__MAP,
-  RAW,
-  TRIGGER_TYPE,
-  getRaw,
-  getTarget
-} from '../convention'
-import { warn } from '../../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/utils'
-import { withRecordTrapOption } from '../../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option'
+import { PROTOTYPE_OF_SET__MAP, RAW, TRIGGER_TYPE, getRaw } from '../convention'
+import { warn, throwErr } from '../../../../../utils/index.js'
+import { withRecordTrapOption } from '../../../../../reactive/traps/option.js'
 
 /**
  * @param {ProxyTrapOption}
@@ -56,6 +50,7 @@ export default function ({
     factory,
     isShallow,
     isReadonly,
+    isSetOrMap: true,
     version,
     factoryName: 'getSetAddProxy',
     option: isReadonly ? undefined : { __proto__: null, trigger, reactiveInfo }
