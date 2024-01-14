@@ -69,7 +69,9 @@ function getProxyHandler(traps) {
  * @callback HandleTrapGetter
  * @param {ProxyTrapGetter} trapGetter
  */
-/**@param {HandleTrapGetter} handleTrap  */
+/**
+ * @deprecated
+ * @param {HandleTrapGetter} handleTrap  */
 function doWithAllTrapGetter(trapsModule, handleTrap) {
   function* traps() {
     // const getProxyHandler = ProxyHandlerHelper.default
@@ -106,7 +108,6 @@ export {
   canReactive,
   canReadonly,
   getProxyHandler,
-  doWithAllTrapGetter,
   isHasTrap,
   isGetTrap,
   isSetTrap

@@ -1,3 +1,5 @@
-export * from './get.js'
-export * from './set.js'
-export * from './ownKeys.js'
+import { getGetTrap } from './get.js'
+import { getSetTrap } from './set.js'
+import { getOwnKeysTrap } from './ownKeys.js'
+
+export const trapGetters = [getGetTrap, getSetTrap, getOwnKeysTrap]

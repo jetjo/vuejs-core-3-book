@@ -6,25 +6,20 @@
 /* @4-9-1 [对象成员遍历、添加、删除时依赖收集与effect触发] */
 import { warn } from '../utils/index.js'
 import { Effect } from '../effect/index.js'
-import * as trapsModule from './traps/index.js'
+import { trapGetters as defaultTrapGetters } from './traps/index.js'
 import { isReactive } from './traps/convention.js'
-import {
-  requireReactiveTarget,
-  getProxyHandler,
-  doWithAllTrapGetter
-} from './traps/helper.js'
+import { requireReactiveTarget, getProxyHandler } from './traps/helper.js'
 import { trigger, track } from './track-trigger.js'
 import { getReactive } from './traps/Reactive.js'
 
-let handleThrow = false
-let handleProto = false
+// let handleThrow = false
+// let handleProto = false
 
 /**@typedef {import('./index.js').ProxyTrapGetter} ProxyTrapGetter*/
 /**@typedef {import('./index.js').ProxyTrapOption} ProxyTrapOption*/
 
 /**@type {ProxyTrapOption} */
 const _trapOption = {
-  __proto__: null,
   Effect,
   // track: function () {
   //   // NOTE: 如果不使用runWithoutProto包裹track函数,
@@ -39,13 +34,11 @@ const _trapOption = {
   //   runWithoutProto(arguments[0], () => track(...arguments))
   // },
   track,
-  trigger,
-  handleThrow,
-  handleProto
+  trigger
 }
 
 /**@type {ProxyTrapGetter[]} */
-const _trapGetters = []
+const _trapGetters = [...defaultTrapGetters]
 
 // /**@param {ProxyTrapGetter} trapGetter */
 // _getApi.addTrapGetter = function (trapGetter) {
@@ -60,32 +53,27 @@ function _getProxyHandler(trapOption) {
     ..._trapOption
   }
   const traps = []
-  doWithAllTrapGetter(trapsModule, getter => traps.push(getter(trapOption)))
   _trapGetters.forEach(getter => traps.push(getter(trapOption)))
   return { proxyHandler: getProxyHandler(traps), trapOption }
 }
 
-function _getApi(isShallow = false) {
-  // provideMethodToModule(reactive, reactiveReceivor)
-  const reactive = __getApi(true)
-  const Reactive = getReactive({ reactive, isShallow, handleProto })
-  const trapOptions = {
-    __proto__: null,
+function createReactive(isShallow = false) {
+  const reactive = _getApi(true)
+  const Reactive = getReactive({ isShallow })
+
+  const { proxyHandler, trapOption } = _getProxyHandler({
     reactive,
     Reactive,
     isShallow
-  }
-
-  const { proxyHandler: handler, trapOption: trapOpt } =
-    _getProxyHandler(trapOptions)
+  })
 
   /**@param {ProxyTrapGetter} trapGetter */
-  __getApi.addTrapBeforeCall = function (trapGetter) {
-    const trap = trapGetter({ ...trapOpt })
+  _getApi.addTrapBeforeCall = function (trapGetter) {
+    const trap = trapGetter({ ...trapOption })
     const _handler = getProxyHandler([trap])
     for (const key in _handler) {
       if (Object.hasOwnProperty.call(_handler, key)) {
-        handler[key] = _handler[key]
+        proxyHandler[key] = _handler[key]
       }
     }
   }
@@ -99,7 +87,7 @@ function _getApi(isShallow = false) {
   所以需要在`_getApi`内且`__getApi`外声明  */
   const reactiveMap = new WeakMap()
 
-  function __getApi(internalCall = false) {
+  function _getApi(internalCall = false) {
     return function reactive(target) {
       if (!internalCall) {
         requireReactiveTarget(target)
@@ -109,13 +97,13 @@ function _getApi(isShallow = false) {
         }
       }
       if (reactiveMap.has(target)) return reactiveMap.get(target)
-      const py = new Proxy(target, handler)
+      const py = new Proxy(target, proxyHandler)
       reactiveMap.set(target, py)
       return py
     }
   }
 
-  return __getApi
+  return _getApi
 }
 
-export { _getApi as getApi, track, trigger }
+export { createReactive }

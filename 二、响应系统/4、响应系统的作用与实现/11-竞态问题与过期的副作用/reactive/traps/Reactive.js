@@ -8,39 +8,12 @@ import {
 
 /**getReactive */
 function getReactive(options = {}) {
-  const { reactive, isShallow, handleProto } = options
-  class Reactive {
-    constructor() {
-      return reactive
-    }
-    /* readonly */
-    static get [SHALLOW_REACTIVE_FLAG]() {
-      return isShallow
-    }
-
-    static tryGetProto(target) {
-      const proto = Reflect.getPrototypeOf(target)
-      const isExt = Reflect.isExtensible(target)
-      if (!isExt) return proto
-      if (proto !== null) return reactive(proto)
-      return null
-    }
-
-    static needProto(target, key) {
-      if ('__proto__' === key) error('target.__proto__已经弃用!')
-      // 不妥, 考虑ownKeys
-      // const desc = Reflect.getOwnPropertyDescriptor(target, key)
-      // if (!desc && handleProto) {
-      //   return this.tryGetProto(target)
-      // }
-    }
-
+  const { isShallow } = options
+  return class Reactive {
     static tryGet(target, key, receiver) {
       if (key === RAW) return target
       if (key === REACTIVE_FLAG) return true
       if (key === SHALLOW_REACTIVE_FLAG) return isShallow
-      const proto = this.needProto(target, key)
-      if (proto) return Reflect.get(proto, key, receiver)
       return TRY_PROXY_NO_RESULT
     }
 
@@ -51,12 +24,8 @@ function getReactive(options = {}) {
         SHALLOW_REACTIVE_FLAG === key
       ) {
         warn(`成员${key}是只读的!`)
-        return false
+        return true
       }
-      const proto = this.needProto(target, key)
-      // RangeError: Maximum call stack size exceeded
-      // const suc = Reflect.set(reactive(target), key, newVal, receiver)
-      if (proto) return Reflect.set(proto, key, newVal, receiver)
       return TRY_PROXY_NO_RESULT
     }
 
@@ -78,18 +47,18 @@ function getReactive(options = {}) {
     }
   }
 
-  //NOTE:  TypeError: Cannot assign to read only property 'prototype' of function
-  // 类需要实例化,实例化需要调用Reactive.prototype.constructor???
-  // Reactive.prototype = null
-  Object.setPrototypeOf(Reactive, null)
+  // //NOTE:  TypeError: Cannot assign to read only property 'prototype' of function
+  // // 类需要实例化,实例化需要调用Reactive.prototype.constructor???
+  // // Reactive.prototype = null
+  // Object.setPrototypeOf(Reactive, null)
 
-  // console.log(Reactive)
-  // TypeError: Class constructor Reactive cannot be invoked without 'new'
-  // console.log(Reactive())
-  // console.log(new Reactive()) //OK
+  // // console.log(Reactive)
+  // // TypeError: Class constructor Reactive cannot be invoked without 'new'
+  // // console.log(Reactive())
+  // // console.log(new Reactive()) //OK
 
-  // return Object.freeze(Reactive)
-  return Reactive
+  // // return Object.freeze(Reactive)
+  // return Reactive
 }
 
 /**@typedef {ReturnType<getReactive>} ReactiveCtor */
