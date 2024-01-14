@@ -67,20 +67,6 @@ function createReactive(isShallow = false) {
     isShallow
   })
 
-  /**@param {ProxyTrapGetter} trapGetter */
-  _getApi.addTrapBeforeCall = function (trapGetter) {
-    const trap = trapGetter({ ...trapOption })
-    const _handler = getProxyHandler([trap])
-    for (const key in _handler) {
-      if (Object.hasOwnProperty.call(_handler, key)) {
-        proxyHandler[key] = _handler[key]
-      }
-    }
-  }
-  // __getApi.getProxyHandler = function () {
-  //   return { ...handler }
-  // }
-
   /* NOTE: 
   `shallowReactive`和`reactive`两个api用的不是同一个集合,
   但是内部和外部api是同一个集合,
@@ -102,6 +88,20 @@ function createReactive(isShallow = false) {
       return py
     }
   }
+
+  /**@param {ProxyTrapGetter} trapGetter */
+  _getApi.addTrapBeforeCall = function (trapGetter) {
+    const trap = trapGetter({ ...trapOption })
+    const _handler = getProxyHandler([trap])
+    for (const key in _handler) {
+      if (Object.hasOwnProperty.call(_handler, key)) {
+        proxyHandler[key] = _handler[key]
+      }
+    }
+  }
+  // __getApi.getProxyHandler = function () {
+  //   return { ...handler }
+  // }
 
   return _getApi
 }

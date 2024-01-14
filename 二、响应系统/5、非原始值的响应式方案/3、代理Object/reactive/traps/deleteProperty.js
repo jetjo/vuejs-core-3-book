@@ -16,4 +16,4 @@ function getDeleteTrap(option = {}) {
   return deleteProperty
 }
 
-export { getDeleteTrap }
+export default getDeleteTrap

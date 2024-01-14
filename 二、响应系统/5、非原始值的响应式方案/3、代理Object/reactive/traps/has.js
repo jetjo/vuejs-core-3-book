@@ -11,4 +11,4 @@ function getHasTrap(option = {}) {
   return has
 }
 
-export { getHasTrap }
+export default getHasTrap

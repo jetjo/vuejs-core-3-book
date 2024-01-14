@@ -1,13 +1,10 @@
-import { doWithAllTrapGetter, getApi } from '../../index.js'
-import * as ProxyHandlerHelper from './traps/index.js'
-export { track, trigger } from '../../index.js'
+import { createReactive as createReactiveBase } from '../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/api.js'
+import { trapGetters } from './traps/index.js'
 
-const api = getApi()
-const shallowApi = getApi(true)
+function createReactive(isShallow = false) {
+  const baseGetApi = createReactiveBase(isShallow)
+  trapGetters.forEach(getter => baseGetApi.addTrapBeforeCall(getter))
+  return baseGetApi
+}
 
-doWithAllTrapGetter(ProxyHandlerHelper, getter => {
-  api.addTrapBeforeCall(getter)
-  shallowApi.addTrapBeforeCall(getter)
-})
-
-export { api, shallowApi }
+export { createReactive }
