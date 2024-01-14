@@ -1,10 +1,10 @@
-export * from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/convention.js'
+export * from '../../../../reactive/traps/convention/4-11.js'
 import {
   isReactive,
   isShallowReactive,
   isReadonlyReactive,
   READONLY_REACTIVE_FLAG
-} from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用//reactive/traps/convention.js'
+} from '../../../../reactive/traps/convention/4-11.js'
 
 // const READONLY_REACTIVE_FLAG = Symbol('readonly_flag')
 

@@ -5,17 +5,14 @@
 /* @4-9 [深度响应] */
 /* @4-9-1 [对象成员遍历、添加、删除时依赖收集与effect触发] */
 // import { api, shallowApi } from '../../3、代理Object/reactive/api.js'
-import { Effect } from '../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/effect/index.js'
-import {
-  trigger,
-  track
-} from '../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/track-trigger.js'
-import { warn } from '../../index.js'
+import { Effect } from '../../../effect/index/4-11..js'
+import { trigger, track } from '../../../reactive/track-trigger/4-11.js'
+import { throwErr, warn } from '../../../utils/index.js'
 import { requireReactiveTarget, createProxyHandler } from './traps/helper.js'
 import { trapGetters as defaultTrapGetters } from './traps/index.js'
 import { isReactive, reactiveFlagChecker } from './traps/convention.js'
 import getReactive from './traps/Reactive.js'
-import { withRecordTrapOption } from '../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
+import { withRecordTrapOption } from '../../../reactive/traps/option.js'
 
 /**@typedef {import('./index.js').ProxyTrapGetter} ProxyTrapGetter*/
 /**@typedef {import('./index.js').ProxyTrapOption} ProxyTrapOption*/
@@ -51,6 +48,7 @@ function factory({ version, isShallow, isReadonly }) {
   }
 
   let getProxyHandler
+  let proxyHandler
   function reactiveApi(callFromSelfTrap = false) {
     return function (target) {
       if (!callFromSelfTrap) {
@@ -81,8 +79,11 @@ function factory({ version, isShallow, isReadonly }) {
     }
   }
 
-  trapOption[isReadonly ? 'readonly' : 'reactive'] = reactiveApi(true)
-  trapOption.Reactive = getReactive(trapOption)
+  Object.assign(trapOption, {
+    reactive: !isShallow && !isReadonly ? reactiveApi(true) : undefined,
+    readonly: !isShallow && isReadonly ? reactiveApi(true) : undefined,
+    Reactive: getReactive(trapOption)
+  })
 
   /**@type {Reactive} */
   let api
@@ -90,14 +91,18 @@ function factory({ version, isShallow, isReadonly }) {
   const getApi = () => {
     if (api !== undefined) return api
     getProxyHandler = getApi.getProxyHandler
-    delete getApi.getProxyHandler
+    // delete getApi.getProxyHandler
     return (api = reactiveApi())
   }
 
   getApi.getProxyHandler = () => {
+    if (api === undefined) throwErr('配置异常!')
+    if (getProxyHandler === undefined) throwErr('配置异常!')
+    // if (getApi.getProxyHandler !== undefined) throwErr('配置异常!')
+    if (proxyHandler !== undefined) return proxyHandler
     const traps = []
     trapGetters.forEach(getter => traps.push(getter(trapOption)))
-    return createProxyHandler(traps)
+    return (proxyHandler = createProxyHandler(traps))
   }
 
   Object.defineProperty(getApi, 'trapGetters', {
@@ -105,6 +110,7 @@ function factory({ version, isShallow, isReadonly }) {
       return [...trapGetters]
     },
     set(value) {
+      if (proxyHandler !== undefined) throwErr('配置异常!')
       if (!Array.isArray(value)) throwErr('参数必须是数组!')
       trapGetters = [...trapGetters, ...value]
     },
@@ -115,6 +121,7 @@ function factory({ version, isShallow, isReadonly }) {
       return { ...trapOption }
     },
     set(value) {
+      if (proxyHandler !== undefined) throwErr('配置异常!')
       trapOption = { ...trapOption, ...value }
     },
     enumerable: true

@@ -1,6 +1,6 @@
-import { withRecordTrapOption } from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
-import { warn, notNaN } from '../../../index.js'
-import { RAW, TRIGGER_TYPE, TRY_PROXY_NO_RESULT } from './convention.js'
+import { withRecordTrapOption } from '../../../../reactive/traps/option.js'
+import { warn, notNaN } from '../../../../utils/index.js'
+import { RAW, TRIGGER_TYPE, TRY_PROXY_NO_RESULT, getRaw } from './convention.js'
 
 /**@type {TrapFactory<'set'>} */
 function factory({ isReadonly, trigger, Reactive, version }) {
@@ -15,9 +15,12 @@ function factory({ isReadonly, trigger, Reactive, version }) {
   }
 
   return function set(target, key, newVal, receiver) {
+    // // NOTE: 防止污染原始数据,但vue只对Set、Map、WeakSet、WeakMap实施了此策略
+    // newVal = getRaw(newVal)
     const trySuc = Reactive.trySet(target, key, newVal, receiver)
     if (trySuc !== TRY_PROXY_NO_RESULT) return trySuc
     const oldVal = target[key]
+    const type = getType(target, key)
     const suc = Reflect.set(target, key, newVal, receiver)
     // if (suc) {
     // #region NOTE: 根据ES语言规范对[[Set]]方法的执行过程描述,
@@ -43,7 +46,7 @@ function factory({ isReadonly, trigger, Reactive, version }) {
       (notNaN(oldVal) || notNaN(valAfterSet)) &&
       receiver[RAW] === target
     ) {
-      trigger(target, key, getType(target, key))
+      trigger(target, key, type)
       // return true
     } // }
     return suc

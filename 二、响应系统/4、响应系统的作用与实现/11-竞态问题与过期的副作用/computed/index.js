@@ -1,5 +1,5 @@
 import { effect, Effect } from '../effect/index.js'
-import { track, trigger } from '../reactive/api.js'
+import { track, trigger } from '../reactive/track-trigger.js'
 
 /**
  * - 用于对一个依赖于响应式数据的函数(getter,一般是纯函数)的结果进行缓存,

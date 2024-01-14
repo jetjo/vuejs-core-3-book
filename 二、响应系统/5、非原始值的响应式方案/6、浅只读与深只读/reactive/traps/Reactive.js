@@ -1,4 +1,4 @@
-import { warn } from '../../../index.js'
+import { warn } from '../../../../utils/index.js'
 import {
   RAW,
   REACTIVE_FLAG,
@@ -6,7 +6,7 @@ import {
   READONLY_REACTIVE_FLAG,
   TRY_PROXY_NO_RESULT
 } from './convention.js'
-import { withRecordTrapOption } from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
+import { withRecordTrapOption } from '../../../../reactive/traps/option.js'
 
 /**@type {ReactiveCtorFactory} */
 function factory({ isShallow, isReadonly, version }) {

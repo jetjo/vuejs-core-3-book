@@ -1,10 +1,13 @@
-import { withRecordTrapOption } from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option.js'
+import { withRecordTrapOption } from '../../../../reactive/traps/option.js'
 import { ITERATE_KEY } from './convention.js'
+import { UndefinedTrapName } from './helper.js'
 
 /**@type {TrapFactory<'ownKeys'>} */
 function factory({ isReadonly, Effect, track, version }) {
+  // vue也是如此, readonly时不需要追踪,则其行为与原生一致,不需要代理
+  if (isReadonly) return UndefinedTrapName('ownKeys')
   return function ownKeys(target) {
-    if (!isReadonly && Effect.hasActive) track(target, ITERATE_KEY, ownKeys)
+    if (Effect.hasActive) track(target, ITERATE_KEY, ownKeys)
     return Reflect.ownKeys(target)
   }
 }
