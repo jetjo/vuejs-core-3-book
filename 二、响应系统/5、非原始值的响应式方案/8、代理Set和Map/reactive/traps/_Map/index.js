@@ -4,15 +4,16 @@ import getDelete from '../Common/delete.js'
 import getHas from '../Common/has.js'
 import getSize from '../SetMap/size.js'
 import getClear from '../SetMap/clear.js'
+import getForEach from '../SetMap/forEach.js'
 import { withRecordTrapOption } from '../../../../../reactive/traps/option.js'
 import { assignOwnDescriptors } from '../../../../../utils/index.js'
 
 /**
  * @returns {MapProto}
  */
-function factory({ get, set, delete: del, has, clear, size }) {
+function factory({ get, set, delete: del, has, clear, size, forEach }) {
   const res = Object.create(null)
-  assignOwnDescriptors(res, get, set, del, has, clear, size)
+  assignOwnDescriptors(res, get, set, del, has, clear, size, forEach)
   return res
 }
 
@@ -24,6 +25,7 @@ export default function (option) {
   const has = getHas(option)
   const clear = getClear(option)
   const size = getSize(option)
+  const forEach = getForEach(option)
   return withRecordTrapOption({
     factory,
     isShallow: option.isShallow,
@@ -36,6 +38,7 @@ export default function (option) {
     delete: del,
     has,
     clear,
-    size
+    size,
+    forEach
   })
 }
