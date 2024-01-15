@@ -1,5 +1,5 @@
 import { withRecordTrapOption } from '../../../../../reactive/traps/option.js'
-import { ITERATE_KEY, RAW, getRaw } from '../convention'
+import { ITERATE_KEY, RAW, getRaw } from '../convention.js'
 
 /**
  * @param {ProxyTrapOption}

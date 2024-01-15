@@ -1,5 +1,6 @@
 import { withRecordTrapOption } from '../../../../reactive/traps/option.js'
 import { warn, notNaN, isValidArrayIndex } from '../../../../utils/index.js'
+import { canTrigger } from '../trigger-helper.js'
 import { TRIGGER_TYPE, TRY_PROXY_NO_RESULT, RAW } from './convention.js'
 
 /**@type {TrapFactory<'set'>} */
@@ -109,19 +110,7 @@ function factory({ isReadonly, trigger, Reactive }) {
     getTypeGetter.restore(s)
     // #endregion
     const valAfterSet = target[key]
-
-    const canTrigger = () => {
-      return (
-        // 考虑到有代理的情况下赋值结果suc并不可靠. 比如target是readonly时
-        // oldVal !== newVal &&
-        // (notNaN(oldVal) || notNaN(newVal)) &&
-        oldVal !== valAfterSet &&
-        (notNaN(oldVal) || notNaN(valAfterSet)) &&
-        receiver[RAW] === target
-      )
-    }
-
-    if (canTrigger()) {
+    if (canTrigger(oldVal, valAfterSet, target, receiver)) {
       // #region NOTE: 根据ES语言规范对[[Set]]方法的执行过程描述,
       // 当执行target[key]=xxx的赋值语句时,如果target自身没有key属性,
       // 那么会执行[[getPrototypeOf]]获取target的原型parent,

@@ -91,6 +91,16 @@ type MapProto = MapConstructor['prototype']
 type WmProto = WeakMapConstructor['prototype']
 
 type SetMap = SetConstructor | MapConstructor
+type SetMapPrototype = SetMap['prototype']
+
+type MapWm = MapConstructor | WeakMapConstructor
+type MapWmPrototype = MapWm['prototype']
+
+type SetWs = SetConstructor | WeakSetConstructor
+type SetWsPrototype = SetWs['prototype']
+
+type WeakSetMap = WeakSetConstructor | WeakMapConstructor
+type WeakSetMapPrototype = WeakSetMap['prototype']
 
 type SetMapWsWm =
   | SetConstructor
@@ -99,12 +109,6 @@ type SetMapWsWm =
   | WeakMapConstructor
 
 type SetMapWsWmPrototype = SetMapWsWm['prototype']
-
-type SetWs = SetConstructor | WeakSetConstructor
-
-type SetWsPrototype = SetWs['prototype']
-
-type SetMapPrototype = SetMap['prototype']
 
 type ProxyTrapOptionKey = keyof ProxyTrapOption
 

@@ -1,5 +1,6 @@
-import { withRecordTrapOption } from '../../../../4、响应系统的作用与实现/11-竞态问题与过期的副作用/reactive/traps/option'
+import { withRecordTrapOption } from '../../../../reactive/traps/option.js'
 import getSet from './_Set/index.js'
+import getMap from './_Map/index.js'
 
 function factory({ set, map, weakSet, weakMap }) {
   const res = new WeakMap()
@@ -13,9 +14,11 @@ function factory({ set, map, weakSet, weakMap }) {
 /**@param {ProxyTrapOption} option */
 export default function (option) {
   const set = getSet(option)
+  const map = getMap(option)
   return withRecordTrapOption({
     factory,
     set,
+    map,
     isShallow: option.isShallow,
     isReadonly: option.isReadonly,
     version: option.version,
