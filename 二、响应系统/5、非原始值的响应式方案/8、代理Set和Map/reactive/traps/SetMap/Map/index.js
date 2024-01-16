@@ -6,6 +6,7 @@ import getSize from '../size.js'
 import getClear from '../clear.js'
 import getForEach from '../forEach.js'
 import getIterator from '../forof/index.js'
+import getValues from '../forof/values.js'
 import { withRecordTrapOption } from '../../../../../../reactive/_traps/option.js'
 import { assignOwnDescriptors } from '../../../../../../utils/index.js'
 

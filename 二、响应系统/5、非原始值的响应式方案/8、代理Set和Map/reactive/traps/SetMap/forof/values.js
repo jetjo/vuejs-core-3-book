@@ -31,7 +31,10 @@ function factory({
         const proto = reactiveInfo.get(target)[PROTOTYPE]
         if (proto == null) throwErr('获取原型失败!')
         const iterator = target.values() // proto.values.call(targetRaw)
-        const KEY = proto instanceof Map ? ITERATE_KEY_VAL : ITERATE_KEY
+        const KEY =
+          proto === Map.prototype || proto instanceof Map
+            ? ITERATE_KEY_VAL
+            : ITERATE_KEY
         if (Effect.hasActive) track(targetRaw, KEY)
         const wrap = o => (canReactive(o) ? reactive(o) : o)
         return {
