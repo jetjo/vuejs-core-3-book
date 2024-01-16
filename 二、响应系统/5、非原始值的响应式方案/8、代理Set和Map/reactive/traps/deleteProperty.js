@@ -1,5 +1,5 @@
 import { withRecordTrapOption } from '../../../../reactive/_traps/option.js'
-import { UndefinedTrapName } from '../../../6、浅只读与深只读/reactive/traps/helper.js'
+import { UndefinedTrapName } from '../../../../reactive/_traps/helper/5-6.js'
 
 /**@type {TrapFactory<'defineProperty'>} */
 function factory({ isSetOrMap, deleteProperty }) {
