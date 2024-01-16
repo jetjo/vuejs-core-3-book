@@ -1,5 +1,0 @@
-export * from './utils/index.js'
-export * from './effect/index.js'
-export * from './reactive/index.js'
-export * from './computed/index.js'
-export * from './watch/index.js'

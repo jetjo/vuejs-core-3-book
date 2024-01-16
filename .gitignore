@@ -4,3 +4,6 @@ dist
 # !*.sh.log
 
 tmp/
+
+_*/
+.DS_Store
