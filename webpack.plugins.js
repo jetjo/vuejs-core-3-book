@@ -4,26 +4,26 @@
 
 // const CopyPlugin = require("copy-webpack-plugin");
 
-const JsConfigWebpackPlugin = require("js-config-webpack-plugin");
+const JsConfigWebpackPlugin = require('js-config-webpack-plugin')
 
-const htmlPlugin = require("html-webpack-plugin");
-const { title, publicPath, IS_WEBPACK_DEV_SERVER } = require("./webpack.env");
+const htmlPlugin = require('html-webpack-plugin')
+const { title, publicPath, IS_WEBPACK_DEV_SERVER } = require('./webpack.env')
 
-const htmlShareConf = {
+const hpBaseOption = {
   template: `index.ejs`,
-  filename: `index.html`,
+  filename: `index.html`
   // filename: "../[name].html",
   // base: { href: "/learn.html" },
   // inject: 'body'
   // scriptLoading: 'blocking',//如果是默认值‘defer’将导致document.write语句失效！！！
-};
+}
 
 const plugins = [
   new htmlPlugin({
-    ...htmlShareConf,
+    ...hpBaseOption,
     title,
-    filename: `${title}.html`,
-  }),
+    filename: `${title}.html`
+  })
   // new JsConfigWebpackPlugin(),
   // new CopyPlugin({
   //     patterns: [
@@ -35,28 +35,29 @@ const plugins = [
   //   __VUE_PROD_DEVTOOLS__: JSON.stringify(false),
   //   BASE_URL: JSON.stringify("./"),
   // }),
-];
+]
 
-if (IS_WEBPACK_DEV_SERVER) {
+if (IS_WEBPACK_DEV_SERVER && title !== 'index') {
   plugins.push(
     new htmlPlugin({
-      ...htmlShareConf,
+      ...hpBaseOption,
       meta: {
         refresh: {
-          "http-equiv": "refresh",
-          content: `3;url=${publicPath}${title}.html`,
-        },
-      },
+          'http-equiv': 'refresh',
+          content: `3;url=${publicPath}${title}.html`
+        }
+      }
     })
-  );
-} else {
+  )
+}
+if (!IS_WEBPACK_DEV_SERVER && title !== 'learn') {
   plugins.push(
     new htmlPlugin({
-      ...htmlShareConf,
+      ...hpBaseOption,
       title,
-      filename: "../learn.html",
+      filename: '../learn.html'
     })
-  );
+  )
 }
 
-module.exports.plugins = plugins;
+module.exports.plugins = plugins

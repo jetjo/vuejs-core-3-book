@@ -7,3 +7,5 @@ tmp/
 
 _*/
 .DS_Store
+bak/
+*.bak
