@@ -1,4 +1,4 @@
-import { withRecordTrapOption } from '../../../../../reactive/_traps/option.js'
+import { withRecordTrapOption } from './barrel-option.js'
 import { ITERATE_KEY, RAW, getRaw } from '../convention.js'
 
 /**

@@ -8,8 +8,8 @@ import getForEach from '../forEach.js'
 import getIterator from '../forof/index.js'
 import getValues from '../forof/values.js'
 import getKeys from '../forof/keys.js'
-import { withRecordTrapOption } from '../../../../../../reactive/_traps/option.js'
-import { assignOwnDescriptors } from '../../../../../../utils/index.js'
+import { withRecordTrapOption } from '../barrel-option.js'
+import { assignOwnDescriptors } from '../barrel-utils.js'
 
 /**
  * @returns {MapProto}

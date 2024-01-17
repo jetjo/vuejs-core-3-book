@@ -1,5 +1,5 @@
-import { withRecordTrapOption } from '../../../../../reactive/_traps/option.js'
-import { throwErr } from '../../../../../utils/index.js'
+import { withRecordTrapOption } from './barrel-option.js'
+import { throwErr } from './barrel-utils.js'
 import {
   ITERATE_KEY,
   ITERATE_KEY_VAL,

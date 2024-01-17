@@ -1,7 +1,6 @@
-import { withRecordTrapOption } from '../../../../../../reactive/_traps/option.js'
-import { throwErr } from '../../../../../../utils/index.js'
-import { ITERATE_KEY, PROTOTYPE, RAW, getRaw } from '../../convention.js'
-import { canReactive } from '../../helper.js'
+import { withRecordTrapOption } from '../barrel-option.js'
+import { ITERATE_KEY, PROTOTYPE, RAW, getRaw } from '../barrel-convention.js'
+import { canReactive } from '../barrel-trap-helper.js'
 
 /**
  * @param {ProxyTrapOption}

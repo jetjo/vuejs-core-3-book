@@ -1,4 +1,4 @@
-import { withRecordTrapOption } from '../../../../../../reactive/_traps/option'
+import { withRecordTrapOption } from '../barrel-option.js'
 
 function factory({ isShallow, isReadonly }) {
   const res = Object.create(null)

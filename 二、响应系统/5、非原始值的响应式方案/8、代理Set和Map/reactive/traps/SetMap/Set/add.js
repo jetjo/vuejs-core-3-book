@@ -1,6 +1,6 @@
-import { PROTOTYPE, RAW, TRIGGER_TYPE, getRaw } from '../../convention.js'
-import { warn, throwErr } from '../../../../../../utils/index.js'
-import { withRecordTrapOption } from '../../../../../../reactive/_traps/option.js'
+import { PROTOTYPE, RAW, TRIGGER_TYPE, getRaw } from '../barrel-convention.js'
+import { warn, throwErr } from '../barrel-utils.js'
+import { withRecordTrapOption } from '../barrel-option.js'
 
 /**
  * @param {ProxyTrapOption}
