@@ -10,3 +10,4 @@ _*/
 bak/
 *.bak
 __*.*
+tests/unit/coverage/
