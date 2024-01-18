@@ -1,3 +1,4 @@
+/// <reference path="../../../../reactive.d.ts" />
 import { trapGetters as defaultTrapGetters } from './traps/index.js'
 import { isReactive, PROTOTYPE } from './traps/convention.js'
 import { createProxyHandler, requireReactiveTarget } from './traps/helper.js'
@@ -6,7 +7,10 @@ import { throwErr } from '../../../utils/index.js'
 import getReactive from './traps/Reactive.js'
 import { withRecordTrapOption } from '../../../reactive/_traps/option.js'
 
-/**@param {typeof reactive} api  */
+/**
+ * @param {ReactiveApiCreator} api
+ * @param {ReactiveApiCreator} baseApi
+ * */
 function configApi(api, baseApi) {
   const getProtoOfSetOrMap = target => {
     if (Array.isArray(target)) return null
