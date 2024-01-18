@@ -1,4 +1,4 @@
-export * from '../../reactive/_traps/convention/5-8.js'
+export * from '@reactive/_traps/convention/5-8.js'
 
 const REF_FLAG = '__v_isRef'
 

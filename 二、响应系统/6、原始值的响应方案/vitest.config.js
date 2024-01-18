@@ -2,8 +2,7 @@
 /// <reference types="vitest/config" />
 import { fileURLToPath, URL } from 'node:url'
 
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { defineProject } from 'vitest/config'
 
 /** @type {import('vitest').UserWorkspaceConfig} */
 const vitestConfig = {
@@ -34,18 +33,19 @@ const vitestConfig = {
   }
 }
 
-// https://vitejs.dev/config/
-export default defineConfig({
-  define: {
-    // 生产环境下有助于打包器清除无效代码
-    'import.meta.vitest': 'undefined'
-  },
-  plugins: [vue()],
+const alias = {
+  '@reactive': fileURLToPath(new URL('../reactive', import.meta.url)),
+  '@computed': fileURLToPath(new URL('../computed', import.meta.url)),
+  '@effect': fileURLToPath(new URL('../effect', import.meta.url)),
+  '@utils': fileURLToPath(new URL('../utils', import.meta.url)),
+  '@watch': fileURLToPath(new URL('../watch', import.meta.url))
+}
+
+console.warn(alias)
+
+export default defineProject({
   resolve: {
-    alias: {
-      '@src': fileURLToPath(new URL('./src', import.meta.url)),
-      vue: 'vue/dist/vue.esm-bundler.js'
-    }
+    alias
   },
   ...vitestConfig
 })
