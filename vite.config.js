@@ -20,7 +20,7 @@ const vitestConfig = {
     // 包括inline test code block
     includeSource: ['src/**/*.{js,ts}'],
     coverage: {
-      enabled: true,
+      enabled: false,
       // provider: "istanbul",
       provider: 'v8',
       // default报告器用于在终端中实时查看测试结果

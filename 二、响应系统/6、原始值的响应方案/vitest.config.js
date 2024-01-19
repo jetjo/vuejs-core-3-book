@@ -17,15 +17,11 @@ const vitestConfig = {
     // 	html: './test/__vitest__/index.html',
     // },
     // 包括inline test code block
-    includeSource: ['src/**/*.{js,ts}'],
-    coverage: {
-      enabled: true,
-      // provider: "istanbul",
-      provider: 'v8',
-      // default报告器用于在终端中实时查看测试结果
-      reporter: ['text', 'json', 'html', 'clover'],
-      reportsDirectory: './tests/unit/coverage'
-    },
+    // includeSource: ['src/**/*.{js,ts}'],
+    // //NOTE: 无效
+    // coverage: {
+    //   enable: false
+    // },
     snapshotFormat: {
       // https://vitest.dev/guide/snapshot.html#_2-printbasicprototype-is-default-to-false
       printBasicPrototype: false
@@ -33,12 +29,14 @@ const vitestConfig = {
   }
 }
 
+const toPath = url => fileURLToPath(new URL(url, import.meta.url))
+
 const alias = {
-  '@reactive': fileURLToPath(new URL('../reactive', import.meta.url)),
-  '@computed': fileURLToPath(new URL('../computed', import.meta.url)),
-  '@effect': fileURLToPath(new URL('../effect', import.meta.url)),
-  '@utils': fileURLToPath(new URL('../utils', import.meta.url)),
-  '@watch': fileURLToPath(new URL('../watch', import.meta.url))
+  '@reactive': toPath('../reactive'),
+  '@computed': toPath('../computed'),
+  '@effect': toPath('../effect'),
+  '@utils': toPath('../utils'),
+  '@watch': toPath('../watch')
 }
 
 console.warn(alias)
