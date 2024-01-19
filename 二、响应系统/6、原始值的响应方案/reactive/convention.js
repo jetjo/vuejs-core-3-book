@@ -72,4 +72,21 @@ function toRefs(o) {
   return res
 }
 
-export { withRefFlag, isRef, toRef, toRefs, REF__VALUE_KEY }
+function proxyRefs(target) {
+  return new Proxy(target, {
+    get(target, key, receiver) {
+      const res = Reflect.get(target, key, receiver)
+      return isRef(res) ? res.value : res
+    },
+    set(target, key, value, receiver) {
+      const res = target[key]
+      if (isRef(res)) {
+        res.value = value
+        return true
+      }
+      return Reflect.set(target, key, value, receiver)
+    }
+  })
+}
+
+export { withRefFlag, isRef, toRef, toRefs, proxyRefs, REF__VALUE_KEY }
