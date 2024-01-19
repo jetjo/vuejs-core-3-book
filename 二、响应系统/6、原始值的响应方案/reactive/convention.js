@@ -17,4 +17,25 @@ function isRef(ref) {
   return ref && ref[REF_FLAG] && Object.keys(ref).toString() === 'value'
 }
 
-export { withRefFlag, isRef }
+function toRef(o, key) {
+  const wrapper = {
+    get value() {
+      return o[key]
+    },
+    set value(v) {
+      o[key] = v
+    }
+  }
+  return withRefFlag(wrapper)
+}
+
+function toRefs(o) {
+  const res = {}
+  for (const key in o) {
+    // if (Object.hasOwnProperty.call(o, key))
+    res[key] = toRef(o, key)
+  }
+  return res
+}
+
+export { withRefFlag, isRef, toRef, toRefs }
