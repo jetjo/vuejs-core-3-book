@@ -1,7 +1,8 @@
-import { withRecordTrapOption } from '../../../../reactive/_traps/option.js'
-import { warn, notNaN, isValidArrayIndex } from '../../../../utils/index.js'
+import { isRef } from '@reactive/ref/convention.js'
+import { withRecordTrapOption } from '@reactive/_traps/option.js'
+import { warn, notNaN, isValidArrayIndex } from '@utils/index.js'
 import { canTrigger } from '../trigger-helper.js'
-import { TRIGGER_TYPE, TRY_PROXY_NO_RESULT, RAW } from './convention.js'
+import { TRIGGER_TYPE, TRY_PROXY_NO_RESULT, RAW, getRaw } from './convention.js'
 
 /**@type {TrapFactory<'set'>} */
 function factory({ isReadonly, trigger, Reactive }) {
@@ -103,6 +104,10 @@ function factory({ isReadonly, trigger, Reactive }) {
     // 此方法被调用的前提是receiver是reactive或shallowReactive的返回值
     // 所以target一定是raw,非响应的
     const oldVal = target[key]
+    if (isRef(getRaw(oldVal))) {
+      oldVal.value = newVal
+      return true
+    }
     const suc = Reflect.set(target, key, newVal, receiver)
     // #region 恢复现场
     receiverRaw = receiver[RAW]

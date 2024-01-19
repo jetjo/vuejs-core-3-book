@@ -1,6 +1,7 @@
-import { withRecordTrapOption } from '../../../../reactive/_traps/option.js'
-import { isValidArrayIndex } from '../../../../utils/index.js'
-import { TRY_PROXY_NO_RESULT } from './convention.js'
+import { isRef } from '@reactive/ref/convention.js'
+import { withRecordTrapOption } from '@reactive/_traps/option.js'
+import { isValidArrayIndex } from '@utils/index.js'
+import { TRY_PROXY_NO_RESULT, getRaw } from './convention.js'
 import { canReactive, canReadonly } from './helper.js'
 
 /**@type {TrapFactory<'get'>} */
@@ -21,7 +22,8 @@ function factory({
         const tryRes = Reactive.tryGet(target, key, receiver)
         if (tryRes !== TRY_PROXY_NO_RESULT) return tryRes
       }
-      const res = Reflect.get(target, key, receiver)
+      let res = Reflect.get(target, key, receiver)
+      if (isRef(getRaw(res))) res = res.value
       if (!isShallow && canReadonly(res)) return readonly(res)
       return res
     }
@@ -36,8 +38,13 @@ function factory({
         if (tryRes !== TRY_PROXY_NO_RESULT) return tryRes
       }
     // console.warn('key: ', key, target)
-    if (Effect.hasActive) track(target, key, get)
-    const res = Reflect.get(target, key, receiver)
+    const _res = Reflect.get(target, key, receiver)
+    const is_ref = isRef(getRaw(_res))
+    if (Effect.hasActive) {
+      if (is_ref) track(_res, 'value', get)
+      track(target, key, get)
+    }
+    const res = is_ref ? _res.value : _res
     if (!isShallow && canReactive(res)) return reactive(res)
     return res
   }

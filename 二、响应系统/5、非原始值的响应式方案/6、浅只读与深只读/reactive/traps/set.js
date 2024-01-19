@@ -1,5 +1,6 @@
-import { withRecordTrapOption } from '../../../../reactive/_traps/option.js'
-import { warn, notNaN } from '../../../../utils/index.js'
+import { isRef } from '@reactive/ref/convention.js'
+import { withRecordTrapOption } from '@reactive/_traps/option.js'
+import { warn, notNaN } from '@utils/index.js'
 import { RAW, TRIGGER_TYPE, TRY_PROXY_NO_RESULT, getRaw } from './convention.js'
 
 /**@type {TrapFactory<'set'>} */
@@ -20,6 +21,10 @@ function factory({ isReadonly, trigger, Reactive, version }) {
     const trySuc = Reactive.trySet(target, key, newVal, receiver)
     if (trySuc !== TRY_PROXY_NO_RESULT) return trySuc
     const oldVal = target[key]
+    if (isRef(getRaw(oldVal))) {
+      oldVal.value = newVal
+      return true
+    }
     const type = getType(target, key)
     const suc = Reflect.set(target, key, newVal, receiver)
     // if (suc) {

@@ -20,7 +20,7 @@ const REF_KEYS_SortedDef_STR = [
 
 // warn(REF_KEYS_SortedDef_STR, 'REF_KEYS_STR')
 
-function withRefFlag(wrapper) {
+function withRefFlag(wrapper, isShallow, isReadonly, version) {
   if (typeof wrapper !== 'object' || wrapper === null) return wrapper
   Object.defineProperty(wrapper, 'value', {
     get() {
