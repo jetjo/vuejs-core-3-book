@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest'
-import createRef from './ref.sl.js'
+import { createRef } from './ref.sl.js'
 import { isRef } from './convention.sl.js'
 
 describe('ref convention', () => {
