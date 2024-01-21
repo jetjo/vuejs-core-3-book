@@ -34,11 +34,6 @@ const toPath = url => fileURLToPath(new URL(url, import.meta.url))
 
 const alias = {
   '@': toPath('../src'),
-  // '@reactive': toPath('../src/reactive'),
-  // '@computed': toPath('../src/computed'),
-  // '@effect': toPath('../src/effect'),
-  // '@utils': toPath('../src/utils'),
-  // '@watch': toPath('../src/watch'),
   vue: 'vue/dist/vue.esm-bundler.js'
 }
 

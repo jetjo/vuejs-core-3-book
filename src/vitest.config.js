@@ -28,11 +28,6 @@ const vitestConfig = {
 
 const alias = {
   '@': '../src',
-  // '@reactive': '../src/reactive',
-  // '@computed': '../src/computed',
-  // '@effect': '../src/effect',
-  // '@utils': '../src/utils',
-  // '@watch': '../src/watch',
   vue: 'vue/dist/vue.esm-bundler.js'
 }
 
