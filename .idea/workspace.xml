@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a1e09cb1-daf0-4d8f-bd52-216b9c7afb49" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/vite.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/二、响应系统/4、响应系统的作用与实现/11-竞态问题与过期的副作用/effect/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/二、响应系统/4、响应系统的作用与实现/11-竞态问题与过期的副作用/effect/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/二、响应系统/4、响应系统的作用与实现/11-竞态问题与过期的副作用/utils/task.js" beforeDir="false" afterPath="$PROJECT_DIR$/二、响应系统/4、响应系统的作用与实现/11-竞态问题与过期的副作用/utils/task.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/二、响应系统/5、非原始值的响应式方案/6、浅只读与深只读/reactive/auto-unref-reacitve.spec.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/二、响应系统/5、非原始值的响应式方案/6、浅只读与深只读/reactive/traps/deleteProperty.verify.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/二、响应系统/5、非原始值的响应式方案/6、浅只读与深只读/reactive/traps/deleteProperty.verify.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/二、响应系统/5、非原始值的响应式方案/6、浅只读与深只读/reactive/traps/get.verify.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/二、响应系统/5、非原始值的响应式方案/6、浅只读与深只读/reactive/traps/get.verify.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/二、响应系统/5、非原始值的响应式方案/6、浅只读与深只读/reactive/traps/set.verify.spec.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/二、响应系统/5、非原始值的响应式方案/7、代理数组/reactive/traps/array/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/二、响应系统/5、非原始值的响应式方案/7、代理数组/reactive/traps/array/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/二、响应系统/6、原始值的响应方案/2、响应丢失问题/reactive/ref.spec.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/二、响应系统/6、原始值的响应方案/3、自动脱ref/ref.spec.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/二、响应系统/vitest.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/二、响应系统/vitest.config.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="2bDPPbC3SA8d1Zqkmgi3w4UWcE5" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="openDirectoriesWithSingleClick" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "/Users/loong/project/vuejs-core-3-book",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "pnpm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-56bbcd2c060c-JavaScript-WS-233.11799.293" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="a1e09cb1-daf0-4d8f-bd52-216b9c7afb49" name="更改" comment="" />
+      <created>1705746653776</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1705746653776</updated>
+      <workItem from="1705746654844" duration="378000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

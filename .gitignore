@@ -11,3 +11,5 @@ bak/
 *.bak
 __*.*
 tests/unit/coverage/
+
+!二、响应系统/reactive/_traps/
