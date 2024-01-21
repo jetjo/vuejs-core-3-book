@@ -3,6 +3,19 @@ const path = require('path')
 const { plugins } = require('./webpack.plugins')
 
 const { ENTRY, OUT_BASE_PATH, publicPath, DEV_PORT } = require('./webpack.env')
+
+const toPath = url => path.resolve(__dirname, url)
+
+const alias = {
+  '@src': toPath('./src'),
+  '@book2': toPath('./二、响应系统'),
+  '@reactive': toPath('./二、响应系统/reactive'),
+  '@computed': toPath('./二、响应系统/computed'),
+  '@effect': toPath('./二、响应系统/effect'),
+  '@utils': toPath('./二、响应系统/utils'),
+  '@watch': toPath('./二、响应系统/watch')
+}
+
 module.exports = {
   context: __dirname,
   mode: 'development',
@@ -27,9 +40,7 @@ module.exports = {
   //   topLevelAwait: true,
   // },
   resolve: {
-    alias: {
-      '@book2': path.resolve(__dirname, './二、响应系统')
-    }
+    alias
   },
   // module: {
   //   rules,
