@@ -8,5 +8,9 @@
     //     "./src/*"
     //   ]
     // }
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "./*.cjs"
+  ]
 }
