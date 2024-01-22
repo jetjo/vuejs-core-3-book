@@ -2,10 +2,10 @@
 import { trapGetters as defaultTrapGetters } from './traps/index.js'
 import { isReactive, PROTOTYPE } from './traps/convention.js'
 import { createProxyHandler, requireReactiveTarget } from './traps/helper.js'
-import { createReactive as baseCreateReactive } from '../../../reactive/api/5-7.js'
-import { throwErr } from '../../../utils/index.js'
+import { createReactive as baseCreateReactive } from '@/reactive/api/5-7.js'
+import { throwErr } from '@/utils/index.js'
 import getReactive from './traps/Reactive.js'
-import { withRecordTrapOption } from '../../../reactive/_traps/option.js'
+import { withRecordTrapOption } from '@/reactive/_traps/option.js'
 
 /**
  * @param {ReactiveApiCreator} api

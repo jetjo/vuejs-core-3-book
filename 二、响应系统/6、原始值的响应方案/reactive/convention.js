@@ -1,6 +1,6 @@
-// export * from '@reactive/_traps/convention/5-8.js'
+// export * from '@/reactive/_traps/convention/5-8.js'
 
-import { warn } from '@utils/index'
+import { warn } from '@/utils/index'
 
 const REF_FLAG = '__v_isRef'
 const REF__VALUE_KEY = '_value'

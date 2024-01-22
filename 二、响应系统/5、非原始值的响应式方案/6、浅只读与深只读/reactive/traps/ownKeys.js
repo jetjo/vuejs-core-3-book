@@ -1,4 +1,4 @@
-import { withRecordTrapOption } from '../../../../reactive/_traps/option.js'
+import { withRecordTrapOption } from '@/reactive/_traps/option.js'
 import { ITERATE_KEY } from './convention.js'
 import { UndefinedTrapName } from './helper.js'
 

@@ -1,6 +1,6 @@
 import getFinds from './find.js'
 import getStacks from './stack.js'
-import { withRecordTrapOption } from '../../../../../reactive/_traps/option.js'
+import { withRecordTrapOption } from '@/reactive/_traps/option.js'
 
 /**@type {ArrayProtoProxyFactory} */
 function factory({ finds, stacks }) {

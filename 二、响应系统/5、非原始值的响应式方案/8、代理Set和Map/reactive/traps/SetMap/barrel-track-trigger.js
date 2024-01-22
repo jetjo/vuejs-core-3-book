@@ -1,1 +1,1 @@
-export * from '../../../../../reactive/track-trigger/helper.js'
+export * from '@/reactive/track-trigger/helper.js'

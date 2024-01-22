@@ -1,8 +1,8 @@
 import { describe, test, expect, vi } from 'vitest'
-import { createReactive } from '@reactive/api/5-8.js'
+import { createReactive } from '@/reactive/api/5-8.js'
 import { proxyRefs, toRefs } from './convention.sl'
-import { log, queueMacroTask, warn } from '@utils/index'
-import { effect } from '@effect/index/4-11'
+import { log, queueMacroTask, warn } from '@/utils/index'
+import { effect } from '@/effect/index/4-11'
 
 const reactive = createReactive()()
 

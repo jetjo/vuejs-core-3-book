@@ -1,5 +1,5 @@
-import { withRecordTrapOption } from '@reactive/_traps/option.js'
-import { createReactive } from '@reactive/api/5-8.js'
+import { withRecordTrapOption } from '@/reactive/_traps/option.js'
+import { createReactive } from '@/reactive/api/5-8.js'
 import { REF__VALUE_KEY, withRefFlag } from './convention.js'
 
 function factory({ reactiveApi, isShallow, isReadonly, version }) {

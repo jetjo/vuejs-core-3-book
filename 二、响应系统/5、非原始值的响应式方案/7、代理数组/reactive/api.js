@@ -1,8 +1,8 @@
-import { createReactive as baseCreateReactive } from '../../../reactive/api/5-6.js'
+import { createReactive as baseCreateReactive } from '@/reactive/api/5-6.js'
 import { trapGetters } from './traps/index.js'
 import { track, trigger } from './track-trigger.js'
 import getReactive from './traps/Reactive.js'
-import { withRecordTrapOption } from '../../../reactive/_traps/option.js'
+import { withRecordTrapOption } from '@/reactive/_traps/option.js'
 
 function factory({ isShallow, isReadonly, version }) {
   const api = baseCreateReactive(isShallow, isReadonly, version)

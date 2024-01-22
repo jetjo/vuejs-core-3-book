@@ -16,6 +16,7 @@ const vitestConfig = {
     // outputFile: {
     // 	html: './test/__vitest__/index.html',
     // },
+    exclude: ['_*/**', '**/*tmp/**', '**/*bak/**', '**/*test/**'],
     // 包括inline test code block
     includeSource: ['src/**/*.{js,ts}'],
     snapshotFormat: {
@@ -25,13 +26,20 @@ const vitestConfig = {
   }
 }
 
+const alias = {
+  '@': '../src',
+  // '@reactive': '../src/reactive',
+  // '@computed': '../src/computed',
+  // '@effect': '../src/effect',
+  // '@utils': '../src/utils',
+  // '@watch': '../src/watch',
+  vue: 'vue/dist/vue.esm-bundler.js'
+}
+
 export default defineProject({
   plugins: [vue()],
   resolve: {
-    alias: {
-      '@src': '../src',
-      vue: 'vue/dist/vue.esm-bundler.js'
-    }
+    alias
   },
   ...vitestConfig
 })

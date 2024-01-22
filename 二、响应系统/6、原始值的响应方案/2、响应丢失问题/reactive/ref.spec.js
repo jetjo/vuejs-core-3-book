@@ -1,8 +1,8 @@
 import { describe, test, expect, vi } from 'vitest'
 import { REF__VALUE_KEY, toRefs } from './convention.sl.js'
-import { createReactive } from '@reactive/api/5-8.js'
-import { effect } from '@effect/index/4-11.js'
-import { queueMacroTask } from '@utils/index.js'
+import { createReactive } from '@/reactive/api/5-8.js'
+import { effect } from '@/effect/index/4-11.js'
+import { queueMacroTask } from '@/utils/index.js'
 
 const reactive = createReactive()()
 const state = reactive({ foo: 1 })

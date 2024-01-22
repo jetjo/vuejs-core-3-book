@@ -4,21 +4,9 @@
     "module": "NodeNext",
     "baseUrl": "./",
     "paths": {
-      "@reactive/*": [
-        "./二、响应系统/reactive/*"
-      ],
-      "@computed/*": [
-        "./二、响应系统/computed/*"
-      ],
-      "@effect/*": [
-        "./二、响应系统/effect/*"
-      ],
-      "@utils/*": [
-        "./二、响应系统/utils/*"
-      ],
-      "@watch/*": [
-        "./二、响应系统/watch/*"
-      ],
+      "@/*": [
+        "./src/*"
+      ]
     }
   }
 }

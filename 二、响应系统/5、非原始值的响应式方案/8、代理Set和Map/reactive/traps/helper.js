@@ -8,7 +8,7 @@ import {
   getTrapName as _getTrapName,
   createProxyHandler as _getProxyHandler,
   UndefinedTrapName
-} from '../../../../reactive/_traps/helper/5-6.js'
+} from '@/reactive/_traps/helper/5-6.js'
 // import { isReadonlyReactive } from './convention.js'
 
 // const canReadonly = v =>

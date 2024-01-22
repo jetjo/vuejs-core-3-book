@@ -1,4 +1,4 @@
-import { withRecordTrapOption } from '../../../../reactive/_traps/option.js'
+import { withRecordTrapOption } from '@/reactive/_traps/option.js'
 import getSet from './SetMap/Set/index.js'
 import getMap from './SetMap/Map/index.js'
 

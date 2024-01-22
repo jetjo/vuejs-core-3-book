@@ -33,19 +33,20 @@ const vitestConfig = {
 const toPath = url => fileURLToPath(new URL(url, import.meta.url))
 
 const alias = {
-  '@reactive': toPath('./reactive'),
-  '@computed': toPath('./computed'),
-  '@effect': toPath('./effect'),
-  '@utils': toPath('./utils'),
-  '@watch': toPath('./watch')
+  '@': toPath('../src'),
+  // '@reactive': toPath('../src/reactive'),
+  // '@computed': toPath('../src/computed'),
+  // '@effect': toPath('../src/effect'),
+  // '@utils': toPath('../src/utils'),
+  // '@watch': toPath('../src/watch'),
+  vue: 'vue/dist/vue.esm-bundler.js'
 }
 
 console.warn(alias)
 
 export default defineProject({
   resolve: {
-    alias,
-    vue: 'vue/dist/vue.esm-bundler.js'
+    alias
   },
   ...vitestConfig
 })

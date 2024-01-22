@@ -1,4 +1,4 @@
-import { warn } from '../../../../utils/index.js'
+import { warn } from '@/utils/index.js'
 import {
   RAW,
   REACTIVE_FLAG,
@@ -6,7 +6,7 @@ import {
   READONLY_REACTIVE_FLAG,
   TRY_PROXY_NO_RESULT
 } from './convention.js'
-import { withRecordTrapOption } from '../../../../reactive/_traps/option.js'
+import { withRecordTrapOption } from '@/reactive/_traps/option.js'
 
 /**@type {ReactiveCtorFactory} */
 function factory({ isShallow, isReadonly, version }) {

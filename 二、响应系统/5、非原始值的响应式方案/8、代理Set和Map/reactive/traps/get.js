@@ -1,5 +1,5 @@
-import { isRef } from '@reactive/ref/convention.js'
-import { withRecordTrapOption } from '@reactive/_traps/option.js'
+import { isRef } from '@/reactive/ref/convention.js'
+import { withRecordTrapOption } from '@/reactive/_traps/option.js'
 import { TRY_PROXY_NO_RESULT } from './convention.js'
 import { canReactive, canReadonly } from './helper.js'
 

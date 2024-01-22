@@ -1,4 +1,4 @@
-export * from '../../../../reactive/_traps/helper/4-11.js'
+export * from '@/reactive/_traps/helper/4-11.js'
 import {
   requireReactiveTarget,
   canReactive,
@@ -6,8 +6,8 @@ import {
   isHasTrap,
   isGetTrap,
   isSetTrap
-} from '../../../../reactive/_traps/helper/4-11.js'
-import { throwErr } from '../../../../utils/index.js'
+} from '@/reactive/_traps/helper/4-11.js'
+import { throwErr } from '@/utils/index.js'
 
 /**@typedef {import('../index.js').ProxyTrapOption} ProxyTrapOption */
 

@@ -1,9 +1,9 @@
 import { PROTOTYPE, getRaw } from './convention.js'
-import getReactive from '../../../../reactive/_traps/Reactive/5-7.js'
+import getReactive from '@/reactive/_traps/Reactive/5-7.js'
 import { TRY_PROXY_NO_RESULT, ITERATE_KEY } from './convention.js'
 import getInstrumentations from './instrumentations.js'
-import { withRecordTrapOption } from '../../../../reactive/_traps/option.js'
-import { warn, throwErr } from '../../../../utils/index.js'
+import { withRecordTrapOption } from '@/reactive/_traps/option.js'
+import { warn, throwErr } from '@/utils/index.js'
 
 /**@type {ReactiveCtorFactory} */
 function factory({

@@ -1,10 +1,10 @@
-export * from '../../../../reactive/_traps/convention/4-11.js'
+export * from '@/reactive/_traps/convention/4-11.js'
 import {
   isReactive,
   isShallowReactive,
   isReadonlyReactive,
   READONLY_REACTIVE_FLAG
-} from '../../../../reactive/_traps/convention/4-11.js'
+} from '@/reactive/_traps/convention/4-11.js'
 
 // const READONLY_REACTIVE_FLAG = Symbol('readonly_flag')
 

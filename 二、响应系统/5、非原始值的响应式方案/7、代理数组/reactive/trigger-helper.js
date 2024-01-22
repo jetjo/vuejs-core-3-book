@@ -1,4 +1,4 @@
-import { notNaN } from '../../../utils/index.js'
+import { notNaN } from '@/utils/index.js'
 import { RAW } from './traps/convention.js'
 
 const canTrigger = (oldVal, valAfterSet, target, receiver) => {
