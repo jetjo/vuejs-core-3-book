@@ -13,3 +13,4 @@ __*.*
 tests/unit/coverage/
 
 !二、响应系统/reactive/_traps/
+!node_modules/@/
