@@ -8,7 +8,7 @@
     "build": "exit 0",
     "preview": "http-server --gzip --brotli",
     "serve": "webpack serve",
-    "test": "vitest",
+    "test": "vitest run",
     "test-ui": "vitest --ui",
     "coverage": "vitest run --coverage --ui",
     "snapshot": "vitest run -u",

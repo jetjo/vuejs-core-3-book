@@ -62,7 +62,11 @@ function factory({ isReadonly, trigger, Reactive }) {
       hasProperty ? TRIGGER_TYPE.SET : TRIGGER_TYPE.ADD
 
     const res = () => {
-      hasProperty = Object.hasOwn(receiverRaw, propertyName)
+      // NOTE: 在16.7.0版本的nodejs环境下,Object没有hasOwn方法
+      hasProperty = !!(Object.hasOwn || Object.getOwnPropertyDescriptor)(
+        receiverRaw,
+        propertyName
+      )
       const isArray = getArrayOperateTypeFlag()
       const getType = isArray ? arrayGetter() : commonGetter
       return {
