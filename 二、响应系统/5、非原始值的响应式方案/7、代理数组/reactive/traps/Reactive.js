@@ -4,7 +4,8 @@ import {
   RAW,
   REACTIVE_FLAG,
   SHALLOW_REACTIVE_FLAG,
-  READONLY_REACTIVE_FLAG
+  READONLY_REACTIVE_FLAG,
+  VERSION_FLAG
 } from './convention.js'
 import getArrayInstrumentations from './array/index.js'
 import { withRecordTrapOption } from '#reactive/traps/option.js'
@@ -13,6 +14,7 @@ import { withRecordTrapOption } from '#reactive/traps/option.js'
 function factory({
   isShallow,
   isReadonly,
+  version,
   arrayInstrumentations,
   ReactiveBase,
   Effect,
@@ -49,6 +51,7 @@ function factory({
       if (key === REACTIVE_FLAG) return true
       if (key === SHALLOW_REACTIVE_FLAG) return isShallow
       if (key === READONLY_REACTIVE_FLAG) return isReadonly
+      if (key === VERSION_FLAG) return version
       return TRY_PROXY_NO_RESULT
     }
 

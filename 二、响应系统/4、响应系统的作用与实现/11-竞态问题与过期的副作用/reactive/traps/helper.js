@@ -103,6 +103,18 @@ function isSetTrap(trap) {
   return trap.name === 'set' || trap.name === 'set value'
 }
 
+function setReactiveApiFlag(api, flag) {
+  const flagKeys = Object.keys(flag)
+  flagKeys.forEach(key => {
+    Object.defineProperty(api, key, {
+      value: flag[key],
+      writable: false,
+      configurable: false,
+      enumerable: false
+    })
+  })
+}
+
 export {
   requireTarget as requireReactiveTarget,
   canReactive,
@@ -110,5 +122,6 @@ export {
   getProxyHandler,
   isHasTrap,
   isGetTrap,
-  isSetTrap
+  isSetTrap,
+  setReactiveApiFlag
 }

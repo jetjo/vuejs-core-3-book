@@ -1,10 +1,10 @@
 import { describe, test, expect, vi } from 'vitest'
-import { createReactive } from '#reactive/5-8.js'
+import { reactive } from '@jetjo/vue3/reactive'
 import { proxyRefs, toRefs } from './convention.sl'
 import { log, queueMacroTask, warn } from '#utils'
-import { effect } from '#effect/4-11'
+import { effect } from '@jetjo/vue3/effect'
 
-const reactive = createReactive()()
+// const reactive = createReactive()()
 
 const _state = reactive({ foo: 'foo', bar: 'bar' })
 

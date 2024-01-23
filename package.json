@@ -28,7 +28,9 @@
     "#reactive/traps/*.js": "./internal-barrel/reactive/traps/*.js",
     "#reactive/t-t/*.js": "./internal-barrel/reactive/track-trigger/*.js",
     "#reactive-convention": "./internal-barrel/reactive/convention.js",
+    "#reactive-convention/*.js": "./internal-barrel/reactive/traps/convention/*.js",
     "#reactive-helper": "./internal-barrel/reactive/helper.js",
+    "#reactive-helper/*.js": "./internal-barrel/reactive/traps/helper/*.js",
     "#reactive/*.js": "./internal-barrel/reactive/api/*.js",
     "#computed/*.js": "./internal-barrel/computed/index/*.js",
     "#effect/scheduler/*.js": "./internal-barrel/effect/scheduler/*.js",
@@ -43,6 +45,7 @@
   },
   "exports": {
     ".": null,
+    "./ref-utils": "./exports-barrel/reactive/ref/helper.js",
     "./ref/*.js": "./exports-barrel/reactive/ref/*.js",
     "./reactive/*.js": "./exports-barrel/reactive/*.js",
     "./effect/*.js": "./exports-barrel/effect/*.js",

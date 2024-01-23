@@ -34,6 +34,8 @@ const TRIGGER_TYPE = Object.freeze({
 
 const REACTIVE_FLAG = Symbol('__is_reactive_return_type')
 const SHALLOW_REACTIVE_FLAG = Symbol('__is_shallow_reactive_return_type')
+const READONLY_REACTIVE_FLAG = Symbol('readonly_flag')
+const VERSION_FLAG = Symbol('version_flag')
 
 const isReactive = obj =>
   obj &&
@@ -44,7 +46,6 @@ const isReactive = obj =>
 const isShallowReactive = (obj, hasReactiveFlag = false) =>
   (hasReactiveFlag || isReactive(obj)) && true === obj[SHALLOW_REACTIVE_FLAG]
 
-const READONLY_REACTIVE_FLAG = Symbol('readonly_flag')
 function isReadonlyReactive(target, hasReactiveFlag = false) {
   return (
     (hasReactiveFlag || isReactive(target)) &&
@@ -63,9 +64,10 @@ export {
   TRIGGER_TYPE,
   REACTIVE_FLAG,
   SHALLOW_REACTIVE_FLAG,
+  READONLY_REACTIVE_FLAG,
+  VERSION_FLAG,
   isReactive,
   isShallowReactive,
-  READONLY_REACTIVE_FLAG,
   isReadonlyReactive,
   ITERATE_KEY,
   TRY_PROXY_NO_RESULT,

@@ -34,6 +34,22 @@ const toPath = url => fileURLToPath(new URL(url, import.meta.url))
 
 const alias = {
   // '#': toPath('../src'),
+  '@jetjo/vue3/ref-utils': '../vue3/reactive/ref/helper.js',
+  '@jetjo/vue3/ref/*.js': '../vue3/reactive/ref/*.js',
+  '@jetjo/vue3/reactive/*.js': '../vue3/reactive/*.js',
+  '@jetjo/vue3/effect/*.js': '../vue3/effect/*.js',
+  '@jetjo/vue3/computed/*.js': '../vue3/computed/*.js',
+  '@jetjo/vue3/watch/*.js': '../vue3/watch/*.js',
+  '@jetjo/vue3/ref/*': '../vue3/reactive/ref/*.js',
+  '@jetjo/vue3/reactive/*': '../vue3/reactive/*.js',
+  '@jetjo/vue3/effect/*': '../vue3/effect/*.js',
+  '@jetjo/vue3/computed/*': '../vue3/computed/*.js',
+  '@jetjo/vue3/watch/*': '../vue3/watch/*.js',
+  '@jetjo/vue3/ref': '../vue3/reactive/ref/6-1.js',
+  '@jetjo/vue3/reactive': '../vue3/reactive/5-8.js',
+  '@jetjo/vue3/effect': '../vue3/effect/4-11.js',
+  '@jetjo/vue3/computed': '../vue3/computed/4-11.js',
+  '@jetjo/vue3/watch': '../vue3/watch/4-11.js',
   vue: 'vue/dist/vue.esm-bundler.js'
 }
 

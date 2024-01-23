@@ -3,17 +3,21 @@ import {
   RAW,
   REACTIVE_FLAG,
   SHALLOW_REACTIVE_FLAG,
+  READONLY_REACTIVE_FLAG,
+  VERSION_FLAG,
   TRY_PROXY_NO_RESULT
 } from './convention.js'
 
 /**getReactive */
 function getReactive(options = {}) {
-  const { isShallow } = options
+  const { isShallow, isReadonly, version } = options
   return class Reactive {
     static tryGet(target, key, receiver) {
       if (key === RAW) return target
       if (key === REACTIVE_FLAG) return true
       if (key === SHALLOW_REACTIVE_FLAG) return isShallow
+      if (key === READONLY_REACTIVE_FLAG) return isReadonly
+      if (key === VERSION_FLAG) return version
       return TRY_PROXY_NO_RESULT
     }
 

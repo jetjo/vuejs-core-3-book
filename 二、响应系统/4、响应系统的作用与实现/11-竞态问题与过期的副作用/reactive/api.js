@@ -8,7 +8,11 @@ import { warn } from '../utils/index.js'
 import { Effect } from '../effect/index.js'
 import { trapGetters as defaultTrapGetters } from './traps/index.js'
 import { isReactive } from './traps/convention.js'
-import { requireReactiveTarget, getProxyHandler } from './traps/helper.js'
+import {
+  requireReactiveTarget,
+  getProxyHandler,
+  setReactiveApiFlag
+} from './traps/helper.js'
 import { trigger, track } from './track-trigger.js'
 import { getReactive } from './traps/Reactive.js'
 
@@ -57,14 +61,20 @@ function _getProxyHandler(trapOption) {
   return { proxyHandler: getProxyHandler(traps), trapOption }
 }
 
-function createReactive(isShallow = false) {
+function createReactive(
+  isShallow = false,
+  isReadonly = false,
+  version = '4-11'
+) {
   const reactive = _getApi(true)
-  const Reactive = getReactive({ isShallow })
+  const Reactive = getReactive({ isShallow, isReadonly, version })
 
   const { proxyHandler, trapOption } = _getProxyHandler({
     reactive,
     Reactive,
-    isShallow
+    isShallow,
+    isReadonly,
+    version
   })
 
   /* NOTE: 
@@ -74,7 +84,7 @@ function createReactive(isShallow = false) {
   const reactiveMap = new WeakMap()
 
   function _getApi(internalCall = false) {
-    return function reactive(target) {
+    function reactive(target) {
       if (!internalCall) {
         requireReactiveTarget(target)
         if (isReactive(target)) {
@@ -87,6 +97,8 @@ function createReactive(isShallow = false) {
       reactiveMap.set(target, py)
       return py
     }
+    setReactiveApiFlag(reactive, { isShallow, isReadonly, version })
+    return reactive
   }
 
   /**@param {ProxyTrapGetter} trapGetter */

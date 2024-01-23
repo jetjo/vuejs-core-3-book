@@ -4,6 +4,7 @@ import {
   REACTIVE_FLAG,
   SHALLOW_REACTIVE_FLAG,
   READONLY_REACTIVE_FLAG,
+  VERSION_FLAG,
   TRY_PROXY_NO_RESULT
 } from './convention.js'
 import { withRecordTrapOption } from '#reactive/traps/option.js'
@@ -16,6 +17,7 @@ function factory({ isShallow, isReadonly, version }) {
       if (key === REACTIVE_FLAG) return true
       if (key === SHALLOW_REACTIVE_FLAG) return isShallow
       if (key === READONLY_REACTIVE_FLAG) return isReadonly
+      if (key === VERSION_FLAG) return version
       return TRY_PROXY_NO_RESULT
     }
 
@@ -34,7 +36,7 @@ function factory({ isShallow, isReadonly, version }) {
           `getReactive ${version}`,
           `成员Symbol(${key.description})是只读的!`
         )
-        // global-conf.js:11 TypeError: 'set' on proxy: trap returned falsish for property 'Symbol(raw)'
+        // global-conf.js:11 TypeError: 'set' on proxy: trap returned falsify for property 'Symbol(raw)'
         // return false
         return true
       }

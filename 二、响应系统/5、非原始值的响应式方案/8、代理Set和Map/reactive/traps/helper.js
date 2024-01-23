@@ -7,7 +7,8 @@ import {
   isSetTrap,
   getTrapName as _getTrapName,
   createProxyHandler as _getProxyHandler,
-  UndefinedTrapName
+  UndefinedTrapName,
+  setReactiveApiFlag
 } from '#reactive/traps/helper/5-6.js'
 // import { isReadonlyReactive } from './convention.js'
 
@@ -53,5 +54,6 @@ export {
   isSetTrap,
   getTrapName,
   createProxyHandler,
-  UndefinedTrapName
+  UndefinedTrapName,
+  setReactiveApiFlag
 }

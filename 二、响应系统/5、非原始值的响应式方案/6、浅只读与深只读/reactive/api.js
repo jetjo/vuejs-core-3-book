@@ -7,7 +7,11 @@
 import { Effect } from '#effect/4-11.js'
 import { trigger, track } from '#reactive/t-t/4-11.js'
 import { throwErr, warn } from '#utils'
-import { requireReactiveTarget, createProxyHandler } from './traps/helper.js'
+import {
+  requireReactiveTarget,
+  createProxyHandler,
+  setReactiveApiFlag
+} from './traps/helper.js'
 import { trapGetters as defaultTrapGetters } from './traps/index.js'
 import { isReactive, reactiveFlagChecker } from './traps/convention.js'
 import getReactive from './traps/Reactive.js'
@@ -49,7 +53,7 @@ function factory({ version, isShallow, isReadonly }) {
   let getProxyHandler
   let proxyHandler
   function reactiveApi(callFromSelfTrap = false) {
-    return function (target) {
+    const api = function (target) {
       if (!callFromSelfTrap) {
         requireReactiveTarget(target)
         if (isReactive(target)) {
@@ -76,6 +80,8 @@ function factory({ version, isShallow, isReadonly }) {
       reactiveMap.set(target, py)
       return py
     }
+    setReactiveApiFlag(api, { isShallow, isReadonly, version })
+    return api
   }
 
   Object.assign(trapOption, {

@@ -1,6 +1,12 @@
 // export * from '#reactive/traps/convention/5-8.js'
 
 import { warn } from '#utils'
+import { setReactiveApiFlag } from '#reactive-helper/5-6.js'
+import {
+  SHALLOW_REACTIVE_FLAG,
+  READONLY_REACTIVE_FLAG,
+  VERSION_FLAG
+} from '#reactive-convention/4-11.js'
 
 const REF_FLAG = '__v_isRef'
 const REF__VALUE_KEY = '_value'
@@ -38,9 +44,18 @@ function withRefFlag(wrapper, isShallow, isReadonly, version) {
   })
   // NOTE: 临时
   Object.defineProperty(wrapper, REF__RAW, { enumerable: true })
-  Object.defineProperty(wrapper, REF__SHALLOW_FLAG, { enumerable: true })
+  Object.defineProperty(wrapper, REF__SHALLOW_FLAG, {
+    value: isShallow,
+    enumerable: true
+  })
   Object.defineProperty(wrapper, REF_DEP, { enumerable: true })
 
+  setReactiveApiFlag(wrapper, { isShallow, isReadonly, version })
+  // setReactiveApiFlag(wrapper, {
+  //   [SHALLOW_REACTIVE_FLAG]: isShallow,
+  //   [READONLY_REACTIVE_FLAG]: isReadonly,
+  //   [VERSION_FLAG]: version
+  // })
   return wrapper
 }
 
@@ -51,7 +66,7 @@ function isRef(ref) {
   return res
 }
 
-function toRef(o, key) {
+function toRef(o, key, flags) {
   const wrapper = {
     get [REF__VALUE_KEY]() {
       return o[key]
@@ -60,15 +75,39 @@ function toRef(o, key) {
       o[key] = v
     }
   }
-  return withRefFlag(wrapper)
+  if (flags == undefined) {
+    flags = {
+      [SHALLOW_REACTIVE_FLAG]: o[SHALLOW_REACTIVE_FLAG],
+      [READONLY_REACTIVE_FLAG]: o[READONLY_REACTIVE_FLAG],
+      [VERSION_FLAG]: o[VERSION_FLAG]
+    }
+  }
+  const {
+    [SHALLOW_REACTIVE_FLAG]: isShallow,
+    [READONLY_REACTIVE_FLAG]: isReadonly,
+    [VERSION_FLAG]: version
+  } = flags
+  // TODO: withRefFlag剩余参数未传递
+  return withRefFlag(wrapper, isShallow, isReadonly, version)
 }
 
 function toRefs(o) {
+  const flags = {
+    [SHALLOW_REACTIVE_FLAG]: o[SHALLOW_REACTIVE_FLAG],
+    [READONLY_REACTIVE_FLAG]: o[READONLY_REACTIVE_FLAG],
+    [VERSION_FLAG]: o[VERSION_FLAG]
+  }
   const res = {}
   for (const key in o) {
     // if (Object.hasOwnProperty.call(o, key))
-    res[key] = toRef(o, key)
+    res[key] = toRef(o, key, flags)
   }
+  // setReactiveApiFlag(res, flags)
+  setReactiveApiFlag(res, {
+    isShallow: flags[SHALLOW_REACTIVE_FLAG],
+    isReadonly: flags[READONLY_REACTIVE_FLAG],
+    version: flags[VERSION_FLAG]
+  })
   return res
 }
 

@@ -1,7 +1,11 @@
 /// <reference path="../../../../reactive.d.ts" />
 import { trapGetters as defaultTrapGetters } from './traps/index.js'
 import { isReactive, PROTOTYPE } from './traps/convention.js'
-import { createProxyHandler, requireReactiveTarget } from './traps/helper.js'
+import {
+  createProxyHandler,
+  requireReactiveTarget,
+  setReactiveApiFlag
+} from './traps/helper.js'
 import { createReactive as baseCreateReactive } from '#reactive/5-7.js'
 import { throwErr } from '#utils'
 import getReactive from './traps/Reactive.js'
@@ -66,7 +70,8 @@ function configApi(api, baseApi) {
 }
 
 function factory({ isShallow, isReadonly, version }) {
-  const baseApi = baseCreateReactive(isShallow, isReadonly)
+  // TODO: 新增传递version参数, 未测试
+  const baseApi = baseCreateReactive(isShallow, isReadonly) //, version)
 
   const baseApiOption = baseApi.trapOption
   const baseTrapGetters = baseApi.trapGetters
@@ -77,7 +82,7 @@ function factory({ isShallow, isReadonly, version }) {
 
   let getProxyHandler
   function reactiveApi(callFromSelfTrap = false) {
-    return function (target) {
+    const api = function (target) {
       if (!callFromSelfTrap) {
         requireReactiveTarget(target)
         if (isReactive(target) && isExpectedReactive(target, true))
@@ -89,6 +94,8 @@ function factory({ isShallow, isReadonly, version }) {
       reactiveMap.set(target, py)
       return py
     }
+    setReactiveApiFlag(api, { isShallow, isReadonly, version })
+    return api
   }
 
   /**@type {Reactive} */
