@@ -1,4 +1,4 @@
-import { withRecordTrapOption } from '@/reactive/_traps/option.js'
+import { withRecordTrapOption } from '#reactive/traps/option.js'
 import { UndefinedTrapName } from './helper.js'
 
 /**@type {TrapFactory<'has'>} */

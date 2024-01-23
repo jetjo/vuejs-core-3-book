@@ -4,6 +4,7 @@
     "files.autoSave": "onFocusChange",
     "cSpell.words": [
         "brotli",
-        "fullhash"
+        "fullhash",
+        "gsap"
     ]
 }

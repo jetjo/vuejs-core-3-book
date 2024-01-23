@@ -1,1 +1,1 @@
-export * from '@/reactive/_traps/option.js'
+export * from '#reactive/traps/option.js'

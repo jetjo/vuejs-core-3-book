@@ -1,6 +1,6 @@
-import { isRef } from '@/reactive/ref/convention.js'
-import { withRecordTrapOption } from '@/reactive/_traps/option.js'
-import { isValidArrayIndex } from '@/utils/index.js'
+import { isRef } from '#ref-convention'
+import { withRecordTrapOption } from '#reactive/traps/option.js'
+import { isValidArrayIndex } from '#utils'
 import { TRY_PROXY_NO_RESULT, getRaw } from './convention.js'
 import { canReactive, canReadonly } from './helper.js'
 

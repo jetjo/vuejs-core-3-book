@@ -4,14 +4,14 @@
 /* @4-7-1 [副作用列队与中间态] */
 /* @4-9 [深度响应] */
 /* @4-9-1 [对象成员遍历、添加、删除时依赖收集与effect触发] */
-import { Effect } from '@/effect/index/4-11.js'
-import { trigger, track } from '@/reactive/track-trigger/4-11.js'
-import { throwErr, warn } from '@/utils/index.js'
+import { Effect } from '#effect/4-11.js'
+import { trigger, track } from '#reactive/t-t/4-11.js'
+import { throwErr, warn } from '#utils'
 import { requireReactiveTarget, createProxyHandler } from './traps/helper.js'
 import { trapGetters as defaultTrapGetters } from './traps/index.js'
 import { isReactive, reactiveFlagChecker } from './traps/convention.js'
 import getReactive from './traps/Reactive.js'
-import { withRecordTrapOption } from '@/reactive/_traps/option.js'
+import { withRecordTrapOption } from '#reactive/traps/option.js'
 
 /**@typedef {import('./index.js').ProxyTrapGetter} ProxyTrapGetter*/
 /**@typedef {import('./index.js').ProxyTrapOption} ProxyTrapOption*/

@@ -1,6 +1,6 @@
 /* 跳过响应性数据的中间态 */
 
-import { warn, error } from '@/utils/index.js'
+import { warn, error } from '#utils'
 
 let jobQueue
 const jobArray = []

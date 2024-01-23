@@ -1,5 +1,5 @@
-import { withRecordTrapOption } from '@/reactive/_traps/option.js'
-import { warn } from '@/utils/index.js'
+import { withRecordTrapOption } from '#reactive/traps/option.js'
+import { warn } from '#utils'
 import { TRIGGER_TYPE } from './convention.js'
 
 /**@type {TrapFactory<'defineProperty'>} */

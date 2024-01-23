@@ -27,7 +27,7 @@ const vitestConfig = {
 }
 
 const alias = {
-  '@': '../src',
+  // '#': '../src',
   vue: 'vue/dist/vue.esm-bundler.js'
 }
 

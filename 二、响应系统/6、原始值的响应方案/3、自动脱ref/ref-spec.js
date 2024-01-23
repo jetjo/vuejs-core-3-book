@@ -1,7 +1,7 @@
-import { createReactive } from '@/reactive/api/5-8.js'
+import { createReactive } from '#reactive/5-8.js'
 import { proxyRefs, toRefs } from './convention.sl.js'
-import { queueMacroTask, warn } from '@/utils/index.js'
-import { effect } from '@/effect/4-11'
+import { queueMacroTask, warn } from '#utils'
+import { effect } from '@jetjo/vue3/effect'
 
 const reactive = createReactive()()
 

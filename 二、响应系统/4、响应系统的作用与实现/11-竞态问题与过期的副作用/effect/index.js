@@ -5,7 +5,7 @@
 
 import { error, throwErr, warn } from '../utils/log.js'
 import { FN_EFFECT_MAP_KEY } from './convention.js'
-import { scheduler } from '@/effect/scheduler/4-8.js'
+import { scheduler } from '#effect/scheduler/4-8.js'
 
 /**@template T */
 /**@callback CB */

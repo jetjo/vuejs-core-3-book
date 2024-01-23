@@ -1,4 +1,4 @@
-import getReactive from '@/reactive/_traps/Reactive/5-6.js'
+import getReactive from '#reactive/traps/Reactive/5-6.js'
 import {
   TRY_PROXY_NO_RESULT,
   RAW,
@@ -7,7 +7,7 @@ import {
   READONLY_REACTIVE_FLAG
 } from './convention.js'
 import getArrayInstrumentations from './array/index.js'
-import { withRecordTrapOption } from '@/reactive/_traps/option.js'
+import { withRecordTrapOption } from '#reactive/traps/option.js'
 
 /**@type {ReactiveCtorFactory} */
 function factory({

@@ -33,7 +33,7 @@ const vitestConfig = {
 const toPath = url => fileURLToPath(new URL(url, import.meta.url))
 
 const alias = {
-  '@': toPath('../src'),
+  // '#': toPath('../src'),
   vue: 'vue/dist/vue.esm-bundler.js'
 }
 

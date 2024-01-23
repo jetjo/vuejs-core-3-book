@@ -1,6 +1,6 @@
-import { isRef } from '@/reactive/ref/convention.js'
-import { withRecordTrapOption } from '@/reactive/_traps/option.js'
-import { warn, notNaN, isValidArrayIndex } from '@/utils/index.js'
+import { isRef } from '#ref-convention'
+import { withRecordTrapOption } from '#reactive/traps/option.js'
+import { warn, notNaN, isValidArrayIndex } from '#utils'
 import { canTrigger } from '../trigger-helper.js'
 import { TRIGGER_TYPE, TRY_PROXY_NO_RESULT, RAW, getRaw } from './convention.js'
 

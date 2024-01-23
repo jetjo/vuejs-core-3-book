@@ -12,8 +12,8 @@ const {
 const toPath = url => path.resolve(__dirname, url)
 
 const alias = {
-  '@': toPath('./src'),
-  '@book2': toPath('./二、响应系统')
+  '#': toPath('./src'),
+  '#book2': toPath('./二、响应系统')
 }
 
 module.exports = {
@@ -40,7 +40,7 @@ module.exports = {
   //   topLevelAwait: true,
   // },
   resolve: {
-    alias
+    // alias
   },
   // module: {
   //   rules,

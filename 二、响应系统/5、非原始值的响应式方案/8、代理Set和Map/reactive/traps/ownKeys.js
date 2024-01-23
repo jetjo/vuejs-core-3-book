@@ -1,5 +1,5 @@
-import { withRecordTrapOption } from '@/reactive/_traps/option.js'
-import { UndefinedTrapName } from '@/reactive/_traps/helper/5-6.js'
+import { withRecordTrapOption } from '#reactive/traps/option.js'
+import { UndefinedTrapName } from '#reactive/traps/helper/5-6.js'
 
 /**@type {TrapFactory<'ownKeys'>} */
 function factory({ isSetOrMap, ownKeys }) {

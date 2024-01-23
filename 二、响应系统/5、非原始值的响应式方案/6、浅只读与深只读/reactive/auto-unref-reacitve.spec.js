@@ -1,11 +1,11 @@
-import { effect } from '@/effect/index/4-11.js'
+import { effect } from '#effect/4-11.js'
 // import { createReactive } from './api.js'
-// import { createReactive } from '@/reactive/api/5-7.js'
-import { createReactive } from '@/reactive/api/5-8.js'
-import { createRef } from '@/reactive/ref/6-1.js'
-import { isRef, toRef, toRefs } from '@/reactive/ref/convention.js'
+// import { createReactive } from '#reactive/5-7.js'
+import { createReactive } from '#reactive/5-8.js'
+import { createRef } from '#ref/6-1.js'
+import { isRef, toRef, toRefs } from '#ref-convention'
 import { describe, test, expect, vi } from 'vitest'
-import { log, queueMacroTask, warn } from '@/utils/index.js'
+import { log, queueMacroTask, warn } from '#utils'
 
 const reactive = createReactive()()
 const ref = createRef(reactive)

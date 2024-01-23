@@ -1,5 +1,5 @@
-import { withRecordTrapOption } from '@/reactive/_traps/option.js'
-import { warn } from '@/utils/index.js'
+import { withRecordTrapOption } from '#reactive/traps/option.js'
+import { warn } from '#utils'
 import { RAW, getRaw } from '../convention.js'
 import { withAllPropertyEnumerable } from './helper.js'
 

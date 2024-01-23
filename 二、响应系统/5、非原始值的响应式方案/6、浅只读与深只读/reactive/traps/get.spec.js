@@ -1,8 +1,8 @@
 import { ref as v_ref, isRef as v_isRef } from 'vue'
 import { describe, test, expect } from 'vitest'
-import { createReactive } from '@/reactive/api/5-6.js'
-import { createRef } from '@/reactive/ref/6-1.js'
-import { isRef } from '@/reactive/ref/convention.js'
+import { createReactive } from '#reactive/5-6.js'
+import { createRef } from '#ref/6-1.js'
+import { isRef } from '#ref-convention'
 
 const reactive = createReactive()()
 const ref = createRef()
