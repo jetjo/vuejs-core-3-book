@@ -8,7 +8,7 @@ import {
   SHALLOW_REACTIVE_FLAG,
   READONLY_REACTIVE_FLAG,
   VERSION_FLAG,
-  getRaw
+  toRaw
 } from '#reactive-convention/4-11.js'
 
 describe('ref flags test', () => {

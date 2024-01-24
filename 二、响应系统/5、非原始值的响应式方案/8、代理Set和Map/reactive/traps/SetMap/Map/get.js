@@ -1,5 +1,5 @@
 import { withRecordTrapOption } from '../barrel-option.js'
-import { RAW, getRaw } from '../barrel-convention.js'
+import { RAW, toRaw } from '../barrel-convention.js'
 import { canReactive, canReadonly } from '../barrel-trap-helper.js'
 
 /**
@@ -13,19 +13,19 @@ function factory({ isReadonly, isShallow, Effect, track, reactive, readonly }) {
       value(key) {
         /**@type {MapWmPrototype} */
         const target = this[RAW]
-        const targetRaw = getRaw(target)
-        // TODO: reactiveInfo.get(targetRaw)[PROTOTYPE]
+        const tartoRaw = toRaw(target)
+        // TODO: reactiveInfo.get(tartoRaw)[PROTOTYPE]
         // const proto = reactiveInfo.get(target)[PROTOTYPE]
         // if (proto == null) throwErr(`无法获取target的原型!`)
         // 经测试,vue也是这样做的,层层剥离,获取到最原始的对象
-        const rawKey = getRaw(key)
-        // const has = proto.has.call(targetRaw, rawKey)
+        const rawKey = toRaw(key)
+        // const has = proto.has.call(tartoRaw, rawKey)
         // 考虑到target可能有自定义的`get`方法,因此不能直接调用原型上的`get`方法,避免覆盖用户代码
         // 经测试确认,vue也是这样并没有传递自定义方法需要的所有参数
         const res = target.get(rawKey) // (...arguments)
         if (Effect.hasActive) {
-          // track(target, rawKey) //vue既收集了target又收集了targetRaw,为何???
-          track(targetRaw, rawKey)
+          // track(target, rawKey) //vue既收集了target又收集了tartoRaw,为何???
+          track(tartoRaw, rawKey)
         }
         if (!isShallow && canReactive(res)) return reactive(res)
         return res
@@ -39,7 +39,7 @@ function factory({ isReadonly, isShallow, Effect, track, reactive, readonly }) {
       value(key) {
         /**@type {MapWmPrototype} */
         const target = this[RAW]
-        const rawKey = getRaw(key)
+        const rawKey = toRaw(key)
         const res = target.get(rawKey)
         if (!isShallow && canReadonly(res)) return readonly(res)
         return res

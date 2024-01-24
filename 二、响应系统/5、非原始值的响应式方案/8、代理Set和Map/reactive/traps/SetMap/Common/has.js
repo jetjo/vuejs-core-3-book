@@ -1,6 +1,6 @@
 import { throwErr } from '../barrel-utils.js'
 import { withRecordTrapOption } from '../barrel-option.js'
-import { PROTOTYPE, RAW, getRaw } from '../barrel-convention.js'
+import { PROTOTYPE, RAW, toRaw } from '../barrel-convention.js'
 
 /**
  * @param {ProxyTrapOption}
@@ -17,7 +17,7 @@ function factory({ track, reactiveInfo, Effect, isReadonly }) {
       const proto = reactiveInfo.get(target)[PROTOTYPE]
       if (proto == null) throwErr(`无法获取target的原型!`)
       // 经测试,vue也是这样做的,层层剥离,获取到最原始的对象
-      const _item = getRaw(item)
+      const _item = toRaw(item)
       // const has = proto.has.call(target, item)
       // 考虑到target可能有自定义的has方法,因此不能直接调用原型上的has方法,避免覆盖用户代码
       // 经测试确认,vue也是这样并没有传递自定义方法需要的所有参数

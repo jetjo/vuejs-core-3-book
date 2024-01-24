@@ -1,4 +1,4 @@
-import { PROTOTYPE, getRaw } from './convention.js'
+import { PROTOTYPE, toRaw } from './convention.js'
 import getReactive from '#reactive/traps/Reactive/5-7.js'
 import { TRY_PROXY_NO_RESULT, ITERATE_KEY } from './convention.js'
 import getInstrumentations from './instrumentations.js'
@@ -94,7 +94,7 @@ function factory({
         }
       }
 
-      if (typeof res === 'function') return res.bind(getRaw(target))
+      if (typeof res === 'function') return res.bind(toRaw(target))
       return res
     }
 

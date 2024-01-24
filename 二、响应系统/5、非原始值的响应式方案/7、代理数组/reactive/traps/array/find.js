@@ -1,5 +1,5 @@
 import { withRecordTrapOption } from '#reactive/traps/option.js'
-import { ITERATE_KEY_VAL, RAW, getRaw } from '../convention.js'
+import { ITERATE_KEY_VAL, RAW, toRaw } from '../convention.js'
 import { withAllPropertyEnumerable } from './helper.js'
 
 const proto = {
@@ -34,7 +34,7 @@ function factory({ isReadonly, track, Effect }) {
       // }
       // 根据避免污染原始数据的原则,原始数组中不应该出现reactive类型,
       // 所以如果要搜索的元素是reactive类型,应该先取出原始值
-      return getRaw(searchElement)
+      return toRaw(searchElement)
     }
     trackFind() {
       if (!isReadonly && Effect.hasActive) {
@@ -43,24 +43,24 @@ function factory({ isReadonly, track, Effect }) {
     }
     indexOf(searchElement, fromIndex = 0) {
       this.trackFind()
-      return this[RAW].indexOf(getRaw(searchElement), fromIndex)
+      return this[RAW].indexOf(toRaw(searchElement), fromIndex)
     }
     lastIndexOf(searchElement, fromIndex = 0) {
       this.trackFind()
-      return this[RAW].lastIndexOf(getRaw(searchElement), fromIndex)
+      return this[RAW].lastIndexOf(toRaw(searchElement), fromIndex)
     }
     includes(...args) {
       // NOTE: vue并没有对参数做任何更改
       // includes(searchElement, fromIndex = 0) {
       this.trackFind()
       // NOTE: vue并没有对参数做任何更改
-      // return this[RAW].includes(getRaw(searchElement), fromIndex)
+      // return this[RAW].includes(toRaw(searchElement), fromIndex)
       const target = this[RAW]
       const originMethod = target.includes
       const res = originMethod.apply(this, args)
       if (res) return res
       return originMethod.apply(target, args)
-      // return super.includes.call(this[RAW], getRaw(args[0]), args[1])
+      // return super.includes.call(this[RAW], toRaw(args[0]), args[1])
       // 相当于super.includes.apply(this, args)
       // const res = super.includes(...args)
       if (res) return res

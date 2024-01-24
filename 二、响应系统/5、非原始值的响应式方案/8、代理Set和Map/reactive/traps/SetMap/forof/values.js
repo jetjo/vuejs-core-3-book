@@ -5,7 +5,7 @@ import {
   ITERATE_KEY_VAL,
   PROTOTYPE,
   RAW,
-  getRaw
+  toRaw
 } from '../barrel-convention.js'
 import { canReactive } from '../barrel-trap-helper.js'
 
@@ -27,15 +27,15 @@ function factory({
       value() {
         /**@type {SetMapPrototype} */
         const target = this[RAW]
-        const targetRaw = getRaw(target)
+        const tartoRaw = toRaw(target)
         const proto = reactiveInfo.get(target)[PROTOTYPE]
         if (proto == null) throwErr('获取原型失败!')
-        const iterator = target.values() // proto.values.call(targetRaw)
+        const iterator = target.values() // proto.values.call(tartoRaw)
         const KEY =
           proto === Map.prototype || proto instanceof Map
             ? ITERATE_KEY_VAL
             : ITERATE_KEY
-        if (Effect.hasActive) track(targetRaw, KEY)
+        if (Effect.hasActive) track(tartoRaw, KEY)
         const wrap = o => (canReactive(o) ? reactive(o) : o)
         return {
           __proto__: null,

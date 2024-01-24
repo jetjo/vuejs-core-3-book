@@ -8,7 +8,7 @@ function getTarget(reactive, hasReactiveFlag = false) {
   return reactive[RAW]
 }
 
-function getRaw(reactive, hasReactiveFlag = false) {
+function toRaw(reactive, hasReactiveFlag = false) {
   hasReactiveFlag = hasReactiveFlag || isReactive(reactive)
   if (!hasReactiveFlag) return reactive
   if (!isReadonlyReactive(reactive, true)) return reactive[RAW]
@@ -72,5 +72,5 @@ export {
   ITERATE_KEY,
   TRY_PROXY_NO_RESULT,
   ITERATE_KEY_VAL,
-  getRaw
+  toRaw
 }

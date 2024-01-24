@@ -1,6 +1,6 @@
 import { withRecordTrapOption } from '#reactive/traps/option.js'
 import { warn } from '#utils'
-import { RAW, getRaw } from '../convention.js'
+import { RAW, toRaw } from '../convention.js'
 import { withAllPropertyEnumerable } from './helper.js'
 
 const proto = {
@@ -18,17 +18,17 @@ function factory({ isReadonly, applyWithoutEffect }) {
     constructor(...args) {
       super(...args)
     }
-    getRawItems(...items) {
+    toRawItems(...items) {
       return items
       // NOTE: 防止污染原始数据,但vue只对Set、Map、WeakSet、WeakMap实施了此策略
-      return items.map(item => getRaw(item))
+      return items.map(item => toRaw(item))
     }
     push(...args) {
       if (isReadonly) {
         warn('数组是只读的,不能执行push操作')
         return this[RAW].length
       }
-      const _args = this.getRawItems(...args)
+      const _args = this.toRawItems(...args)
       _args.unshift(this[RAW].push)
       const res = applyWithoutEffect.apply(this, _args)
       // trigger(this[RAW], 'length', TRIGGER_TYPE.SET, this[RAW].length, true)
@@ -55,7 +55,7 @@ function factory({ isReadonly, applyWithoutEffect }) {
         warn('数组是只读的,不能执行unshift操作')
         return this[RAW].length
       }
-      const _args = this.getRawItems(...args)
+      const _args = this.toRawItems(...args)
       _args.unshift(this[RAW].unshift)
       return applyWithoutEffect.apply(this, _args)
     }
@@ -65,7 +65,7 @@ function factory({ isReadonly, applyWithoutEffect }) {
         return []
       }
       const [start, deleteCount, ...itemsToAdd] = args
-      const _itemsToAdd = this.getRawItems(...itemsToAdd)
+      const _itemsToAdd = this.toRawItems(...itemsToAdd)
       const _args = [start, deleteCount, ..._itemsToAdd]
       _args.unshift(this[RAW].splice)
       return applyWithoutEffect.apply(this, _args)

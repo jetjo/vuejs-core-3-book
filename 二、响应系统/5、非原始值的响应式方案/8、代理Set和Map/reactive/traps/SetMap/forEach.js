@@ -5,7 +5,7 @@ import {
   ITERATE_KEY_VAL,
   PROTOTYPE,
   RAW,
-  getRaw
+  toRaw
 } from '../convention.js'
 import { canReactive } from '../helper.js'
 
@@ -30,12 +30,12 @@ function factory({
       value(callback, thisArg) {
         /**@type {SetMapPrototype} */
         const target = this[RAW]
-        const targetRaw = getRaw(target)
+        const tartoRaw = toRaw(target)
         const proto = reactiveInfo.get(target)[PROTOTYPE]
         if (proto == null) throwErr('获取原型失败!')
         // Map的forEach不仅能遍历到集合的键,还能直接遍历到集合的值,即依赖于值的变化,不止是增删
         const KEY = proto === Map.prototype ? ITERATE_KEY_VAL : ITERATE_KEY
-        if (Effect.hasActive) track(targetRaw, KEY)
+        if (Effect.hasActive) track(tartoRaw, KEY)
         target.forEach((value, key, target) => {
           callback.call(thisArg, wrap(value), wrap(key), this)
         })

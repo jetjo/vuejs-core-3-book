@@ -11,11 +11,11 @@ function getSetTrap(options = {}) {
     return has ? TRIGGER_TYPE.SET : TRIGGER_TYPE.ADD
   }
 
-  function getTargetPropertyVal(target, key, targetRaw) {
-    if (!targetRaw) {
-      targetRaw = target
+  function getTargetPropertyVal(target, key, tartoRaw) {
+    if (!tartoRaw) {
+      tartoRaw = target
     }
-    return { targetRaw, val: Effect.runWithoutEffect(() => targetRaw[key]) }
+    return { tartoRaw, val: Effect.runWithoutEffect(() => tartoRaw[key]) }
   }
 
   /**@type {ProxyHandler['set']} */
@@ -23,7 +23,7 @@ function getSetTrap(options = {}) {
     warn('set trap...')
     const trySuc = Reactive.trySet(target, key, newVal, receiver)
     if (trySuc !== TRY_PROXY_NO_RESULT) return trySuc
-    const { targetRaw, val: oldVal } = getTargetPropertyVal(target, key)
+    const { tartoRaw, val: oldVal } = getTargetPropertyVal(target, key)
     const suc = Reflect.set(...arguments)
     if (suc) {
       // NOTE: 根据ES语言规范对[[Set]]方法的执行过程描述,
@@ -40,7 +40,7 @@ function getSetTrap(options = {}) {
       // 所以需要区分target是receiver的target,还是receiver的target的原型;
       // 如果是原型,则没必要再重复执行副作用;
       // 考虑到有代理的情况下赋值结果suc并不可靠. 比如target是readonly时
-      const { val: valAfterSet } = getTargetPropertyVal(target, key, targetRaw)
+      const { val: valAfterSet } = getTargetPropertyVal(target, key, tartoRaw)
       if (
         // oldVal !== newVal &&
         // (notNaN(oldVal) || notNaN(newVal)) &&

@@ -1,7 +1,7 @@
 import { isRef } from '#ref-convention'
 import { withRecordTrapOption } from '#reactive/traps/option.js'
 import { isValidArrayIndex } from '#utils'
-import { TRY_PROXY_NO_RESULT, getRaw } from './convention.js'
+import { TRY_PROXY_NO_RESULT, toRaw } from './convention.js'
 import { canReactive, canReadonly } from './helper.js'
 
 /**@type {TrapFactory<'get'>} */
@@ -23,7 +23,7 @@ function factory({
         if (tryRes !== TRY_PROXY_NO_RESULT) return tryRes
       }
       let res = Reflect.get(target, key, receiver)
-      if (isRef(getRaw(res))) res = res.value
+      if (isRef(toRaw(res))) res = res.value
       if (!isShallow && canReadonly(res)) return readonly(res)
       return res
     }
@@ -39,7 +39,7 @@ function factory({
       }
     // console.warn('key: ', key, target)
     const _res = Reflect.get(target, key, receiver)
-    const is_ref = isRef(getRaw(_res))
+    const is_ref = isRef(toRaw(_res))
     if (Effect.hasActive) {
       if (is_ref) track(_res, 'value', get)
       track(target, key, get)

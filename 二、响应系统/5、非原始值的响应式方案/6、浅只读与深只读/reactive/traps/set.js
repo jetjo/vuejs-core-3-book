@@ -1,7 +1,7 @@
 import { isRef } from '#ref-convention'
 import { withRecordTrapOption } from '#reactive/traps/option.js'
 import { warn, notNaN } from '#utils'
-import { RAW, TRIGGER_TYPE, TRY_PROXY_NO_RESULT, getRaw } from './convention.js'
+import { RAW, TRIGGER_TYPE, TRY_PROXY_NO_RESULT, toRaw } from './convention.js'
 
 /**@type {TrapFactory<'set'>} */
 function factory({ isReadonly, trigger, Reactive, version }) {
@@ -17,11 +17,11 @@ function factory({ isReadonly, trigger, Reactive, version }) {
 
   return function set(target, key, newVal, receiver) {
     // // NOTE: 防止污染原始数据,但vue只对Set、Map、WeakSet、WeakMap实施了此策略
-    // newVal = getRaw(newVal)
+    // newVal = toRaw(newVal)
     const trySuc = Reactive.trySet(target, key, newVal, receiver)
     if (trySuc !== TRY_PROXY_NO_RESULT) return trySuc
     const oldVal = target[key]
-    if (isRef(getRaw(oldVal))) {
+    if (isRef(toRaw(oldVal))) {
       oldVal.value = newVal
       return true
     }

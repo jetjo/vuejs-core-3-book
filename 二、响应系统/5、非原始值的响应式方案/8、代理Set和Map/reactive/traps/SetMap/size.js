@@ -1,5 +1,5 @@
 import { withRecordTrapOption } from './barrel-option.js'
-import { ITERATE_KEY, RAW, getRaw } from '../convention.js'
+import { ITERATE_KEY, RAW, toRaw } from '../convention.js'
 
 /**
  * @param {ProxyTrapOption}
@@ -11,10 +11,10 @@ function factory({ track, Effect, isReadonly }) {
     __proto__: null,
     get() {
       const target = this[RAW]
-      const targetRaw = getRaw(this)
+      const tartoRaw = toRaw(this)
       const res = Reflect.get(target, 'size', target)
-      if (!isReadonly && Effect.hasActive) track(targetRaw, ITERATE_KEY)
-      if (typeof res === 'function') return res.bind(targetRaw)
+      if (!isReadonly && Effect.hasActive) track(tartoRaw, ITERATE_KEY)
+      if (typeof res === 'function') return res.bind(tartoRaw)
       return res
     },
     enumerable: true

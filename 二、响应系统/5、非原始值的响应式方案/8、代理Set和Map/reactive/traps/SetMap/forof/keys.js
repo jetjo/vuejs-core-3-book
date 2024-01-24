@@ -1,5 +1,5 @@
 import { withRecordTrapOption } from '../barrel-option.js'
-import { ITERATE_KEY, PROTOTYPE, RAW, getRaw } from '../barrel-convention.js'
+import { ITERATE_KEY, PROTOTYPE, RAW, toRaw } from '../barrel-convention.js'
 import { canReactive } from '../barrel-trap-helper.js'
 
 /**
@@ -20,10 +20,10 @@ function factory({
       value() {
         /**@type {SetMapPrototype} */
         const target = this[RAW]
-        const targetRaw = getRaw(target)
-        const iterator = target.keys() // proto.keys.call(targetRaw)
+        const tartoRaw = toRaw(target)
+        const iterator = target.keys() // proto.keys.call(tartoRaw)
         const KEY = ITERATE_KEY
-        if (Effect.hasActive) track(targetRaw, KEY)
+        if (Effect.hasActive) track(tartoRaw, KEY)
         const wrap = o => (canReactive(o) ? reactive(o) : o)
         return {
           __proto__: null,
