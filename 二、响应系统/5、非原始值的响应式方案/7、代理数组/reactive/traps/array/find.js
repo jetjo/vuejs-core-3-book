@@ -57,7 +57,10 @@ function factory({ isReadonly, track, Effect }) {
       // return this[RAW].includes(toRaw(searchElement), fromIndex)
       const target = this[RAW]
       const originMethod = target.includes
-      const res = originMethod.apply(this, args)
+      const res = originMethod.apply(
+        originMethod === super.includes ? this : target,
+        args
+      )
       if (res) return res
       return originMethod.apply(target, args)
       // return super.includes.call(this[RAW], toRaw(args[0]), args[1])

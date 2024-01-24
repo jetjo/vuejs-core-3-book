@@ -22,7 +22,15 @@ const vitestConfig = {
     // coverage: {
     //   enable: false
     // },
-    exclude: ['_*/**', '**/*tmp/**', '**/*bak/**', '**/*test/**'],
+    exclude: [
+      '_*/**',
+      '**/*tmp/**',
+      '**/*bak/**',
+      '**/*test/**',
+      '**/*.bak',
+      '**/*.tmp',
+      '**/*.test'
+    ],
     snapshotFormat: {
       // https://vitest.dev/guide/snapshot.html#_2-printbasicprototype-is-default-to-false
       printBasicPrototype: false
