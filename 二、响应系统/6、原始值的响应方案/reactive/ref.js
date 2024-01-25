@@ -1,10 +1,14 @@
 import { withRecordTrapOption } from '#reactive/traps/option.js'
 import { createReactive } from '#reactive/5-8.js'
-import { REF__VALUE_KEY, withRefFlag } from './convention.js'
+import { REF__VALUE_KEY, isRef, withRefFlag } from './convention.js'
 import { setReactiveApiFlag } from '#reactive-helper/5-8.js'
+import { throwErr } from '#utils'
 
 function factory({ reactiveApi, isShallow, isReadonly, version }) {
   function ref(v) {
+    // TODO: 确保v不是ref, 未测试
+    // throwErr('未测试!')
+    if (isRef(v)) return v
     const wrapper = {
       // __proto__: null,
       [REF__VALUE_KEY]: v

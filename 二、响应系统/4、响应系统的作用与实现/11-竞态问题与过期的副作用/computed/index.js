@@ -1,3 +1,4 @@
+import { withRefFlag } from '../../../6、原始值的响应方案/reactive/convention.js'
 import { effect, Effect } from '../effect/index.js'
 import { track, trigger } from '../reactive/track-trigger.js'
 
@@ -32,7 +33,8 @@ function computed(getter) {
     }
   }
   const getTrap = Object.getOwnPropertyDescriptor(obj, 'value').get
-  return obj
+
+  return withRefFlag(obj, false, false, '6-1')
 }
 
 export { computed }

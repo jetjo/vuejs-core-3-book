@@ -28,14 +28,16 @@ const REF_KEYS_SortedDef_STR = [
 
 function withRefFlag(wrapper, isShallow, isReadonly, version) {
   if (typeof wrapper !== 'object' || wrapper === null) return wrapper
-  Object.defineProperty(wrapper, 'value', {
-    get() {
-      return wrapper[REF__VALUE_KEY]
-    },
-    set(v) {
-      wrapper[REF__VALUE_KEY] = v
-    }
-  })
+  if (Object.getOwnPropertyDescriptor(wrapper, 'value') === undefined) {
+    Object.defineProperty(wrapper, 'value', {
+      get() {
+        return wrapper[REF__VALUE_KEY]
+      },
+      set(v) {
+        wrapper[REF__VALUE_KEY] = v
+      }
+    })
+  }
   Object.defineProperty(wrapper, REF_FLAG, {
     value: true,
     enumerable: true,

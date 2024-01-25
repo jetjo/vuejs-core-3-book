@@ -20,7 +20,7 @@ effect(() => {
   console.log(state.includes(state[0]))
 })
 
-it('两次对includes的调用都是在raw上调用的', () => {
+it('与Vue表现一致,两次对自定义includes的调用都是在raw上调用的', () => {
   expect(includesCallThis.length).toBe(2)
   expect(includesCallThis[0]).toBe(raw)
   expect(includesCallThis[1]).toBe(raw)
