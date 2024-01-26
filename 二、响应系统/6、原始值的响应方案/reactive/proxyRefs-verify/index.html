@@ -6,8 +6,17 @@
     <title>proxyRefs-verify</title>
   </head>
   <body>
+    <!--NOTE:  在工程根目录运行vite, 打开浏览器,导航到此页面即可 -->
+    <!-- https://vitejs.dev/guide/build.html#multi-page-app -->
+    <!-- http://127.0.0.1:5173/二、响应系统/6、原始值的响应方案/reactive/proxyRefs-verify/index.html -->
     <div id="app"></div>
-    <script type="module" src="./main.js"></script>
+    <script type="module">
+      import { createApp } from 'vue'
+      import App from './verify-helper.vue'
+
+      const app = createApp(App)
+      app.mount('#app')
+    </script>
     <p>
       setup语法糖中声明和导入的一切对象都会被放入一个对象中,
       然后调用proxyRefs函数

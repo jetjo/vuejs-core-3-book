@@ -3,9 +3,16 @@
 </template>
 
 <script setup>
-import { useJustReturnSomething } from './useJustReturnSomething.js'
-import { proxyRefs } from 'vue'
+import { proxyRefs, ref, reactive } from 'vue'
 import { warn } from '#utils'
+
+function useJustReturnSomething() {
+  const counter = ref(0)
+  const state = reactive({})
+  const rawVal = 0
+
+  return { counter, state, rawVal }
+}
 
 const someStates = useJustReturnSomething()
 
