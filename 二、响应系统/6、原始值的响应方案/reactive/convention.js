@@ -113,21 +113,41 @@ function toRefs(o) {
   return res
 }
 
+const proxyRefsMap = new WeakMap()
+
+function unref(v) {
+  return isRef(v) ? v.value : v
+}
+
+function isFunction(v) {
+  return typeof v === 'function'
+}
+
+function toValue(v) {
+  return isFunction(v) ? v() : unref(v)
+}
+
+// NOTE: Vue setup 返回的对象会被自动使用此函数代理
 function proxyRefs(target) {
-  return new Proxy(target, {
+  if (isReactive(target)) return target
+  const cached = proxyRefsMap.get(target)
+  if (cached) return cached
+  const py = new Proxy(target, {
     get(target, key, receiver) {
       const res = Reflect.get(target, key, receiver)
-      return isRef(res) ? res.value : res
+      return unref(res)
     },
     set(target, key, value, receiver) {
       const res = target[key]
-      if (isRef(res)) {
+      if (isRef(res) && !isRef(value)) {
         res.value = value
         return true
       }
       return Reflect.set(target, key, value, receiver)
     }
   })
+  proxyRefsMap.set(target, py)
+  return py
 }
 
 export { withRefFlag, isRef, toRef, toRefs, proxyRefs, REF__VALUE_KEY }

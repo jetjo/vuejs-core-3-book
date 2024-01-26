@@ -34,6 +34,7 @@ function computed(getter) {
   }
   const getTrap = Object.getOwnPropertyDescriptor(obj, 'value').get
 
+  // TODO: 待测试
   return withRefFlag(obj, false, false, '6-1')
 }
 

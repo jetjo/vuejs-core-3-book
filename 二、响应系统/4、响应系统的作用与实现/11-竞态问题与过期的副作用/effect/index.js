@@ -81,6 +81,7 @@ function overMaxRecursiveLimit(efn) {
 const schedulerJobs = new Set()
 
 const is = []
+// TODO: 待完善
 if (import.meta.env.NODE_ENV === 'test')
   warn('在测试环境下执行了setInterval!!!')
 setInterval(() => {
