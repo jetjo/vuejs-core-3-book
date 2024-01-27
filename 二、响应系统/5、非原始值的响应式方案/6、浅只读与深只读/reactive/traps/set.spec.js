@@ -1,4 +1,4 @@
-import { ref as v_ref, isRef as v_isRef } from 'vue'
+import { ref as v_ref, isRef as v_isRef } from '#vue'
 import { describe, test, expect } from 'vitest'
 import { createReactive } from '#reactive/5-6.js'
 import { createRef } from '#ref/6-1.js'

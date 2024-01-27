@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { proxyRefs, ref, reactive } from 'vue'
+import { proxyRefs, ref, reactive } from '#vue'
 import { warn } from '#utils'
 
 function useJustReturnSomething() {

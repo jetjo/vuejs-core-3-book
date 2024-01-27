@@ -14,13 +14,11 @@ effect(() => {
   eFn(refs.foo[REF__VALUE_KEY], 'foo')
 })
 
-describe('toRefs', () => {
-  test('', async () => {
-    refs.foo[REF__VALUE_KEY] = 2
-    await queueMacroTask()
-    expect(eFn).toHaveLastReturnedWith([2, 'foo'])
-    foo[REF__VALUE_KEY] = 8
-    await queueMacroTask()
-    expect(eFn).toHaveLastReturnedWith([8, 'foo'])
-  })
+test('toRefs', async () => {
+  refs.foo[REF__VALUE_KEY] = 2
+  await queueMacroTask()
+  expect(eFn).toHaveLastReturnedWith([2, 'foo'])
+  foo[REF__VALUE_KEY] = 8
+  await queueMacroTask()
+  expect(eFn).toHaveLastReturnedWith([8, 'foo'])
 })

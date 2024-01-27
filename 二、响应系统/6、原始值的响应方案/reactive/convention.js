@@ -5,7 +5,8 @@ import { setReactiveApiFlag } from '#reactive-helper/5-6.js'
 import {
   SHALLOW_REACTIVE_FLAG,
   READONLY_REACTIVE_FLAG,
-  VERSION_FLAG
+  VERSION_FLAG,
+  isReactive
 } from '#reactive-convention/4-11.js'
 
 const REF_FLAG = '__v_isRef'
