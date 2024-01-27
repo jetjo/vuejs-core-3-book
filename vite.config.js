@@ -17,6 +17,14 @@ const vitestConfig = {
     // outputFile: {
     // 	html: './test/__vitest__/index.html',
     // },
+    exclude: [
+      '**/node_modules/**',
+      '_*/**',
+      '**/*tmp/**',
+      '**/*bak/**',
+      '**/*test/**',
+      '**/test/**'
+    ],
     // 包括inline test code block
     includeSource: ['src/**/*.{js,ts}'],
     coverage: {
@@ -58,8 +66,7 @@ export default defineConfig({
       '@jetjo/vue3/reactive': './vue3/reactive/5-8.js',
       '@jetjo/vue3/effect': './vue3/effect/4-11.js',
       '@jetjo/vue3/computed': './vue3/computed/4-11.js',
-      '@jetjo/vue3/watch': './vue3/watch/4-11.js',
-      vue: 'vue/dist/vue.esm-bundler.js'
+      '@jetjo/vue3/watch': './vue3/watch/4-11.js'
     }
   },
   ...vitestConfig

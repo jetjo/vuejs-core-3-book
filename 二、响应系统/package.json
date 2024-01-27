@@ -1,5 +1,5 @@
 {
-  "name": "@jetjo/vue3",
+  "name": "@jetjo/vue3-chapter-2",
   "version": "1.0.0",
   "description": "",
   "type": "module",
@@ -15,24 +15,24 @@
     "v-dev": "vite",
     "v-build": "vite build",
     "v-preview": "vite preview",
-    "lint": "eslint src/**/*.{js,vue}"
+    "lint": "eslint **/*.{js,vue}"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "imports": {
     "#vue": {
-      "browser": {
-        "development": "vue/dist/vue.esm-browser.js?desc=useBy-vite-dev",
-        "production": "vue/dist/vue.esm-browser.prod.js?desc=useBy-vite-prod"
-      },
-      "node": {
-        "development": {
-          "import": "vue/dist/vue.esm-bundler.js?desc=useBy-vitest"
-        }
-      },
-      "default": "fallback-vue"
-    },
+			"browser": {
+				"development": "vue/dist/vue.esm-browser.js?desc=useBy-vite-dev",
+				"production": "vue/dist/vue.esm-browser.prod.js?desc=useBy-vite-prod"
+			},
+			"node": {
+				"development": {
+					"import": "vue/dist/vue.esm-bundler.js?desc=useBy-vitest"
+				}
+			},
+			"default": "fallback-vue"
+		},
     "#ref/*.js": "./internal-barrel/reactive/ref/*.js",
     "#ref-convention": "./internal-barrel/reactive/ref/convention.js",
     "#ref-helper": "./internal-barrel/reactive/ref/helper.js",
