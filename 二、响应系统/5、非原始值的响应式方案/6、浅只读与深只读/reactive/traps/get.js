@@ -39,9 +39,11 @@ function factory({
       }
     // console.warn('key: ', key, target)
     const _res = Reflect.get(target, key, receiver)
-    const is_ref = isRef(toRaw(_res))
+    const _res_raw = toRaw(_res)
+    const is_ref = isRef(_res_raw)
     if (Effect.hasActive) {
-      if (is_ref) track(_res, 'value', get)
+      // 没必要,后面访问res.value时,如果res是响应式的,会自动track
+      // if (is_ref) track(_res_raw, 'value', get)
       track(target, key, get)
     }
     const res = is_ref ? _res.value : _res

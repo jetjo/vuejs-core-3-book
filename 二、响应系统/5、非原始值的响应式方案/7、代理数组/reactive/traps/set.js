@@ -108,7 +108,7 @@ function factory({ isReadonly, trigger, Reactive }) {
     // 此方法被调用的前提是receiver是reactive或shallowReactive的返回值
     // 所以target一定是raw,非响应的
     const oldVal = target[key]
-    if (isRef(toRaw(oldVal))) {
+    if (isRef(toRaw(oldVal)) && !isRef(toRaw(newVal))) {
       oldVal.value = newVal
       return true
     }

@@ -1,6 +1,6 @@
 import { isRef } from '#ref-convention'
 import { withRecordTrapOption } from '#reactive/traps/option.js'
-import { TRY_PROXY_NO_RESULT } from './convention.js'
+import { TRY_PROXY_NO_RESULT, toRaw } from './convention.js'
 import { canReactive, canReadonly } from './helper.js'
 
 /**@type {TrapFactory<'get'>} */
@@ -32,9 +32,11 @@ function factory({
     const tryRes = Reactive.tryGet(target, key, receiver, true)
     if (tryRes !== TRY_PROXY_NO_RESULT) return tryRes
     const res = Reflect.get(target, key, receiver)
-    const is_ref = isRef(res)
+    const res_raw = toRaw(res)
+    const is_ref = isRef(res_raw)
     if (!isReadonly && Effect.hasActive) {
-      if (is_ref) track(res, 'value', get)
+      // 没必要,后面访问res.value时,如果res是响应式的,会自动track
+      // if (is_ref) track(res_raw, 'value', get)
       track(target, key)
     }
     // 定义的拦截器函数中,目前没有对Call和Constructor的拦截,所以不用代理function

@@ -21,7 +21,8 @@ function factory({ isReadonly, trigger, Reactive, version }) {
     const trySuc = Reactive.trySet(target, key, newVal, receiver)
     if (trySuc !== TRY_PROXY_NO_RESULT) return trySuc
     const oldVal = target[key]
-    if (isRef(toRaw(oldVal))) {
+    if (isRef(toRaw(oldVal)) && !isRef(toRaw(newVal))) {
+      // 这里也会触发依赖于oldVal的value的effect
       oldVal.value = newVal
       return true
     }

@@ -23,10 +23,10 @@ function isFlushingQueue() {
 function flushJob() {
   if (isFlushingQueue()) return
   microTasker.then(() => {
-    warn('run micro effect job')
     // 副作用job的执行可能导致新的副作用任务插入`jobArray`
     // 所以拷贝一份,并去重
     jobQueue = new Set(jobArray)
+    warn('run micro effect job', jobArray.length, jobQueue.size)
     jobArray.length = 0
     jobQueue.forEach(job => job())
     jobQueue.clear()
