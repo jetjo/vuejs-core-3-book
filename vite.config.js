@@ -93,7 +93,8 @@ export default defineConfig({
       // 为了在生产环境下, vite不会在打包时把vue的runtime-dom模块打包进去
       // node_modules/vue/dist/vue.runtime.esm-bundler.js文件中导入了@vue/*模块
       // 而node_modules/@vue文件夹下没有这些模块时,会导致打包失败
-      external: [/^@vue/]
+      // 但是如果把vue的包排除掉,生成的index.html被访问时会报找不到vue包的错误
+      // external: [/^@vue/]
     }
   }
 })
