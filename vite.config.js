@@ -45,6 +45,9 @@ const vitestConfig = {
 // https://vitejs.dev/config/
 export default defineConfig({
   appType: 'mpa',
+  optimizeDeps: {
+    entries: ['index.html', 'src/index.html']
+  },
   define: {
     // 生产环境下有助于打包器清除无效代码
     'import.meta.vitest': 'undefined'
@@ -84,5 +87,13 @@ export default defineConfig({
       '**/_test/**'
     ]
   },
-  ...vitestConfig
+  ...vitestConfig,
+  build: {
+    rollupOptions: {
+      // 为了在生产环境下, vite不会在打包时把vue的runtime-dom模块打包进去
+      // node_modules/vue/dist/vue.runtime.esm-bundler.js文件中导入了@vue/*模块
+      // 而node_modules/@vue文件夹下没有这些模块时,会导致打包失败
+      external: [/^@vue/]
+    }
+  }
 })
