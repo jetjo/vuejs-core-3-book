@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>渲染系统与响应式系统结合</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "#vue-fixed/reactive": "https://unpkg.com/@vue/reactivity@3.0.5/dist/reactivity.esm-browser.js",
+          "#html-type-vue-reactive": "https://unpkg.com/browse/@vue/reactivity@3.0.5/dist/reactivity.esm-browser.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <!-- NOTE: 在vite的config的resolve.preserveSymlinks为默认false的情形下, 
+    启动vite在dev mode, 打开这个页面会报错, 但是在访问过路径
+  `'http://127.0.0.1:5173/三、渲染器/7、渲染器的设计/1-与响应式系统的结合/index.html'`后,
+  再次刷新页面不再报错 -->
+    <!-- http://127.0.0.1:5173/chapter-3-7/1-与响应式系统的结合/index.html -->
+    <!-- encodeURI('http://127.0.0.1:5173/三、渲染器/7、渲染器的设计/1-与响应式系统的结合/index.html') -->
+    <!-- http://127.0.0.1:5173/%E4%B8%89%E3%80%81%E6%B8%B2%E6%9F%93%E5%99%A8/7%E3%80%81%E6%B8%B2%E6%9F%93%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1/1-%E4%B8%8E%E5%93%8D%E5%BA%94%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%BB%93%E5%90%88/index.html -->
+    <div id="app"></div>
+    <script type="module">
+      //NOTE: Failed to load module script: Expected a JavaScript module script but
+      // the server responded with a MIME type of "text/html".
+      // Strict MIME type checking is enforced for module scripts per HTML spec.
+      // NOTE: 千万不要使用https://unpkg.com/browse下的包, 这是在浏览器中浏览npm包的, 不是用来引用的
+      // import { effect, ref } from '#html-type-vue-reactive'
+      import { effect, ref } from '#vue-fixed/reactive'
+
+      function render(domStr, container) {
+        container.innerHTML = domStr
+      }
+      const count = ref(1)
+      effect(() => {
+        render(`<h1>${count.value}</h1>`, document.getElementById('app'))
+      })
+
+      setTimeout(() => {
+        count.value = 2
+      }, 1000)
+    </script>
+  </body>
+</html>

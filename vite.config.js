@@ -44,12 +44,18 @@ const vitestConfig = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  appType: 'mpa',
   define: {
     // 生产环境下有助于打包器清除无效代码
     'import.meta.vitest': 'undefined'
   },
   plugins: [vue()],
   resolve: {
+    // 在preserveSymlinks为默认false时,
+    // dev mode下,如果浏览器访问的地址对应的物理路径是个软连接,
+    // 并且在(软连接对应的)源物理路径所对应的url还没有被加载(浏览器访问)的前提下, 会报错
+    // NOTE: No matching HTML proxy module found from /Users/loong/project/vuejs-core-3-book/三、渲染器/7、渲染器的设计/1-与响应式系统的结合/index.html?html-proxy&index=0.js
+    preserveSymlinks: true,
     alias: {
       // '#': fileURLToPath(new URL('./src', import.meta.url)),
       '@jetjo/vue3/ref/*.js': './vue3/reactive/ref/*.js',
@@ -67,7 +73,16 @@ export default defineConfig({
       '@jetjo/vue3/effect': './vue3/effect/4-11.js',
       '@jetjo/vue3/computed': './vue3/computed/4-11.js',
       '@jetjo/vue3/watch': './vue3/watch/4-11.js'
-    }
+    },
+    exclude: [
+      '**/node_modules/**',
+      '_*/**',
+      '**/*tmp/**',
+      '**/*bak/**',
+      '**/*test/**',
+      '**/test/**',
+      '**/_test/**'
+    ]
   },
   ...vitestConfig
 })
