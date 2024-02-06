@@ -23,6 +23,11 @@ const vitestConfig = {
     //   enable: false
     // },
     exclude: [
+      'node_modules',
+      'dist',
+      '.idea',
+      '.git',
+      '.cache',
       '**/node_modules/**',
       '_*/**',
       '**/*tmp/**',

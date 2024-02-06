@@ -33,7 +33,7 @@ dependencies:
     specifier: ^2.3.1
     version: 2.3.1
   vue:
-    specifier: ^3.3.4
+    specifier: ^3.4.15
     version: 3.4.15(typescript@5.3.3)
 
 devDependencies:
@@ -50,7 +50,7 @@ devDependencies:
     specifier: ^6.7.5
     version: 6.19.1(eslint@8.56.0)(typescript@5.3.3)
   '@vitejs/plugin-vue':
-    specifier: ^4.3.1
+    specifier: ^4.6.2
     version: 4.6.2(vite@4.5.2)(vue@3.4.15)
   '@vitest/coverage-istanbul':
     specifier: ^0.34.6
@@ -59,7 +59,7 @@ devDependencies:
     specifier: ^0.34.6
     version: 0.34.6(vitest@0.34.6)
   '@vitest/ui':
-    specifier: ^0.34.6
+    specifier: ^0.34.7
     version: 0.34.7(vitest@0.34.6)
   '@vue/test-utils':
     specifier: ^2.4.1
@@ -101,10 +101,10 @@ devDependencies:
     specifier: ^1.66.1
     version: 1.70.0
   typescript:
-    specifier: ^5.2.2
+    specifier: ^5.3.3
     version: 5.3.3
   vite:
-    specifier: ^4.4.9
+    specifier: ^4.5.2
     version: 4.5.2(@types/node@20.11.7)(sass@1.70.0)
   vitest:
     specifier: ^0.34.6
