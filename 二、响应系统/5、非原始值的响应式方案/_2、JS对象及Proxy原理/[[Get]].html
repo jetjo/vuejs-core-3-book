@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ordinary Object [[Get]]</title>
+  </head>
+  <body>
+    <h1>o.[[Get]](propertyKey, receiver)的执行过程</h1>
+    <ul>
+      <li>1、调用o.[[GetOwnProperty]]获取desc</li>
+      <li>
+        2、如果desc是undefined,那么
+        <ul>
+          <li>a、调用o.[[GetPrototypeOf]]获取parent</li>
+          <li>b、如果parent是null,返回undefined</li>
+          <li>c、否则,执行parent.[[Get]](propertyKey, receiver)</li>
+        </ul>
+      </li>
+      <li>
+        <i style="color: crimson"
+          >3、如果desc是data-descriptor, 返回desc.value</i
+        >
+      </li>
+      <li>4、断言:desc是accessor-descriptor</li>
+      <li>5、使得getter为desc.get</li>
+      <li>6、如果getter是undefined,返回undefined</li>
+      <li><i style="color: crimson">7、返回Call(getter, receiver)</i></li>
+    </ul>
+
+    <script type="module">
+      const py = new Proxy(
+        {},
+        {
+          getOwnPropertyDescriptor(target, p) {
+            console.log('[[GetOwnProperty]]')
+            return Reflect.getOwnPropertyDescriptor(target, p)
+          },
+          getPrototypeOf(target) {
+            console.log('[[GetPrototypeOf]]')
+            return Reflect.getPrototypeOf(target)
+          }
+          //   get(target, p, receiver) {
+          //     console.log('[[Get]]')
+          //     // return target[p]
+          //     return Reflect.get(target, p, receiver)
+          //   }
+        }
+      )
+
+      py.noExist
+      //   Object.getOwnPropertyDescriptor(py)
+      //   Object.getPrototypeOf(py)
+    </script>
+
+    <p>
+      经测试,虽然[[Get]]内部调用了[[GetOwnProperty]]和[[GetPrototypeOf]],
+      但是这两个基本操作并不能被Proxy拦截到,只能拦截到[[Get]]
+    </p>
+  </body>
+</html>

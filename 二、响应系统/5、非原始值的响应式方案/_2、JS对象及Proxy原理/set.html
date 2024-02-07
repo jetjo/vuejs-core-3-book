@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>set trap 约束</title>
+  </head>
+  <body>
+    <script type="module">
+      const py = new Proxy(
+        {},
+        {
+          getOwnPropertyDescriptor() {
+            // 从ES语言规范中看,设置对象属性值时,
+            // 第一步是要先获取到对象上这个属性的Descriptor,
+            // 但是这不会被此处这个trap拦截到
+            console.log('[[getOwnProperty]]')
+            return Reflect.getOwnPropertyDescriptor(...arguments)
+          },
+          set() {
+            console.log('[[Set]]')
+            return true
+          }
+        }
+      )
+      //   确认在o.[[Set]]内部方法的执行中,
+      // 第一步是调用o.[[getOwnProperty]]
+      console.log('....')
+      py.foo = 'foo'
+    </script>
+  </body>
+</html>

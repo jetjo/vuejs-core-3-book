@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <pre>
+满足TypeError的最少条件:
+        1、只有getter
+        2、configurable是false
+    </pre>
+    <script type="module">
+      const target = {}
+      Object.defineProperty(target, 'foo', {
+        get() {
+          return 'bar'
+        },
+        configurable: false
+      })
+      const py = new Proxy(target, {
+        set() {
+          return true
+        }
+      })
+      py.foo = py.foo
+    </script>
+  </body>
+</html>
