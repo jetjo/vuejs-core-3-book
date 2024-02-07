@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>4.7.2 调度应用-宏任务</title>
+    <script type="module">
+      // src属性是空时,内不代码不执行
+      // <script type="module" src="">
+      //   import { effect } from './1-effect-fn-reg.js'
+      //   import { reactive } from './2-reactive.js'
+      import { effect } from '../8-计算属性与lazy/1-effect-fn-reg.js'
+      import { reactive } from '../8-计算属性与lazy/2-reactive.js'
+
+      const state = reactive({ value: 0 })
+      effect(
+        () => {
+          console.log('执行次序: ', state.value)
+        },
+        {
+          scheduler(efn) {
+            setTimeout(() => {
+              efn()
+            }, 0)
+          }
+        }
+      )
+      // 副作用函数变成了宏任务
+      state.value++
+      console.warn('执行次序: ', state.value)
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <a href="./3-响应性数据的中间态.html">3-响应性数据的中间态</a>
+  </body>
+</html>

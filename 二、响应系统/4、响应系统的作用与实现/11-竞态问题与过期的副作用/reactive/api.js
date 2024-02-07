@@ -19,8 +19,8 @@ import { getReactive } from './traps/Reactive.js'
 // let handleThrow = false
 // let handleProto = false
 
-/**@typedef {import('./index.js').ProxyTrapGetter} ProxyTrapGetter*/
-/**@typedef {import('./index.js').ProxyTrapOption} ProxyTrapOption*/
+// /**@typedef {import('./index.js').ProxyTrapGetter} ProxyTrapGetter*/
+// /**@typedef {import('./index.js').ProxyTrapOption} ProxyTrapOption*/
 
 /**@type {ProxyTrapOption} */
 const _trapOption = {

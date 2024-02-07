@@ -7,9 +7,9 @@ import { canReactive } from './helper.js'
 // }
 /**
  * @param {Object} options
- * @param {import('../index.js').EffectM} options.Effect
- * @param {import('../index.js').ReactiveCtor} options.Reactive
- * @param {import('../index.js').Track} options.track
+ * @param {EffectM} options.Effect
+ * @param {ReactiveCtor} options.Reactive
+ * @param {Track} options.track
  * @returns {ProxyHandler['get']}
  */
 function getGetTrap(options = {}) {

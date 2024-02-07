@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <pre>
+满足TypeError的最少条件:
+        1、只有getter
+        2、返回Reflect.set的调用结果(false)
+    </pre>
+    <script type="module">
+      import { reactive } from "@jetjo/vue3/reactive";
+      const target = {}
+      Object.defineProperty(target, 'foo', {
+        get() {
+          return 'bar'
+        },
+        configurable: true
+      })
+      const py = reactive(Object.seal(Object.create(target, {})))
+      // const py = reactive(Object.freeze(Object.create(target, {})))
+      // const py = reactive(Object.preventExtensions(Object.create(target, {})))
+      // const py = reactive(Object.create(target, {}))
+      // py.foo = 'bar'
+      py.foo = py.foo
+      //   py.foo = undefined
+      console.log('没有Throw.......')
+      console.log(Object.getPrototypeOf(py))
+      console.log(Reflect.getPrototypeOf(py))
+    </script>
+  </body>
+</html>

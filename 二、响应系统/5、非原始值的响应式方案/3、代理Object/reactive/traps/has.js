@@ -1,4 +1,4 @@
-/**@param {import('../../../index.js').ProxyTrapOption} [option] */
+/**@param {ProxyTrapOption} [option] */
 function getHasTrap(option = {}) {
   const { Effect, track } = option
 

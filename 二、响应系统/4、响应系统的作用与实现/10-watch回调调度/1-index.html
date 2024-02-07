@@ -1,0 +1,62 @@
+<!doctype html>
+<!-- 4-watch-object-iterable.html -->
+<html lang="en">
+  <head>
+    <!-- http://localhost:5174/4%E3%80%81%E5%93%8D%E5%BA%94%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%BD%9C%E7%94%A8%E4%B8%8E%E5%AE%9E%E7%8E%B0/10-watch%E5%9B%9E%E8%B0%83%E8%B0%83%E5%BA%A6/1-index.html -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Watch 回调调度测试 测试</title>
+  </head>
+  <body>
+    <script type="module">
+      import {
+        reactive,
+        bucket
+      } from '../9-watch的实现原理/iterable/2-reactive-deep.js'
+      import { watch } from '../9-watch的实现原理/4-watch.js'
+
+      const state = reactive({
+        name: 'liuyifei',
+        price: 3000,
+        bodyQu: {
+          height: 179,
+          weight: 70
+        }
+      })
+
+      watch(
+        state,
+        (val, oldVal) => {
+          const keys = []
+          for (const key in state.bodyQu) {
+            if (Object.hasOwnProperty.call(state.bodyQu, key)) {
+              keys.push(key)
+            }
+          }
+          // console.log('girl: ', keys, state.bodyQu)
+          console.log(val.raw.bodyQu, oldVal?.raw.bodyQu)
+        },
+        {
+          // immediate: true
+        }
+      )
+
+      setTimeout(() => {
+        state.bodyQu.height = 175
+      }, 0)
+
+      setTimeout(() => {
+        state.bodyQu.bustGrade = 'B+'
+        state.bodyQu.waistInch = 20
+        state.bodyQu.hipInch = 40
+        // console.log(state)
+      }, 0)
+
+      setTimeout(() => {
+        state.bodyQu.hipInch++
+      }, 1000)
+    </script>
+
+    <p><a href='../11-竞态问题与过期的副作用/1-index.html'>11-竞态问题与过期的副作用</a></p>
+  </body>
+</html>

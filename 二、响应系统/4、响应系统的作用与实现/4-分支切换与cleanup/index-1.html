@@ -1,0 +1,35 @@
+<!doctype html>
+<!-- http://localhost:5174/4%E3%80%81%E5%93%8D%E5%BA%94%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%BD%9C%E7%94%A8%E4%B8%8E%E5%AE%9E%E7%8E%B0/4-%E5%88%86%E6%94%AF%E5%88%87%E6%8D%A2%E4%B8%8Ecleanup/index-1.html -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>4.4 分支切换与cleanup</title>
+    <script type="module">
+      import { effect } from '../3-响应系统的基本设计/1-effect-fn-reg.js'
+      import { reactive } from '../3-响应系统的基本设计/2-reactive.js'
+      const state = reactive({ ok: true, txt: 'hello world! ' })
+      window.addEventListener('load', () => {
+        effect(() => {
+          console.log('effect run')
+          const el = document.getElementById('app')
+          el.innerText = state.ok ? state.txt : 'not'
+        })
+      })
+      setTimeout(() => {
+        console.log(
+          '切换分支, 副作用不再依赖txt字段, 但是txt对应的依赖集合中仍然遗留了这个副作用,没有清除'
+        )
+        state.ok = false
+      }, 10000)
+      setTimeout(() => {
+        console.log('触发了遗留的副作用的执行')
+        state.txt = 'hello vue3! '
+      }, 13000)
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <a href="./index-2.html">分支切换与cleanup</a>
+  </body>
+</html>

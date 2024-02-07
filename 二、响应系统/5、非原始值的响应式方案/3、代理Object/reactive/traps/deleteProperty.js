@@ -1,6 +1,6 @@
-import { TRIGGER_TYPE } from '../../../../reactive/_traps/convention/4-11.js'
+import { TRIGGER_TYPE } from '#reactive-convention/4-11.js'
 
-/**@param {import('../../../index.js').ProxyTrapOption} [option]  */
+/**@param {ProxyTrapOption} [option]  */
 function getDeleteTrap(option = {}) {
   const { trigger } = option
   /**@type {ProxyHandler['deleteProperty']} */

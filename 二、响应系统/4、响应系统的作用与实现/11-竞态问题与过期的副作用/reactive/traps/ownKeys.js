@@ -2,8 +2,8 @@ import { ITERATE_KEY } from './convention.js'
 
 /**
  * @param {Object} options
- * @param {import('../index.js').EffectM} options.Effect
- * @param {import('../index.js').Track} options.track
+ * @param {EffectM} options.Effect
+ * @param {Track} options.track
  * @returns {ProxyHandler['ownKeys']}
  */
 function getOwnKeysTrap(options = {}) {

@@ -1,0 +1,26 @@
+<!doctype html>
+<!-- http://localhost:5174/5%E3%80%81%E9%9D%9E%E5%8E%9F%E5%A7%8B%E5%80%BC%E7%9A%84%E5%93%8D%E5%BA%94%E5%BC%8F%E6%96%B9%E6%A1%88/7%E3%80%81%E4%BB%A3%E7%90%86%E6%95%B0%E7%BB%84/set-length-2.html -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>set-length-2</title>
+  </head>
+  <body>
+    <script type="module">
+      const arr = new Array(100) //长度为100的空数组
+      arr.fill('刘亦菲') //全部填充相同的元素
+      //   console.log(arr)
+      const oldDescOf50 = Object.getOwnPropertyDescriptor(arr, '50')
+      //   console.log(oldDescOf50)
+      //   oldDescOf50.writable = false //不会阻止删除
+      //   oldDescOf50.configurable = false //会阻止删除
+      Object.defineProperty(arr, '50', oldDescOf50)
+      const newDescOf50 = Object.getOwnPropertyDescriptor(arr, '50')
+      //   console.log(newDescOf50)
+      arr.length = 0 // TypeError: Cannot delete property '50' of [object Array]
+      console.log(arr)
+      console.log(Object.getOwnPropertyDescriptor(arr, '50'))
+    </script>
+  </body>
+</html>

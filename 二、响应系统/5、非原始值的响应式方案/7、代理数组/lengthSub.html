@@ -1,0 +1,48 @@
+<!doctype html>
+<!-- http://localhost:5174/5%E3%80%81%E9%9D%9E%E5%8E%9F%E5%A7%8B%E5%80%BC%E7%9A%84%E5%93%8D%E5%BA%94%E5%BC%8F%E6%96%B9%E6%A1%88/7%E3%80%81%E4%BB%A3%E7%90%86%E6%95%B0%E7%BB%84/lengthSub.html -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>lengthSub</title>
+  </head>
+  <body>
+    <script type="module">
+      import { effect } from './effect/index.js'
+      import { reactive } from '@jetjo/vue3/reactive'
+      const arr = Array(100).fill('刘亦菲')
+      //   console.log(arr)
+      const MaxLen = Math.pow(2, 32) - 1
+      arr[MaxLen - 1] = ''
+      arr[MaxLen] = ''
+      arr[MaxLen + 1] = ''
+      //   console.log(arr);
+      const sk = Symbol('老婆')
+      arr[sk] = ''
+      arr['老婆'] = ''
+
+      const state = reactive(arr)
+
+      effect(() => {
+        console.log(state.length)
+        console.log(state[0])
+        console.log(state[90])
+        console.log(state[MaxLen - 1])
+        console.log(state[MaxLen])
+        console.log(state[MaxLen + 1])
+        console.log(state[sk])
+        console.log(state['老婆'])
+        for (const key in state) {
+          if (Object.hasOwnProperty.call(state, key)) {
+            const element = state[key]
+          }
+        }
+        console.log(arr)
+      })
+
+      state.length = 50
+
+      state[50] = '刘亦菲'
+    </script>
+  </body>
+</html>

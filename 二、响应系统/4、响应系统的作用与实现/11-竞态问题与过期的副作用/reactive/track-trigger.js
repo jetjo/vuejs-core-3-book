@@ -1,12 +1,12 @@
 import { Effect } from '../effect/index.js'
 import { ITERATE_KEY, TRIGGER_TYPE } from './traps/convention.js'
 
-/**@type {WeakMap<, Map<, Set<import('./index.js').EffectFn>>>} */
+/**@type {WeakMap<, Map<, Set<EFn>>>} */
 const bucket = new WeakMap()
 
 /**getTrigger */
 function getTrigger(options = {}) {
-  /**@type {Map<, Set<import('./index.js').EffectFn>> | undefined} */
+  /**@type {Map<, Set<EFn>> | undefined} */
   let depsMap
   let effectsToRun = []
   function run(key) {
@@ -16,8 +16,8 @@ function getTrigger(options = {}) {
 
   // ReferenceError: Cannot access 'trigger' before initialization
   /**
-   * @param {(import('./index.js').EffectFn)[]} effects
-   * @param {import('./index.js').TriggerType} type 属性操作类型
+   * @param {(EFn)[]} effects
+   * @param {TriggerType} type 属性操作类型
    * */
   function runEffects() {
     // warn('try scheduler job...')
@@ -37,7 +37,7 @@ function getTrigger(options = {}) {
   /* return  */
   /**
    * @param {string} key 属性名称
-   * @param {import('./index.js').TriggerType} type 属性操作类型
+   * @param {TriggerType} type 属性操作类型
    * */
   return function trigger(target, key, type) {
     depsMap = bucket.get(target)

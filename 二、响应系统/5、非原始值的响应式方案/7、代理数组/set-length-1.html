@@ -1,0 +1,65 @@
+<!doctype html>
+<!-- http://localhost:5174/5%E3%80%81%E9%9D%9E%E5%8E%9F%E5%A7%8B%E5%80%BC%E7%9A%84%E5%93%8D%E5%BA%94%E5%BC%8F%E6%96%B9%E6%A1%88/7%E3%80%81%E4%BB%A3%E7%90%86%E6%95%B0%E7%BB%84/set-length-1.html -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>稀疏数组</title>
+  </head>
+  <body>
+    <a
+      href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Indexed_collections#sparse_arrays"
+      >Sparse arrays,稀疏数组</a
+    >
+    <script type="module">
+      const arrProto = ['媳妇', '媳妇']
+      arrProto[200] = '刘亦菲~'
+      const arr = ['老婆', '老婆'].fill('老婆', 10, 100)
+      console.log({ arrProto, arr })
+      arr.length = 300
+      console.log(
+        'arr索引200的PropertyDescription: ',
+        Object.getOwnPropertyDescriptor(arr, '200')
+      )
+      console.log('arr索引200的值: ', arr[200])
+
+      function printArrForInOrForOf(
+        forof = false,
+        arrKeys = false,
+        objKeys = true
+      ) {
+        if (forof) {
+          for (const iterator of arr) {
+            console.log('iterator: ', iterator)
+          }
+        } else if (arrKeys) {
+          console.log('arrKeys: ', [...arr.keys()])
+        } else if (objKeys) {
+          console.log('objKes: ', Object.keys(arr))
+        } else {
+          for (const key in arr) {
+            if (Object.hasOwnProperty.call(arr, key)) {
+              const element = arr[key]
+              console.log(key, element)
+            } else console.warn(key, arr[key])
+          }
+        }
+      }
+      printArrForInOrForOf()
+
+      console.warn('设置arrProto为arr的原型后: ')
+      Object.setPrototypeOf(arr, arrProto)
+      console.log('arr索引200的值: ', arr[200])
+      printArrForInOrForOf()
+
+      console.log('删除arr[0]后: ')
+      delete arr[0]
+      printArrForInOrForOf()
+
+      console.log(
+        '数组的length属性描述符: ',
+        Object.getOwnPropertyDescriptor(arr, 'length')
+      )
+    </script>
+  </body>
+</html>

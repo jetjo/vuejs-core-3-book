@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>with</title>
+  </head>
+  <body>
+    <script type="module">
+      import { effect } from './effect/index.js'
+      import { reactive } from '@jetjo/vue3/reactive'
+
+      const state = reactive(['lisa', 'lily', 'lucy'])
+
+      effect(() => {
+        console.log(state.with(0, state.at(0)))
+      })
+
+      setTimeout(() => {
+        state[state.length - 1] = 'liuyifei'
+      }, 0)
+
+      setTimeout(() => {
+        state.length = 2
+      }, 0)
+    </script>
+  </body>
+</html>

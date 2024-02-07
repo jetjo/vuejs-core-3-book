@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- http://localhost:5174/4%E3%80%81%E5%93%8D%E5%BA%94%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%BD%9C%E7%94%A8%E4%B8%8E%E5%AE%9E%E7%8E%B0/6-%E6%97%A0%E9%99%90%E9%80%92%E5%BD%92%E5%BE%AA%E7%8E%AF/index.html -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>4.6 避免无限递归循环</title>
+    <script type="module">
+      // import { effect } from '../5-嵌套的effect与effect栈/1-effect-fn-reg.js'
+      // // import { reactive } from '../5-嵌套的effect与effect栈/2-reactive.js'
+      // import { reactive } from './2-reactive.js'
+      import { effect } from '../8-计算属性与lazy/1-effect-fn-reg.js'
+      import { reactive } from '../8-计算属性与lazy/2-reactive.js'
+      const obj = {
+        i: 0
+      }
+      const state = reactive(obj)
+      window.addEventListener('load', () => {
+        effect(() => {
+          console.log('effect run')
+          // 这一句导致无限递归循环,
+          // 原因在于,在一个副作用中对一个响应性对象的字段即读又写
+          state.i++
+          // 执行不到的代码...
+          console.log('fucking~~~~~~~~')
+        }, 1)
+        // 执行不到的代码...
+        console.log('fuck off~~~~~~~~')
+      })
+
+      setTimeout(() => {
+        state.i++
+        console.log('更新状态...')
+      }, 5000)
+    </script>
+  </head>
+  <body>
+    <a href="../7-调度执行/1-概念.html">7-调度执行</a>
+  </body>
+</html>

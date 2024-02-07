@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>4.8 计算属性与lazy</title>
+    <script type="module">
+      import { computed } from '../11-竞态问题与过期的副作用/computed/index.js'
+      import { effect } from '../11-竞态问题与过期的副作用/effect/index.js'
+      import { reactive } from '@jetjo/vue3/reactive'
+
+      const age = reactive({ value: 18 })
+      const price = computed(() => {
+        console.log('computed run')
+        if (age.value >= 21) return 1000
+        else return 3000
+      })
+
+      console.log('检测计算属性的懒执行')
+
+      //   effect(() => console.log({ price }, 'effect run'))
+      //   effect(() => console.log({ price: price.value }, 'effect run'))
+      effect(() => console.log({ price: price.value }, 'effect run'))
+
+      setTimeout(() => {
+        age.value++
+        age.value++
+        age.value++
+        console.log('年龄增加: ', age.value)
+      }, 0)
+      setTimeout(() => {
+        age.value--
+        age.value--
+        age.value--
+        console.log('年龄减小: ', age.value)
+      }, 0)
+    </script>
+  </head>
+  <body>
+    <a href='../9-watch的实现原理/1-index.html'>9-Watch实现的测试</a>
+  </body>
+</html>

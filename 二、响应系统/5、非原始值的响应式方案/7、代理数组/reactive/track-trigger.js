@@ -6,14 +6,14 @@ import {
   ITERATE_KEY_VAL
 } from './traps/convention.js'
 
-/**@type {WeakMap<, Map<, Set<import('./index.js').EffectFn>>>} */
+/**@type {WeakMap<, Map<, Set<EFn>>>} */
 const bucket = new WeakMap()
-/**@type {WeakMap<import('./index.js').EffectFn, Map<, Set<string>>>} */
+/**@type {WeakMap<EFn, Map<, Set<string>>>} */
 const triggerBucket = new WeakMap()
 
 /**getTrigger */
 function getTrigger(option = {}) {
-  /**@type {Map<, Set<import('./index.js').EffectFn>> | undefined} */
+  /**@type {Map<, Set<EFn>> | undefined} */
   let depsMap
   let effectsToRun = []
 
@@ -78,7 +78,7 @@ function getTrigger(option = {}) {
 
   /**
    * @param {any} key 属性名称
-   * @param {import('./index.js').TriggerType} type 属性操作类型
+   * @param {TriggerType} type 属性操作类型
    * */
   return function trigger(target, key, type, newVal, isArrayProperty) {
     depsMap = bucket.get(target)

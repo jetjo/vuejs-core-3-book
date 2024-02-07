@@ -2,7 +2,7 @@ import { warn, notNaN } from '../../utils/index.js'
 import { TRIGGER_TYPE, TRY_PROXY_NO_RESULT, getTarget } from './convention.js'
 
 /**
- * @param {import('../index.js').ProxyTrapOption} [options]
+ * @param {ProxyTrapOption} [options]
  */
 function getSetTrap(options = {}) {
   const { Effect, trigger, handleThrow, Reactive } = options

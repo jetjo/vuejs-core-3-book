@@ -3,7 +3,7 @@ import { warn } from '../../utils/index.js'
 /**
  * @param {Object} options
  * @param {boolean} options.handleProto
- * @param {import('../index.js').ReactiveCtor} options.Reactive
+ * @param {ReactiveCtor} options.Reactive
  * @returns {ProxyHandler['getPrototypeOf']}
  */
 function getGetProtoTrap(options = {}) {

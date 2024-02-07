@@ -1,4 +1,4 @@
-import { createReactive as createReactiveBase } from '../../../reactive/api/4-11.js'
+import { createReactive as createReactiveBase } from '#reactive/4-11.js'
 import { trapGetters } from './traps/index.js'
 
 function createReactive(

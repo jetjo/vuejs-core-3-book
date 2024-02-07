@@ -24,9 +24,9 @@ const canReactive = v => !!v && requireTarget(v, false) && !isReactive(v)
 const canReadonly = v =>
   !!v && requireTarget(v, false) && !isReadonlyReactive(v)
 
-/**@typedef {import('../index.js').ProxyTrapOption} ProxyTrapOption */
+// /**@typedef {import('../index.js').ProxyTrapOption} ProxyTrapOption */
 
-/**@typedef {ProxyHandler<any>} PH */
+// /**@typedef {ProxyHandler<any>} PH */
 
 /**@type {(keyof PH)[]} */
 const ProxyHandlerNames = [
@@ -65,7 +65,6 @@ function getProxyHandler(traps) {
 }
 
 /**
- * @typedef {import('../index.js').ProxyTrapGetter} ProxyTrapGetter
  * @callback HandleTrapGetter
  * @param {ProxyTrapGetter} trapGetter
  */

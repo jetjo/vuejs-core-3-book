@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- http://localhost:5174/4%E3%80%81%E5%93%8D%E5%BA%94%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%BD%9C%E7%94%A8%E4%B8%8E%E5%AE%9E%E7%8E%B0/9-watch%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/1-index.html -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Watch实现的测试</title>
+  </head>
+  <body>
+    <script type="module">
+      import { reactive, bucket } from './2-reactive.js'
+      import { watch } from './4-watch.js'
+
+      const state = reactive({
+        name: 'liuyifei',
+        price: 3000,
+        bodyQu: {
+          height: 179,
+          weight: 70
+        }
+      })
+
+      watch(
+        () => state.bodyQu.height,
+        () => {
+          console.log('liuyifei.body.height: ', state.bodyQu.height)
+        }
+      )
+
+      setTimeout(() => {
+        state.bodyQu.height = 175
+      }, 0)
+
+      setTimeout(() => {
+        state.bodyQu = { height: 180, weight: 70 }
+      }, 0)
+
+      setTimeout(() => {
+        // console.log(bucket)
+        state.bodyQu = reactive({ height: 181, weight: 70 })
+      }, 0)
+      setTimeout(() => {
+        state.bodyQu.height = 176
+      }, 0)
+    </script>
+    <p><a href='./2-深度响应.html'>2-深度响应</a></p>
+  </body>
+</html>

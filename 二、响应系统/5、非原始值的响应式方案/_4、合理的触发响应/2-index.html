@@ -1,0 +1,33 @@
+<!doctype html>
+<!-- http://localhost:5174/5%E3%80%81%E9%9D%9E%E5%8E%9F%E5%A7%8B%E5%80%BC%E7%9A%84%E5%93%8D%E5%BA%94%E5%BC%8F%E6%96%B9%E6%A1%88/_4%E3%80%81%E5%90%88%E7%90%86%E7%9A%84%E8%A7%A6%E5%8F%91%E5%93%8D%E5%BA%94/2-index.html -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>watch computed</title>
+  </head>
+  <body>
+    <script type="module">
+      import { reactive } from '@jetjo/vue3/reactive'
+      import { watch } from '@jetjo/vue3/watch'
+      import { computed } from '@jetjo/vue3/computed'
+      const state = reactive({
+        name: 'liuyifei',
+        ejaculateIn: true
+      })
+      const price = computed(() => {
+        console.log('重新计算')
+        return 'ejaculateIn' in state ? 3000 : 1000
+      })
+
+      watch(
+        () => price.value,
+        v => {
+          console.log('price更新: ', v)
+        }
+      )
+
+      delete state.ejaculateIn
+    </script>
+  </body>
+</html>

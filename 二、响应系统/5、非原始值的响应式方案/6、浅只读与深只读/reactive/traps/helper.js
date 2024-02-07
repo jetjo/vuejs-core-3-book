@@ -9,8 +9,6 @@ import {
 } from '#reactive/traps/helper/4-11.js'
 import { throwErr } from '#utils'
 
-/**@typedef {import('../index.js').ProxyTrapOption} ProxyTrapOption */
-
 /**@typedef {ProxyHandler<any>} PH */
 
 /**@type {(keyof PH)[]} */
