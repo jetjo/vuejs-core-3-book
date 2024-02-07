@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>测试打包结果</title>
+  </head>
+  <body>
+    <script type="module">
+      import * as OnRes from './dist/on/index.js'
+      // Derived, DogHouse
+      const onRes = {
+        derived: new OnRes.Derived(),
+        dogHouse: new OnRes.DogHouse({__proto__:null, name: 'dogHouse'})
+      }
+
+      console.log(onRes, 'onRes')
+    </script>
+
+    <script type="module">
+      import * as OffRes from './dist/off/index.js'
+      // Derived, DogHouse
+      const offRes = {
+        derived: new OffRes.Derived(),
+        dogHouse: new OffRes.DogHouse({__proto__:null, name: 'dogHouse'})
+      }
+
+      console.log(offRes, 'offRes')
+    </script>
+  </body>
+</html>

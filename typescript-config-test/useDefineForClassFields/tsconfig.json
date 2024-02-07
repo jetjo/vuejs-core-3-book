@@ -4,6 +4,7 @@
     // modern browsers support `es6/es2015` entirely
     "target": "ES2015",
     "module": "NodeNext",
-    "moduleResolution": "NodeNext"
+    "moduleResolution": "NodeNext",
+    "verbatimModuleSyntax": true
   }
 }

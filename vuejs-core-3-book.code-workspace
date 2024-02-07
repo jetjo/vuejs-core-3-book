@@ -11,6 +11,9 @@
 		{
 			"name": "chapter-3",
 			"path": "三、渲染器"
+		},
+		{
+			"path": "typescript-config-test"
 		}
 	],
 	"settings": {
