@@ -200,3 +200,9 @@ interface CreateReactive {
 }
 
 type ReactiveApiCreator = ReturnType<CreateReactive>
+
+type PH = ProxyHandler<any>
+
+type ProxyTrap = PH[keyof PH]
+
+type ProxyTrapGetter = (opt: ProxyTrapOption) => ProxyTrap
