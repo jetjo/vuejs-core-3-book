@@ -28,6 +28,9 @@
 			"**/*bak/**",
 			"**/*test/**",
 			"**/test/**",
+		],
+		"cSpell.enableFiletypes": [
+			"shellscript"
 		]
 	}
 }

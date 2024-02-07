@@ -1,16 +1,132 @@
 {
   "compilerOptions": {
+    // https://www.typescriptlang.org/tsconfig#rootDir
+    // https://www.typescriptlang.org/tsconfig#composite
+    "composite": true,
+    // 模块系统类型及版本,影响模块的解析规则及ts的编译结果的模块规范
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "rootDir": ".",
+    "allowJs": true,
+    // 项目打包产出的文件的JS语言版本,也影响lib的值
     "target": "ESNext",
-    "module": "NodeNext",
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "outDir": "./ts-out",
+    "rootDirs": [
+      // NOTE: 在package.json中的`imports`字段中为`"./src/utils/index.js"`设置了别名`#utils`,
+      // 所以如果不把本文件设置的`compilerOptions.outDir`作为`rootDirs`的一部分,则无法正确的解析`#utils`别名的类型
+      "./ts-out"
+    ],
+    // // 仅用于AMD, 从TS 4.1开始
     // "baseUrl": "./",
-    // "paths": {
-    //   "@/*": [
-    //     "./src/*"
-    //   ]
-    // }
+    // 用于裸模块的类型导入路径的re-map, 权限最高
+    "paths": {
+      // NOTE: 这里使用单个*,就代表所有层级的子目录,不用使用**/*
+      "@/*": [
+        // 这里的相对路径基于此配置文件的位置
+        "./src/*",
+        // fallback, 如果第一个路径找不到, 就会使用第二个路径
+        "./"
+      ],
+      "@components/*": [
+        "./src/components/*",
+        "./components/*"
+      ]
+    },
+    // sourceMap的baseUrl
+    // "sourceRoot": "//www.xxx.com/",
+    "useDefineForClassFields": true,
+    /* Bundler mode */
+    // https://www.typescriptlang.org/docs/handbook/2/modules.html#typescripts-module-resolution-options
+    // https://vitejs.dev/guide/performance.html#reduce-resolve-operations
+    // https://vitejs.dev/guide/migration.html#rollup-4
+    // https://www.typescriptlang.org/docs/handbook/modules/reference.html#packagejson-imports-and-self-name-imports
+    // "moduleResolution": "Bundler",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "moduleDetection": "auto",
+    "allowSyntheticDefaultImports": true,
+    "resolvePackageJsonImports": true,
+    "resolvePackageJsonExports": true,
+    "esModuleInterop": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "jsxImportSource": "vue",
+    "jsx": "preserve",
+    /* Linting */
+    "checkJs": false,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
   },
   "exclude": [
-    "node_modules",
+    "**/node_modules/**",
+    "**/dist/**",
     "./*.cjs"
-  ]
+  ],
+  "include": [
+    // "./**/*",
+    "./**/*.ts",
+    "./**/*.tsx",
+    "./**/*.d.ts",
+    "./**/*.js",
+    "./**/*.jsx",
+    "./**/*.vue",
+    "./**/*.json",
+    "./**/*.wasm",
+    "./**/*.mjs",
+    "./**/*.mts",
+    "./**/*.cjs",
+    "./**/*.css",
+    "./**/*.less",
+    "./**/*.sass",
+    "./**/*.scss",
+    "./**/*.styl",
+    "./**/*.svg",
+    "./**/*.png",
+    "./**/*.jpg",
+    "./**/*.jpeg",
+    "./**/*.gif",
+    "./**/*.webp",
+    "./**/*.bmp",
+    "./**/*.tiff",
+    "./**/*.ico",
+    "./**/*.avif",
+    "./**/*.mp3",
+    "./**/*.mp4",
+    "./**/*.webm",
+    "./**/*.ogg",
+    "./**/*.ogv",
+    "./**/*.oga",
+    "./**/*.ogx",
+    "./**/*.wav",
+    "./**/*.flac",
+    "./**/*.aac",
+    "./**/*.m4a",
+    "./**/*.opus",
+    "./**/*.flv",
+    "./**/*.mov",
+    "./**/*.wmv",
+    "./**/*.avi",
+    "./**/*.rm",
+    "./**/*.rmvb",
+    "./**/*.mkv",
+    "./**/*.asf",
+    "./**/*.mpg",
+    "./**/*.mpeg",
+    "./**/*.mpe",
+    "./**/*.tsv",
+    "./**/*.csv"
+  ],
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  // 定义sub project, 用于composite
+  // https://www.typescriptlang.org/docs/handbook/project-references.html
+  // "references": []
 }

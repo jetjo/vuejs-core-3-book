@@ -22,16 +22,6 @@
   "author": "",
   "license": "ISC",
   "imports": {
-    "#vue-fixed/reactive": {
-      "types": "@vue-fixed/reactivity/dist/reactivity.d.ts",
-      "browser": {
-        "development": "@vue-fixed/reactivity/dist/reactivity.esm-browser.js",
-        "production": "@vue-fixed/reactivity/dist/reactivity.esm-browser.prod.js"
-      },
-      "import": "@vue-fixed/reactivity/dist/reactivity.esm-bundler.js",
-      "require": "@vue-fixed/reactivity/index.js",
-      "default": "@vue-fixed/reactivity/dist/reactivity.global.js"
-    },
     "#vue": {
       "browser": {
         "development": "vue/dist/vue.esm-browser.js?desc=useBy-vite-dev",
@@ -111,6 +101,7 @@
     "@vitest/coverage-v8": "^0.34.6",
     "@vitest/ui": "^0.34.7",
     "@vue/test-utils": "^2.4.1",
+    "@vue/tsconfig": "^0.5.1",
     "eslint": "^8.51.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
@@ -124,6 +115,7 @@
     "resize-observer-polyfill": "^1.5.1",
     "sass": "^1.66.1",
     "typescript": "^5.3.3",
+    "undici-types": "^6.6.2",
     "vite": "^4.5.2",
     "vitest": "^0.34.6",
     "webpack": "^5.89.0",

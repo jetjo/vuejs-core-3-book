@@ -5,6 +5,8 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
+// vite-plugin-checker不识别jsconfig.json, 其默认会寻找tsconfig.json, 需要设置其checker的tsconfig字段
+
 // https://vitejs.dev/config/
 export default defineConfig({
   appType: 'mpa',

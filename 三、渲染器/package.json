@@ -10,6 +10,25 @@
     "test": "vitest run",
     "v-dev": "vite"
   },
+  "imports": {
+    "#vue-fixed/reactive": {
+      "types": "@vue-fixed/reactivity/dist/reactivity.d.ts",
+      "browser": {
+        "development": "@vue-fixed/reactivity/dist/reactivity.esm-browser.js",
+        "production": "@vue-fixed/reactivity/dist/reactivity.esm-browser.prod.js"
+      },
+      "import": "@vue-fixed/reactivity/dist/reactivity.esm-bundler.js",
+      "require": "@vue-fixed/reactivity/index.js",
+      "default": "@vue-fixed/reactivity/dist/reactivity.global.js"
+    },
+    "#shims": "./types/shims.d.ts"
+  },
+  "exports": {
+    ".": {
+      "types": "./types/shims.d.ts",
+      "default": null
+    }
+  },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.6.2",
     "@vitest/coverage-istanbul": "^0.34.6",
