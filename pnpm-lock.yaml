@@ -153,6 +153,9 @@ importers:
       '@vitest/ui':
         specifier: ^0.34.7
         version: 0.34.7(vitest@0.34.6)
+      jsdom:
+        specifier: ^22.1.0
+        version: 22.1.0
       vite:
         specifier: ^4.5.2
         version: 4.5.2(@types/node@20.10.5)(sass@1.69.7)

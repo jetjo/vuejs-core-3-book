@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>测试api.js</title>
+  </head>
+  <body>
+    <!-- http://localhost:5173/7%E3%80%81%E6%B8%B2%E6%9F%93%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1/3-%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B8%B2%E6%9F%93%E5%99%A8/app-test.html -->
+    <div id='app'></div>
+    <script type="module">
+      import { createRenderer } from './api.js'
+
+      // 配置一个可以在node环境运行的渲染器
+      const renderConfig = {
+        get container() {
+          return document.body.firstElementChild
+        },
+
+        get window() {
+          return window
+        },
+
+        get document() {
+          return document
+        },
+
+        createElement: tag => {
+          return document.createElement(tag)
+        },
+        insert: (child, parent, anchor) => {
+          parent.insertBefore(child, anchor)
+        },
+        setElementText: (el, text) => {
+          el.textContent = text
+        },
+        setElementAttribute: (el, key, value) => {
+          el.setAttribute(key, value)
+        },
+        onElementEvent: (el, event, handler) => {
+          el.addEventListener(event.slice(2).toLowerCase(), handler)
+        }
+      }
+
+      const { render } = createRenderer(renderConfig)
+
+      const vnode = {
+        type: 'div',
+        props: {
+          id: 'foo'
+        },
+        children: [
+          {
+            type: 'p',
+            props: {},
+            //  <div id="foo"><p><text text="Hello World"></text></p></div>
+            // children: [{ type: 'TEXT', props: { text: 'Hello World' } }]
+            children: 'Hello World'
+          }
+        ]
+      }
+
+      render(vnode, renderConfig.container)
+    </script>
+  </body>
+</html>
