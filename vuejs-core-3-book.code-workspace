@@ -5,10 +5,12 @@
 			"path": "."
 		},
 		{
-			"name": "book-chapter-2",
-			// 至少要有`package.json`文件和`vitest`的配置文件,
-			// 才会被vitest-extension识别为一个项目
+			"name": "chapter-2",
 			"path": "二、响应系统"
+		},
+		{
+			"name": "chapter-3",
+			"path": "三、渲染器"
 		}
 	],
 	"settings": {

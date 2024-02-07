@@ -1,0 +1,8 @@
+packages:
+  - "!**/node_modules/**"
+  - "packages/*"
+  - "!chapter-1/**"
+  - "!chapter-2/**"
+  - "!chapter-3/**"
+  - "二、响应系统/"
+  - "三、渲染器/"
