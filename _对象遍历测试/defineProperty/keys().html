@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Object.keys() 遍历对象</title>
+  </head>
+  <body>
+    <script>
+      console.log('Object.keys() 遍历对象')
+      const proto = { speak: 'fuck me!!!', fk() {} }
+      const obj = {
+        __proto__: proto,
+        name: 'liuyifei',
+        age: 18,
+        price: 3000,
+        fkm() {}
+      }
+      const keys = Object.keys(obj)
+      console.log('obj的键: ', keys)
+    </script>
+    <ul>
+      <li><a href="./entries().html">Object.entries() 遍历对象</a></li>
+      <li><a href="./for-in.html">for-in 遍历对象</a></li>
+      <li><a href="./for-of.html">for-of 遍历对象</a></li>
+      <li><a href="./keys().html">Object.keys() 遍历对象</a></li>
+    </ul>
+  </body>
+</html>

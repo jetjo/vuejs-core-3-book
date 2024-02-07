@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>accessor-descriptor</title>
+  </head>
+  <body>
+    <pre>
+        1、无论data-descriptor还是access-descriptor,
+        只要是通过对象字面量赋值的方式定义的属性,
+        属性的descriptor的configurable和enumerable默认都是true.
+        2、descriptor.enumerable的作用是设置是否可以通过forin循环
+        或者Object.keys()调用的方式获取到对应的属性.
+    </pre>
+    <script type="module">
+      const obj = {
+        __proto__: {
+          __proto__: null,
+          _price: 3000
+        },
+        // NOTE: 模拟私有变量的新方案,
+        // 虽然其descriptor.enumerable是true,
+        // 但是无法通过forin或Object.keys()等方式枚举到.
+        [Symbol.for('name')]: 'liuyifei',
+        get name() {
+          return this[Symbol.for('name')]
+        },
+        get price() {
+          return this._price
+        },
+        set price(p) {
+          this._price = p
+        }
+      }
+      console.log(
+        'Object.getOwnPropertyDescriptors(obj): ',
+        Object.getOwnPropertyDescriptors(obj)
+      )
+      console.log('Object.keys(obj): ', Object.keys(obj))
+      for (const key in obj) {
+        console.log(key)
+      }
+      console.log('设置obj.price为不可枚举: ')
+      Object.defineProperty(obj, 'price', {
+        ...Object.getOwnPropertyDescriptor(obj, 'price'),
+        enumerable: false
+      })
+      console.log('Object.keys(obj): ', Object.keys(obj))
+      for (const key in obj) {
+        console.log(key)
+      }
+      console.log('私有属性Symbol(name): ', obj[Symbol.for('name')])
+      obj.price = 1000
+      console.log('name: ', obj.name, ', price: ', obj.price)
+    </script>
+    <p><a href="./data-descriptor.html">data-descriptor</a></p>
+  </body>
+</html>
