@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>textContent & innerText</title>
+</head>
+<body>
+    <main>
+        <div id="divA">This is <span>some</span> text!
+            <!-- style、script、display-none、visibility-hidden的textContent都会作为父节点textContent的一部分 -->
+        <style>
+            #divA span {
+                color: red;
+            }
+        </style>
+        <script>console.log('hello~')</script>
+        <div style="display: none;">div with display none</div>
+        <div style="visibility: hidden;">div with visibility hidden</div>
+        <input type='hidden' value="hidden input">
+        </div>
+    </main>
+<script type='module' >
+    const divA = document.getElementById('divA');
+    console.log(divA.textContent, 'textContent');
+    console.log(divA.innerText, 'innerText');
+    // 注释也会被当作innerHTML和outerHTML的一部分
+    console.log(divA.innerHTML, 'innerHTML');
+    console.log(divA.outerHTML, 'outerHTML');
+    
+    const mainBlock = document.querySelector('main');
+    console.log(mainBlock.textContent, 'mainBlock.textContent');
+</script>
+</body>
+</html>

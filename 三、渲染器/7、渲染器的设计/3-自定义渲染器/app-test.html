@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>测试app.js</title>
+  </head>
+  <body>
+    <script type="module">
+      import { createRenderer } from './api.js'
+
+      // 配置一个可以在node环境运行的渲染器
+      const renderConfig = {
+        createElement: tag => {
+          // return document.createElement(tag);
+          console.log(`创建元素 ${tag}`)
+          return { tag }
+        },
+        insert: (child, parent, anchor) => {
+          console.log(
+            `将元素 ${child.tag} 添加到元素 ${JSON.stringify(parent)} 下`
+          )
+          // parent.insertBefore(child, anchor)
+          parent.children = child
+        },
+        setElementText: (el, text) => {
+          console.log(`设置元素 ${el.tag} 的文本为 ${text}`)
+          el.textContent = text
+        }
+      }
+
+      const { render } = createRenderer(renderConfig)
+
+      const vnode = {
+        type: 'h1',
+        children: 'Hello, World!'
+      }
+      const container = { type: 'root' }
+
+      render(vnode, container)
+    </script>
+  </body>
+</html>
