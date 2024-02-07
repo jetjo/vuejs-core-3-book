@@ -1,0 +1,3 @@
+node -v
+tsc -v
+tsc --useDefineForClassFields --outDir ./dist-on

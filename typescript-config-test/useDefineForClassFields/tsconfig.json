@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    // 默认值`es3`, 但是`es3`不支持`Object.defineProperty`
+    // modern browsers support `es6/es2015` entirely
+    "target": "ES2015",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
+  }
+}

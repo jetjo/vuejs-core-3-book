@@ -1,0 +1,11 @@
+{
+  "name": "use-define-for-class-fields",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "private": true,
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

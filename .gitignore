@@ -25,3 +25,6 @@ tests/unit/coverage/
 
 !_对象遍历测试/
 !_test/
+
+typescript-config-test/**/dist-off/
+typescript-config-test/**/dist-on/
