@@ -19,6 +19,7 @@ export default defineConfig({
   },
   plugins: [vue()],
   resolve: {
+    // dedupe: ['#vue', 'vue'],
     // 在preserveSymlinks为默认false时,
     // dev mode下,如果浏览器访问的地址对应的物理路径是个软连接,
     // 并且在(软连接对应的)源物理路径所对应的url还没有被加载(浏览器访问)的前提下, 会报错
@@ -30,6 +31,7 @@ export default defineConfig({
     // // 那么当有其他文件引用`src/tmp/a.js`时, 会报找不到`./b.js`的错误
     // preserveSymlinks: true,
     alias: {
+      'vue': '#vue',
       // '#': fileURLToPath(new URL('./src', import.meta.url)),
       // 为了与package.json中的export字段配合...
       '@jetjo/vue3/ref/*.js': './src/reactive/ref/*.js',
@@ -85,7 +87,7 @@ export default defineConfig({
       // node_modules/vue/dist/vue.runtime.esm-bundler.js文件中导入了@vue/*模块
       // 而node_modules/@vue文件夹下没有这些模块时,会导致打包失败
       // 但是如果把vue的包排除掉,生成的index.html被访问时会报找不到vue包的错误
-      // external: [/^@vue/]
+      // external: [/^@vue/, /^vue/]
     }
   }
 })

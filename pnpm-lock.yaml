@@ -140,6 +140,10 @@ importers:
         version: 4.15.1(webpack-cli@5.1.4)(webpack@5.89.0)
 
   三、渲染器:
+    dependencies:
+      vue:
+        specifier: ^3.4.15
+        version: 3.4.15(typescript@5.3.3)
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^4.6.2

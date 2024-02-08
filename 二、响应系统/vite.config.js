@@ -28,6 +28,7 @@ export default defineConfig({
     // // 那么当有其他文件引用`src/tmp/a.js`时, 会报找不到`./b.js`的错误
     // preserveSymlinks: true,
     alias: {
+      "vue": "#vue",
       // '#': fileURLToPath(new URL('./src', import.meta.url)),
       // 为了与package.json中的export字段配合...
       '@jetjo/vue3/ref/*.js': './exports-barrel/reactive/ref/*.js',

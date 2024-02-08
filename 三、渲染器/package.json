@@ -21,6 +21,13 @@
       "require": "@vue-fixed/reactivity/index.js",
       "default": "@vue-fixed/reactivity/dist/reactivity.global.js"
     },
+    "#vue": {
+      "import": {
+        "types": "vue/dist/vue.d.mts",
+        "browser": "vue/dist/vue.esm-browser.js?desc=useBy-vite-dev",
+        "default": "vue/dist/vue.runtime.esm-bundler.js"
+      }
+    },
     "#shims": "./types/shims.d.ts"
   },
   "exports": {
@@ -28,6 +35,9 @@
       "types": "./types/shims.d.ts",
       "default": null
     }
+  },
+  "dependencies": {
+    "vue": "^3.4.15"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.6.2",
