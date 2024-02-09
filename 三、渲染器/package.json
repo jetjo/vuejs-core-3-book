@@ -21,6 +21,7 @@
       "require": "@vue-fixed/reactivity/index.js",
       "default": "@vue-fixed/reactivity/dist/reactivity.global.js"
     },
+    "#vue/c": "vue",
     "#vue": {
       "import": {
         "types": "vue/dist/vue.d.mts",

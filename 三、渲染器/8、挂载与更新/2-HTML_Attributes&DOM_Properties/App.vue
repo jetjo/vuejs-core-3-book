@@ -1,91 +1,66 @@
 <template>
-  <p>HTML Attributes 与 DOM Properties是两码事, 是两个有一定关联的概念</p>
-  <div>
-    HTML Attributes, 一个目的是用作某(几)个DOM Property的初始值; <br />
-    <p>
-      例如: <code>{{ inputHTML1 }}</code> , 其中, <code>value='hello'</code>的
-      <code>hello</code> 就作为渲染的节点的value和defaultValue属性的初始值;
-    </p>
-    其在页面渲染为如下的输入框:
-    <p v-html="inputHTML1"></p>
-    其对应的DOM节点有如下两个属性:
+  <nav>
     <ul>
+      <li><a href="#/concept">HTML Attributes与DOM Properties的概念</a></li>
       <li>
-        value, 初始值是 {{ getInitVal('[input-1]', 'value') }};
-        <div>值为{{ getVal('[input-1]', 'value', 'input') }}</div>
-      </li>
-      <li>
-        defaultValue, 固定值为{{ getInitVal('[input-1]', 'defaultValue') }}
+        <h3>HTML Attributes与DOM Properties之间的关系:</h3>
+        <ul style="list-style: 1">
+          <li>
+            <a href="#/exa1"> 有的Attr有唯一与之对应的同名的Prop </a>
+          </li>
+          <li>
+            <a href="#/exa2">有的Attr有多个与之对应的Prop</a>
+          </li>
+          <li>
+            <a href="#/exa3">
+              有的Attr有一个与之对应的Prop,
+              但名称不同,也可能存在其他与之关联的Prop
+            </a>
+          </li>
+          <li>
+            <a href="#/exa4"
+              >有的Attr没有与之对应的Prop, 可能存在与之关联的Prop,
+              在有标签支持此Attr的情况下.</a
+            >
+          </li>
+          <li>
+            并且也不是所有DOM Property都与HTML Attribute有关联, 例如:
+            <a
+              href="//developer.mozilla.org/en-US/docs/Web/API/Node/textContent"
+              >Node的textContent属性</a
+            >,其值取决于标签的子节点.
+          </li>
+        </ul>
+        <p><a href='#/summarize'>综述...</a></p>
       </li>
     </ul>
-  </div>
+  </nav>
+  <KeepAlive>
+    <component :is="curCom" />
+  </KeepAlive>
 </template>
 
 <script setup>
-import { reactive } from '#vue'
+import { computed, defineAsyncComponent, ref } from '#vue/c'
+import Concept from './Concept.vue'
 
-const inputHTML1 = /* html */ `<input input-1 value='hello'>`
-
-function getEle(css, doWithEle) {
-  const eleLen = document.querySelectorAll(css).length
-  if (eleLen !== 1) {
-    console.error(`There are ${eleLen} elements with css ${css}`)
-    return
-  }
-  const ele = document.querySelector(css)
-  if (doWithEle) doWithEle(ele)
-  return ele
+const routes = {
+  '/': Concept,
+  '/concept': Concept,
+  '/exa1': defineAsyncComponent(() => import('./Exa.1.vue')),
+  '/exa2': defineAsyncComponent(() => import('./Exa.2.vue')),
+  '/exa3': defineAsyncComponent(() => import('./Exa.3.vue')),
+  '/exa4': defineAsyncComponent(() => import('./Exa.4.vue')),
+  '/mark1': defineAsyncComponent(() => import('./Mark.1.vue')),
+  '/summarize': defineAsyncComponent(() => import('./Summarize.vue'))
 }
 
-const map = reactive(new Map())
+const hash = ref(window.location.hash)
+const curCom = computed(() => {
+  return routes[`${hash.value.slice(1) || '/'}`] || Concept
+})
 
-function getInitVal(css, prop, key) {
-  key = key || `${css}\`s initial ${prop}`
-  const initVal = map.get(key)
-  if (initVal !== undefined) return initVal
-  window.requestAnimationFrame(() => {
-    getEle(css, ele => {
-      map.set(key, ele[prop])
-    })
-  })
-}
-
-const eventMap = new WeakSet()
-// const eventMap = new WeakMap()
-function getVal(css, prop, event) {
-  const key = `${css}\`s ${prop} on ${event}`
-  window.requestAnimationFrame(() => {
-    getEle(css, ele => {
-      if (eventMap.has(ele)) {
-        return
-        if (eventMap.get(ele) === event) return
-        ele.removeEventListener(event, eventMap.get(ele))
-      }
-      if (map.has(key)) {
-        console.warn(`The css ${css} has a new instance node!`)
-      }
-      const handler = () => {
-        map.set(key, ele[prop])
-      }
-      ele.addEventListener(event, handler)
-      // eventMap.set(ele, event)
-      eventMap.add(ele)
-    })
-  })
-  return getInitVal(css, prop, key)
-}
+window.addEventListener('hashchange', () => {
+  hash.value = window.location.hash
+})
 </script>
-
-
-<style>
-code {
-  background-color: #f0f0f0;
-  padding: 0 5px;
-  border-radius: 3px;
-  font-size: 1.2em;
-  /* color: #f00; */
-  font-weight: bold;
-  font-family: monospace;
-}
-</style>
-

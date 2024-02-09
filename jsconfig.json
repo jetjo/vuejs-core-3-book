@@ -10,11 +10,11 @@
     "allowJs": true,
     // 项目打包产出的文件的JS语言版本,也影响lib的值
     "target": "ESNext",
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    // "lib": [
+    //   "ES2020",
+    //   "DOM",
+    //   "DOM.Iterable"
+    // ],
     "outDir": "./ts-out",
     "rootDirs": [
       // NOTE: 在package.json中的`imports`字段中为`"./src/utils/index.js"`设置了别名`#utils`,
