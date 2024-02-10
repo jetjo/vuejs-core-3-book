@@ -57,6 +57,7 @@ const routes = {
 
 const hash = ref(window.location.hash)
 const curCom = computed(() => {
+  // @ts-ignore
   return routes[`${hash.value.slice(1) || '/'}`] || Concept
 })
 

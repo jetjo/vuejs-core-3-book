@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import { reactive, watchEffect, ref } from '#vue/c'
+import { watchEffect, ref } from '#vue/c'
 import useElement from './useElement.js'
 
 const { getInitVal } = useElement('#input-1')
@@ -21,6 +21,7 @@ const id = ref('')
 
 watchEffect(
   () => {
+    // @ts-ignore
     id.value = getInitVal('id')
   },
   { flush: 'post' }

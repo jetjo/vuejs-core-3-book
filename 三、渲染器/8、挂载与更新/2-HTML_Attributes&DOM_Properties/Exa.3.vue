@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import { reactive, watchEffect, ref } from '#vue/c'
+import { watchEffect, ref } from '#vue/c'
 import useElement from './useElement.js'
 
 const { getInitVal } = useElement('[exa-3-btn]')
@@ -23,7 +23,9 @@ const classList = ref()
 
 watchEffect(
   () => {
+    // @ts-ignore
     className.value = getInitVal('className')
+    // @ts-ignore
     classList.value = getInitVal('classList')
   },
   { flush: 'post' }

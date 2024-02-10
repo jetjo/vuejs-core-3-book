@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { reactive, watchEffect, ref } from '#vue/c'
+import { watchEffect, ref } from '#vue/c'
 import useElement from './useElement.js'
 
 const { getInitVal, getAttrVal } = useElement('[mark-1-input]')
@@ -19,7 +19,9 @@ const type = ref('')
 
 watchEffect(
   () => {
+    // @ts-ignore
     attrTypeValue.value = getAttrVal('type')
+    // @ts-ignore
     type.value = getInitVal('type')
   },
   { flush: 'post' }

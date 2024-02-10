@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { reactive, watchEffect, ref } from '#vue/c'
+import { watchEffect, ref } from '#vue/c'
 import useElement from './useElement.js'
 
 const { getInitVal, getVal, getAttrVal } = useElement('[input-1]')
@@ -32,9 +32,13 @@ const defaultValue = ref('')
 
 watchEffect(
   () => {
+    // @ts-ignore
     attrValue.value = getAttrVal('value')
+    // @ts-ignore
     valueInitial.value = getInitVal('value')
+    // @ts-ignore
     value.value = getVal('value', 'input')
+    // @ts-ignore
     defaultValue.value = getInitVal('defaultValue')
   },
   { flush: 'post' }

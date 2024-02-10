@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import { reactive, watchEffect, ref } from '#vue/c'
+import { watchEffect, ref } from '#vue/c'
 import useElement from './useElement.js'
 
 const { getInitVal } = useElement('[exa-4-div]')
@@ -21,11 +21,14 @@ const ariaAttributes = ref()
 
 watchEffect(
   () => {
+    // @ts-ignore
     ariaAttributes.value = getInitVal('ariaAttributes')
     if (ariaAttributes.value === undefined) {
       alert('书上有误!')
       ariaAttributes.value = {
+        // @ts-ignore
         'aria-valuenow': getInitVal('ariaValueNow'),
+        // @ts-ignore
         'aria-valuetext': getInitVal('ariaValueText')
       }
     }
