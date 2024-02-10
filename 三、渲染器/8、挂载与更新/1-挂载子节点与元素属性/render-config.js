@@ -1,6 +1,10 @@
 import { JSDOM } from 'jsdom'
 
-function createHTML({ title }) {
+/**
+ * @param {object} [arg]
+ * @param {string} [arg.title]
+ */
+function createHTML({ title } = {}) {
   const html = /* html */ `<!doctype html>
     <html lang="en">
       <head>
@@ -13,6 +17,11 @@ function createHTML({ title }) {
   return html
 }
 
+/**
+ * @param {object} opt
+ * @param {string} [opt.title]
+ * @param {string} [opt.bodyHtml]
+ */
 function createJsDomOption({ title, bodyHtml } = {}) {
   const { window } = new JSDOM(createHTML({ title }), {
     pretendToBeVisual: true
@@ -26,8 +35,7 @@ function createJsDomOption({ title, bodyHtml } = {}) {
    * @type {import('#shims').RendererConfig}
    */
   const forJSDOM = {
-
-    getContainer: function (css='#app') {
+    getContainer: function (css = '#app') {
       return document.querySelector(css)
     },
     get window() {
@@ -52,6 +60,12 @@ function createJsDomOption({ title, bodyHtml } = {}) {
     },
     addEventListener: (el, event, handler) => {
       el.addEventListener(event.slice(2).toLowerCase(), handler)
+    },
+    patchProps: () => {
+      throw new Error('Method not implemented.')
+    },
+    requestAnimationFrame: (cb) => {
+      return window.requestAnimationFrame(cb)
     }
   }
   return forJSDOM

@@ -5,16 +5,18 @@ import { createJsDomOption } from './render-config.js'
 
 it('导入jsdom,可以正常工作 ', () => {
   const dom = new JSDOM(`<!DOCTYPE html><p>Hello world</p>`)
-  expect(dom.window.document.querySelector('p').textContent).toBe('Hello world')
+  expect(dom.window.document.querySelector('p')?.textContent).toBe(
+    'Hello world'
+  )
 })
 
 const config = createJsDomOption({})
 
-const { window, document, ...renderOption } = config
+const { document, requestAnimationFrame: rAF } = config
 
 it('正确创建了页面', async () => {
   await new Promise(resolve => {
-    window.requestAnimationFrame(() => resolve())
+    rAF&&rAF(() => resolve(void 0))
   })
 
   expect(document.title).toBe('jsdom')
@@ -23,10 +25,10 @@ it('正确创建了页面', async () => {
 
 it('正确渲染了节点', async () => {
   await new Promise(resolve => {
-    window.requestAnimationFrame(() => resolve())
+    rAF&&rAF(() => resolve(void 0))
   })
-  const container = config.getContainer()
-  const { render } = createRenderer(renderOption)
+  const container = config.getContainer && config.getContainer()
+  const { render } = createRenderer(config)
   const vnode = {
     type: 'div',
     props: {
@@ -44,9 +46,9 @@ it('正确渲染了节点', async () => {
   }
   render(vnode, container)
   await new Promise(resolve => {
-    window.requestAnimationFrame(() => resolve())
+    rAF&&rAF(() => resolve(void 0))
   })
-  expect(container.innerHTML).toBe(
+  expect(container?.innerHTML).toBe(
     /* html */ `<div id="foo"><p>Hello World</p></div>`
   )
 })

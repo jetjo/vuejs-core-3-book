@@ -1,6 +1,10 @@
+// @ts-nocheck
 function createRenderer() {
   function patch(oldVnode, vnode, container) {
     console.log(oldVnode, vnode, container)
+  }
+  function mountElement(vnode, container) {
+    console.log(vnode, container)
   }
   function render(vnode, container) {
     console.log(vnode, container)

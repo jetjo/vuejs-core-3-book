@@ -1,3 +1,7 @@
 {
-  "extends": "../jsconfig.json"
+  "extends": "../jsconfig.json",
+  "compilerOptions": {
+    "checkJs": true,
+    "noUnusedParameters": false
+  }
 }

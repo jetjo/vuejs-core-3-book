@@ -12,7 +12,7 @@ function createRenderer({
 }) {
   /**
    * @description 挂载子节点children到父节点container
-   * @param {import('#shims').VNode['children']} children
+   * @param {VVNode['children']} children
    * @param {Node} container
    */
   function mountChildren(children, container) {
@@ -30,28 +30,29 @@ function createRenderer({
 
   /**
    * @description 挂载attribute到节点
-   * @param {import('#shims').VNode['props']} props
-   * @param {Node} container
+   * @param {VVNode['props']} props
+   * @param {Element} container
    */
   function mountProps(props, container) {
     for (const key in props) {
       // if (Object.hasOwnProperty.call(props, key)) {}
       const element = props[key]
-      if (key.startsWith('on')) {
-        addEventListener(container, key, element)
+      if (key.startsWith('on') && typeof element === 'function') {
+        addEventListener && addEventListener(container, key, element)
       } else {
-        setAttribute(container, key, element)
+        setAttribute && setAttribute(container, key, element)
       }
     }
   }
 
   /**
    * @description 将vdom node挂载到配置指定的平台
-   * @param {import('#shims').VNode} vnode
+   * @param {VVNode} vnode
    * @param {Node} container
    */
   function mountElement(vnode, container) {
     const { type, props, children } = vnode
+    if (typeof type !== 'string') throw new Error('type is not string')
     const el = createElement(type)
     // 挂载子节点
     mountChildren(children, el)
@@ -60,6 +61,7 @@ function createRenderer({
     insert(el, container, null)
   }
 
+  // @ts-ignore
   function patch(oldVnode, vnode, container) {
     if (!oldVnode) {
       // 挂载
@@ -69,6 +71,7 @@ function createRenderer({
     throw new Error('Not implemented')
   }
 
+  // @ts-ignore
   function render(vnode, container) {
     // console.log(vnode, container)
     if (container._vnode && vnode) {
@@ -90,7 +93,7 @@ function createRenderer({
     }
   }
 
-  // 服务端渲染、同构渲染、激活已有DOM
+  // @ts-ignore 服务端渲染、同构渲染、激活已有DOM
   function hydrate(vnode, container) {
     console.log(vnode, container)
   }

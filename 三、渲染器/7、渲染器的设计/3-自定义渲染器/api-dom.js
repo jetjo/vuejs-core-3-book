@@ -1,5 +1,5 @@
+// @ts-nocheck
 function createRenderer() {
-
   // 将vdom node挂载到DOM平台
   function mountElement_DOM(vnode, container) {
     const { type, props, children } = vnode
@@ -8,11 +8,11 @@ function createRenderer() {
       // 文本节点
       // https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent#differences_from_innertext
       el.textContent = children
-      
     }
     container.appendChild(el)
-    
   }
+
+  const mountElement = mountElement_DOM
 
   function patch(oldVnode, vnode, container) {
     console.log(oldVnode, vnode, container)

@@ -1,10 +1,10 @@
+// @ts-nocheck
 // 抽离特定于平台的API
 // 将特定于平台的API视为配置项, 作为参数传入
 /**
- * @param {import('./api-c.d.ts').RendererConfig} options 
+ * @param {import('./api-c.d.ts').RendererConfig} options
  */
-function createRenderer({createElement, setElementText, insert}) {
-
+function createRenderer({ createElement, setElementText, insert }) {
   // 将vdom node挂载到配置指定的平台
   function mountElement(vnode, container) {
     const { type, props, children } = vnode
