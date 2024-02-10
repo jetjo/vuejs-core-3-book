@@ -11,10 +11,10 @@
     <script type="module">
       import { createRenderer } from './api.js'
 
-      // 配置一个可以在node环境运行的渲染器
       const renderConfig = {
-        get container() {
-          return document.body.firstElementChild
+
+        getContainer: (selector='#app') => {
+          return document.querySelector(selector)
         },
 
         get window() {
@@ -34,10 +34,10 @@
         setElementText: (el, text) => {
           el.textContent = text
         },
-        setElementAttribute: (el, key, value) => {
+        setAttribute: (el, key, value) => {
           el.setAttribute(key, value)
         },
-        onElementEvent: (el, event, handler) => {
+        addEventListener: (el, event, handler) => {
           el.addEventListener(event.slice(2).toLowerCase(), handler)
         }
       }
@@ -60,7 +60,7 @@
         ]
       }
 
-      render(vnode, renderConfig.container)
+      render(vnode, renderConfig.getContainer())
     </script>
   </body>
 </html>

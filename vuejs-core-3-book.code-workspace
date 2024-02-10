@@ -1,9 +1,9 @@
 {
 	"folders": [
-		{
-			"name": "root",
-			"path": "."
-		},
+		// {
+		// 	"name": "root",
+		// 	"path": "."
+		// },
 		{
 			"name": "chapter-2",
 			"path": "二、响应系统"

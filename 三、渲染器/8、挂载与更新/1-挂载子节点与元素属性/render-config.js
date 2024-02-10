@@ -1,7 +1,7 @@
 import { JSDOM } from 'jsdom'
 
 function createHTML({ title }) {
-  const html = /* html */`<!doctype html>
+  const html = /* html */ `<!doctype html>
     <html lang="en">
       <head>
         <meta charset="UTF-8" />
@@ -20,16 +20,16 @@ function createJsDomOption({ title, bodyHtml } = {}) {
 
   const { document } = window
 
-  document.body.innerHTML = bodyHtml || /* html */`<div id="app"></div>`
+  document.body.innerHTML = bodyHtml || /* html */ `<div id="app"></div>`
   /**
    * @description 配置一个可以在jsdom环境运行的渲染器
    * @type {import('#shims').RendererConfig}
    */
   const forJSDOM = {
-    get container() {
-      return document.body.firstElementChild
-    },
 
+    getContainer: function (css='#app') {
+      return document.querySelector(css)
+    },
     get window() {
       return window
     },
@@ -47,10 +47,10 @@ function createJsDomOption({ title, bodyHtml } = {}) {
     setElementText: (el, text) => {
       el.textContent = text
     },
-    setElementAttribute: (el, key, value) => {
+    setAttribute: (el, key, value) => {
       el.setAttribute(key, value)
     },
-    onElementEvent: (el, event, handler) => {
+    addEventListener: (el, event, handler) => {
       el.addEventListener(event.slice(2).toLowerCase(), handler)
     }
   }

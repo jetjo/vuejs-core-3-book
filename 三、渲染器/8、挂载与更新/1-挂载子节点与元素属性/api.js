@@ -6,8 +6,8 @@
 function createRenderer({
   createElement,
   setElementText,
-  setElementAttribute,
-  onElementEvent,
+  setAttribute,
+  addEventListener,
   insert
 }) {
   /**
@@ -38,9 +38,9 @@ function createRenderer({
       // if (Object.hasOwnProperty.call(props, key)) {}
       const element = props[key]
       if (key.startsWith('on')) {
-        onElementEvent(container, key, element)
+        addEventListener(container, key, element)
       } else {
-        setElementAttribute(container, key, element)
+        setAttribute(container, key, element)
       }
     }
   }

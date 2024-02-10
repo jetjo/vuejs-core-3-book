@@ -1,6 +1,10 @@
 type RendererConfig = {
   // 接口Node继承自EventTarget，所以这里的el是Node类型
-  createElement: (tag: string, props: any, ...children: any[]) => Node
+  createElement: (
+    tag: string,
+    props?: VNode['props'],
+    ...children: VNode[]
+  ) => Node
 
   //   接口Node实现了textContent属性，所以这里的el是Node类型
   /**@description 设置元素的文本节点 */
@@ -8,15 +12,24 @@ type RendererConfig = {
 
   //   接口Node实现了insertBefore方法，所以这里的anchor是Node类型
   /**@description 将`child`插入到`parent.anchor`节点前面 */
-  insert: (child: Node, parent: Node, anchor: Node, isSvg: boolean) => void
+  insert: (
+    child: Node,
+    parent: Node,
+    anchor: Node | null,
+    isSvg?: boolean
+  ) => void
 
-  setElementAttribute: (el: Node, key: string, value: any) => void
+  patchProps: (el: Element, key: string, prevValue: any, nextValue: any) => void
 
-  onElementEvent: (el: Node, event: string, handler: EventListener) => void
+  setAttribute: Element['setAttribute']
+
+  addEventListener: EventTarget['addEventListener']
+
+  querySelector: ParentNode['querySelector']
 
   get window(): Window
   get document(): Document
-  get container(): Element
+  getContainer: (css: string = '#app') => Element
 }
 
 interface VNode {

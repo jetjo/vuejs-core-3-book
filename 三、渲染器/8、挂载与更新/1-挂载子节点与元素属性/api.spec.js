@@ -25,7 +25,7 @@ it('正确渲染了节点', async () => {
   await new Promise(resolve => {
     window.requestAnimationFrame(() => resolve())
   })
-  const container = config.container
+  const container = config.getContainer()
   const { render } = createRenderer(renderOption)
   const vnode = {
     type: 'div',
