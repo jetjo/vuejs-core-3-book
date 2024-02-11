@@ -1,107 +1,103 @@
-// 抽离特定于平台的API
-// 将特定于平台的API视为配置项, 作为参数传入
-/**
- * @param {import('@jetjo/vue3-chapter3').RendererConfig} options
- */
-function createRenderer({
-  createElement,
-  setElementText,
-  setAttribute,
-  addEventListener,
-  insert
-}) {
-  /**
-   * @description 挂载子节点children到父节点container
-   * @param {VVNode['children']} children
-   * @param {Node} container
-   */
-  function mountChildren(children, container) {
-    if (typeof children === 'string') {
-      // 文本节点
-      setElementText(container, children)
-      return
+import { defArg0 } from '#root/utils'
+import { RendererCreatorFactoryConfig } from '#utils'
+
+/**@type {import('#shims').RendererCreatorFactory} */
+function factory(config = defArg0) {
+  /* prettier-ignore */ // 标记config的所有字段都不是`undefined`
+  if (!RendererCreatorFactoryConfig.markAllDefined(config)) throw new Error('what???')
+  // 抽离特定于平台的API,将特定于平台的API视为配置项, 作为参数传入
+  return function createRenderer({
+    createElement,
+    setElementText,
+    setAttribute,
+    addEventListener,
+    insert
+  }) {
+    config.isVNodeArrayChildrenC ||= Array.isArray //&& children.every(child => typeof child === 'object')
+    // @ts-ignore
+    config.isVNodeChildAtomC_VVNode ||= child => {
+      if (!child) return false
+      if (typeof child !== 'object') return false
+      if (config.isVNodeArrayChildrenC(child)) return false
+      return true
     }
-    if (Array.isArray(children)) {
+    config.mountChildren ||= function (children, container) {
+      if (typeof children === 'string') {
+        setElementText(container, children) //文本节点
+        return
+      }
+      if (!config.isVNodeArrayChildrenC(children))
+        throw new Error('children is not array')
       children.forEach(child => {
-        patch(null, child, container)
+        if (!config.isVNodeChildAtomC_VVNode(child))
+          throw new Error('child is not vnode')
+        config.patch(null, child, container)
       })
     }
-  }
 
-  /**
-   * @description 挂载attribute到节点
-   * @param {VVNode['props']} props
-   * @param {Element} container
-   */
-  function mountProps(props, container) {
-    for (const key in props) {
-      // if (Object.hasOwnProperty.call(props, key)) {}
-      const element = props[key]
-      if (key.startsWith('on') && typeof element === 'function') {
-        addEventListener && addEventListener(container, key, element)
-      } else {
-        setAttribute && setAttribute(container, key, element)
+    config.mountProps ||= function (props, container) {
+      for (const key in props) {
+        // if (Object.hasOwnProperty.call(props, key)) {}
+        const element = props[key]
+        if (key.startsWith('on') && typeof element === 'function') {
+          addEventListener && addEventListener(container, key, element)
+        } else {
+          setAttribute && setAttribute(container, key, element)
+        }
       }
     }
-  }
 
-  /**
-   * @description 将vdom node挂载到配置指定的平台
-   * @param {VVNode} vnode
-   * @param {Node} container
-   */
-  function mountElement(vnode, container) {
-    const { type, props, children } = vnode
-    if (typeof type !== 'string') throw new Error('type is not string')
-    const el = createElement(type)
-    // 挂载子节点
-    mountChildren(children, el)
-    // 挂载props
-    mountProps(props, el)
-    insert(el, container, null)
-  }
-
-  // @ts-ignore
-  function patch(oldVnode, vnode, container) {
-    if (!oldVnode) {
-      // 挂载
-      mountElement(vnode, container)
-      return
+    config.mountElement ||= function (vnode, container) {
+      const { type, props, children } = vnode
+      if (typeof type !== 'string') throw new Error('type不是字符串')
+      const ele = createElement(type)
+      props && config.mountProps(props, ele)
+      children && config.mountChildren(children, ele)
+      insert(ele, container, null)
+      container.vnode = vnode
     }
-    throw new Error('Not implemented')
-  }
 
-  // @ts-ignore
-  function render(vnode, container) {
-    // console.log(vnode, container)
-    if (container._vnode && vnode) {
-      // 更新
-      patch(container._vnode, vnode, container)
-      container._vnode = vnode
-      return
+    config.patch ||= function (oldVnode, vnode, container) {
+      if (!oldVnode) {
+        config.mountElement(vnode, container) // 挂载
+        return
+      }
+      throw new Error('Not implemented')
     }
-    // 首次渲染
-    if (vnode) {
-      mountElement(vnode, container)
-      container._vnode = vnode
-      return
-    }
-    if (container._vnode) {
-      // 卸载
-      container.innerHTML = ''
-      delete container._vnode
-    }
-  }
 
-  // @ts-ignore 服务端渲染、同构渲染、激活已有DOM
-  function hydrate(vnode, container) {
-    console.log(vnode, container)
-  }
+    /**@type {typeof config['render']} */
+    function render(vnode, container) {
+      if (!RendererCreatorFactoryConfig.isAllDefined(config))
+        throw new Error('config is not valid')
+      if (!container) throw new Error('container is not exist')
+      if (container.vnode && vnode) {
+        config.patch(container.vnode, vnode, container) // 更新
+        container.vnode = vnode
+        return
+      }
+      if (vnode) {
+        config.mountElement(vnode, container) // 首次渲染
+        container.vnode = vnode
+        return
+      }
+      if (container.vnode) {
+        container.innerHTML = '' // 卸载
+        delete container.vnode
+      }
+    }
 
-  return {
-    render,
-    hydrate
+    // @ts-ignore 服务端渲染、同构渲染、激活已有DOM
+    function hydrate(vnode, container) {
+      console.log(vnode, container)
+    }
+
+    const base = RendererCreatorFactoryConfig.init()
+    return {
+      ...base,
+      ...config,
+      render,
+      hydrate
+    }
   }
 }
-
-export { createRenderer }
+export default factory
