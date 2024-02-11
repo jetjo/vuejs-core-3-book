@@ -17,24 +17,17 @@ function createHTML({ title } = {}) {
   return html
 }
 
-/**
- * @param {object} opt
- * @param {string} [opt.title]
- * @param {string} [opt.bodyHtml]
- */
-function createJsDomOption({ title, bodyHtml } = {}) {
-  const { window } = new JSDOM(createHTML({ title }), {
+/**@type {import('#shims').RendererConfigCreator} */
+function createJsDomOption() {
+  const { window } = new JSDOM(createHTML(), {
     pretendToBeVisual: true
   })
 
   const { document } = window
 
-  document.body.innerHTML = bodyHtml || /* html */ `<div id="app"></div>`
-  /**
-   * @description 配置一个可以在jsdom环境运行的渲染器
-   * @type {import('#shims').RendererConfig}
-   */
-  const forJSDOM = {
+  document.body.innerHTML = /* html */ `<div id="app"></div>`
+
+  return {
     getContainer: function (css = '#app') {
       return document.querySelector(css)
     },
@@ -64,11 +57,10 @@ function createJsDomOption({ title, bodyHtml } = {}) {
     patchProps: () => {
       throw new Error('Method not implemented.')
     },
-    requestAnimationFrame: (cb) => {
+    requestAnimationFrame: cb => {
       return window.requestAnimationFrame(cb)
     }
   }
-  return forJSDOM
 }
 
-export { createJsDomOption }
+export default createJsDomOption

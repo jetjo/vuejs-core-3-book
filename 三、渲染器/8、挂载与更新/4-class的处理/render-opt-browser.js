@@ -1,4 +1,4 @@
-import { createDOMOption as baseCreate } from '../3-正确地设置元素属性/dom-render-opt.js'
+import baseCreate from '../3-正确地设置元素属性/render-opt-browser.js'
 
 /**@type {typeof baseCreate} */
 function createDOMOption({ window } = { window: undefined }) {
@@ -29,4 +29,4 @@ function createDOMOption({ window } = { window: undefined }) {
   return domOpt
 }
 
-export { createDOMOption }
+export default createDOMOption

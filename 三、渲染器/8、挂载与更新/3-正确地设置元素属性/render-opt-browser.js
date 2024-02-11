@@ -1,3 +1,6 @@
+import { defArg0 } from '#root/utils'
+import baseCreate from '../1-挂载子节点与元素属性/render-opt-browser.js'
+
 /**
  * @description ele.key是只读的?
  * @param {Element} ele
@@ -18,36 +21,14 @@ function shouldSetAsProp(ele, key) {
   return key in ele
 }
 
-/**
- * @param {{window?: import('#shims').RendererConfig['window']}} [arg0]
- */
-function createDOMOption({ window } = {}) {
+/**@type {typeof baseCreate} */
+function createDOMOption({ window } = defArg0) {
   window = window || globalThis
 
-  const { document } = window
+  const domOpt = baseCreate({ window })
 
-  /**
-   * @description 在指定环境运行的渲染器的配置
-   * @type {import('#shims').RendererConfig}
-   */
-  const domOpt = {
-    get window() {
-      return window
-    },
-
-    get document() {
-      return document
-    },
-
-    createElement: tag => {
-      return document.createElement(tag)
-    },
-    insert: (child, parent, anchor) => {
-      parent.insertBefore(child, anchor)
-    },
-    setElementText: (el, text) => {
-      el.textContent = text
-    },
+  return {
+    ...domOpt,
     patchProps: (el, key, _, nextValue) => {
       if (shouldSetAsProp(el, key)) {
         const attrType = typeof el[key]
@@ -70,13 +51,8 @@ function createDOMOption({ window } = {}) {
           el.setAttribute(key, nextValue)
         }
       }
-    },
-    addEventListener: (el, event, handler) => {
-      el.addEventListener(event.slice(2).toLowerCase(), handler)
-    },
-    getContainer: (css = '#app') => document.querySelector(css)
+    }
   }
-  return domOpt
 }
 
-export { createDOMOption }
+export default createDOMOption
