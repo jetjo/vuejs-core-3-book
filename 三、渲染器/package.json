@@ -29,7 +29,9 @@
         "default": "vue/dist/vue.runtime.esm-bundler.js"
       }
     },
-    "#shims": "./types/shims.d.ts"
+    "#shims": "./types/shims.d.ts",
+    "#utils": "./utils/index.js",
+    "#root/utils": "../internal-barrel/utils/index.js"
   },
   "exports": {
     ".": {
