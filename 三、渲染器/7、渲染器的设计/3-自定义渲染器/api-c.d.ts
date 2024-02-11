@@ -48,4 +48,8 @@ interface JSDOMWindow extends DOMWindow {
   name?: string
 }
 
-export type { RendererConfig, JSDOMWindow }
+interface RendererConfigCreator {
+  (arg0: { window?: HostWindowC }): RendererConfig
+}
+
+export type { RendererConfig, JSDOMWindow, RendererConfigCreator }
