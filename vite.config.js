@@ -57,6 +57,17 @@ export default defineConfig({
     // 生产环境下有助于打包器清除无效代码
     'import.meta.vitest': 'undefined'
   },
+  esbuild: {
+    exclude: [
+      '**/node_modules/**',
+      '_*/**',
+      '**/*tmp/**',
+      '**/*bak/**',
+      '**/*test/**',
+      '**/test/**',
+      '**/_test/**'
+    ]
+  },
   plugins: [vue()],
   resolve: {
     // 在preserveSymlinks为默认false时,
@@ -89,15 +100,6 @@ export default defineConfig({
       '@jetjo/vue3/computed': './src/computed/4-11.js',
       '@jetjo/vue3/watch': './src/watch/4-11.js'
     },
-    exclude: [
-      '**/node_modules/**',
-      '_*/**',
-      '**/*tmp/**',
-      '**/*bak/**',
-      '**/*test/**',
-      '**/test/**',
-      '**/_test/**'
-    ],
     // // The default allowed conditions are: import, module, browser, default, and production/development based on current mode.
     conditions: [
       // 'types', //NOTE: 在没有吧vitest与typescript匹配好的情况下, 运行vitest, node的模块系统报错: ERR_UNKNOWN_FILE_EXTENSION

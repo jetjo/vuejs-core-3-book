@@ -4,7 +4,7 @@
   "description": "",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm",
+  "packageManager": "pnpm@8.15.1",
   "main": "index.js",
   "scripts": {
     "test": "vitest run",
@@ -19,7 +19,7 @@
       },
       "import": "@vue-fixed/reactivity/dist/reactivity.esm-bundler.js",
       "require": "@vue-fixed/reactivity/index.js",
-      "default": "@vue-fixed/reactivity/dist/reactivity.global.js"
+      "default": "xxx.js"
     },
     "#vue/c": "vue",
     "#vue": {
