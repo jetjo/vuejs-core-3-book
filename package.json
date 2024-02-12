@@ -73,7 +73,8 @@
     "./reactive": "./exports-barrel/reactive/5-8.js",
     "./effect": "./exports-barrel/effect/4-11.js",
     "./computed": "./exports-barrel/computed/4-11.js",
-    "./watch": "./exports-barrel/watch/4-11.js"
+    "./watch": "./exports-barrel/watch/4-11.js",
+    "./utils": "./internal-barrel/utils/index.js"
   },
   "dependencies": {
     "@vue/reactivity": "^3.4.15",

@@ -6,22 +6,25 @@
   "private": true,
   "packageManager": "pnpm@8.15.1",
   "scripts": {
-    "v-test": "NODE_OPTIONS='--experimental-import-meta-resolve --experimental-json-modules --C=verify' vitest run",
-    "t-test": "NODE_OPTIONS='--experimental-import-meta-resolve --experimental-json-modules --C=test' vitest run",
-    "v-dev": "NODE_OPTIONS='--experimental-import-meta-resolve --experimental-json-modules --C=verify' vite",
-    "t-dev": "NODE_OPTIONS='--experimental-import-meta-resolve --experimental-json-modules --C=test' vite"
+    "v-test": "NODE_OPTIONS='--experimental-import-meta-resolve --experimental-json-modules --conditions=verify' vitest run",
+    "t-test": "NODE_OPTIONS='--experimental-import-meta-resolve --experimental-json-modules --conditions=test' vitest run",
+    "v-dev": "NODE_OPTIONS='--experimental-import-meta-resolve --experimental-json-modules --conditions=verify' vite",
+    "t-dev": "NODE_OPTIONS='--experimental-import-meta-resolve --experimental-json-modules --conditions=test' vite",
+    "dev": "NODE_OPTIONS='--experimental-import-meta-resolve --experimental-default-type=module' vite"
   },
   "imports": {
     "#vue-fixed/reactive": {
-      "types": "@vue-fixed/reactivity/dist/reactivity.d.ts",
-      "browser": {
-        "verify": "@vue-fixed/reactivity/dist/reactivity.esm-browser.js",
-        "development": "@vue-fixed/reactivity/dist/reactivity.esm-browser.js",
-        "production": "@vue-fixed/reactivity/dist/reactivity.esm-browser.prod.js"
+      "verify": {
+        "types": "@vue-fixed/reactivity/dist/reactivity.d.ts",
+        "browser": {
+          "development": "@vue-fixed/reactivity/dist/reactivity.esm-browser.js",
+          "production": "@vue-fixed/reactivity/dist/reactivity.esm-browser.prod.js"
+        },
+        "import": "@vue-fixed/reactivity/dist/reactivity.esm-bundler.js",
+        "require": "@vue-fixed/reactivity/index.js",
+        "default": "@vue-fixed/reactivity/dist/reactivity.global.js"
       },
-      "import": "@vue-fixed/reactivity/dist/reactivity.esm-bundler.js",
-      "require": "@vue-fixed/reactivity/index.js",
-      "default": "@vue-fixed/reactivity/dist/reactivity.global.js"
+      "default": "../internal-barrel/index.js?desc=also-for-test-condition"
     },
     "#vue/c": "vue",
     "#vue": {
@@ -29,7 +32,8 @@
         "types": "vue/dist/vue.d.mts",
         "browser": "vue/dist/vue.esm-browser.js?desc=useBy-vite-dev",
         "default": "vue/dist/vue.runtime.esm-bundler.js"
-      }
+      },
+      "default": "vue/dist/vue.global.js"
     },
     "#shims": "./types/shims.d.ts",
     "#utils": "./utils/index.js",

@@ -1,9 +1,36 @@
 /// <reference types="vitest" />
 /// <reference types="vitest/config" />
-import { fileURLToPath, URL } from 'node:url'
+// import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import {
+  parseCustomConditions,
+  parsePkgResolveConditionFrom
+} from './module-res-utils'
+
+const conditionsOfTsConf = await parseCustomConditions({
+  url: await import.meta.resolve('./jsconfig.json')
+})
+
+// console.warn('conditionsOfTsConf:', conditionsOfTsConf)
+// console.warn('NODE_OPTIONS: ', process.env.NODE_OPTIONS)
+
+const conditionsOfNodeCLI = parsePkgResolveConditionFrom(
+  process.env.NODE_OPTIONS
+)
+// console.warn('conditionsOfNodeCLI: ', conditionsOfNodeCLI)
+
+/**@type {string[]} */
+const conditions = []
+conditionsOfNodeCLI.forEach(c => {
+  if (!conditionsOfTsConf.includes(c)) {
+    console.warn(`conditionsOfNodeCLI: ${c} is not in conditionsOfTsConf`)
+  }
+  conditions.push(c)
+})
+
+// console.warn('conditions: ', conditions);
 
 // vite-plugin-checker不识别jsconfig.json, 其默认会寻找tsconfig.json, 需要设置其checker的tsconfig字段
 
@@ -44,24 +71,22 @@ export default defineConfig({
     alias: {
       vue: '#vue',
       // '#': fileURLToPath(new URL('./src', import.meta.url)),
-      // 为了与package.json中的export字段配合...
-      '@jetjo/vue3/ref/*.js': './src/reactive/ref/*.js',
-      '@jetjo/vue3/reactive/*.js': './src/reactive/*.js',
-      '@jetjo/vue3/effect/*.js': './src/effect/*.js',
-      '@jetjo/vue3/computed/*.js': './src/computed/*.js',
-      '@jetjo/vue3/watch/*.js': './src/watch/*.js',
-      '@jetjo/vue3/ref/*': './src/reactive/ref/*.js',
-      '@jetjo/vue3/reactive/*': './src/reactive/*.js',
-      '@jetjo/vue3/effect/*': './src/effect/*.js',
-      '@jetjo/vue3/computed/*': './src/computed/*.js',
-      '@jetjo/vue3/watch/*': './src/watch/*.js',
-      '@jetjo/vue3/ref': './src/reactive/ref/6-1.js',
-      '@jetjo/vue3/reactive': './src/reactive/5-8.js',
-      '@jetjo/vue3/effect': './src/effect/4-11.js',
-      '@jetjo/vue3/computed': './src/computed/4-11.js',
-      '@jetjo/vue3/watch': './src/watch/4-11.js'
     },
     // // The default allowed conditions are: import, module, browser, default, and production/development based on current mode.
+    // 如果不指定, 当通过`--conditions=xxx`给`nodejs`指定条件时, vite会报错:
+    // [plugin:vite:import-analysis] No known conditions for "#vue-fixed/reactive" specifier in "@jetjo/vue3-chapter3" package
+    // 换句话说, 就是`--conditions=xxx,yyy`,
+    // 如果`xxx`和`yyy`都没出现在`vite.config.js`的`resolve.conditions`中, vite会如上的错误
+    // 而且, vite的`--conditions`参数还有对`nodejs`的`cli`的`--conditions`参数的依赖有过滤作用
+    // 例如: 运行`vite run`前, 通过环境变量`NODE_OPTIONS`
+    // 给`nodejs`指定条件(export NODE_OPTIONS=--conditions=xxx,yyy)
+    // 但是`vite`的`--conditions`参数中只有`xxx`的话,那么只有`xxx`会被传递给`nodejs`
+    // (并且只有在导入的包的package.json中有`exports/imports`字段中配置了`xxx`时,`xxx`条件才可能有用)
+    // 上述不全对, 如果`vite`的`conditions`字段不是空数组,
+    // 那么即使`--conditions`参数中指定的所有的条件都不在`vite`的`conditions`数组中,
+    // vite也不会报错, 而是会把其`conditions`字段的值作为`nodejs cli`的`--conditions`参数的值传递给`nodejs`
+    // 例如: `conditions`字段的值为`["xxx","yyy"]`,
+    // 那么`vite run`时, `nodejs`的`--conditions`参数的值为`xxx,yyy`
     conditions: [
       // 'types', //NOTE: 在没有吧vitest与typescript匹配好的情况下, 运行vitest, node的模块系统报错: ERR_UNKNOWN_FILE_EXTENSION
       // NOTE: node和node-addons会导致开发模式下页面报错:  The requested module '/node_modules/.vite/deps/vue.js?v=65ec3c77' does not provide an export named 'createElementBlock'
@@ -78,10 +103,9 @@ export default defineConfig({
       'browser',
       'production',
       'development',
-      // 'test',
-      // 'vitest',
       'default',
-      'dev'
+      // ...conditionsOfTsConf
+      ...conditions
     ]
   },
   build: {
