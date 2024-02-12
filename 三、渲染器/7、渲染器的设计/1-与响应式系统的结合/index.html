@@ -31,6 +31,9 @@
       // NOTE: 千万不要使用https://unpkg.com/browse下的包, 这是在浏览器中浏览npm包的, 不是用来引用的
       // import { effect, ref } from '#html-type-vue-reactive'
       import { effect, ref } from '#vue-fixed/reactive'
+      import { warn } from '#root/utils'
+
+      warn('work fine!!!')
 
       function render(domStr, container) {
         container.innerHTML = domStr
@@ -45,6 +48,10 @@
       }, 1000)
     </script>
 
-    <p><a href='../3-自定义渲染器/node-textContent.html'>../3-自定义渲染器/node-textContent.html</a></p>
+    <p>
+      <a href="../3-自定义渲染器/node-textContent.html"
+        >../3-自定义渲染器/node-textContent.html</a
+      >
+    </p>
   </body>
 </html>
