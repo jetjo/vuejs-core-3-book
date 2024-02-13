@@ -6,4 +6,8 @@ function queueMacroTask() {
   })
 }
 
-export { queueMacroTask }
+function queueMicroTask() {
+  return Promise.resolve()
+}
+
+export { queueMacroTask, queueMicroTask }

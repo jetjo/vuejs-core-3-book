@@ -24,9 +24,16 @@ function factory(_config = defArg0) {
       }
     }
 
-    return {
-      ...config
-    }
+    // @ts-ignore
+    config.version = '8-3'
+
+    return config;
+
+    // NOTE: 不应返回一个解构的副本, 这样, 新版本更新的方法无法替换掉旧版本的了!!!
+    // return {
+    //   ...config,
+    //   version: '8-3'
+    // }
   }
 }
 

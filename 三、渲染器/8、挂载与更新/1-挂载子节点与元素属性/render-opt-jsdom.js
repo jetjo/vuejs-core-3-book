@@ -1,9 +1,12 @@
-import { JSDOM } from 'jsdom'
+// import { JSDOM } from 'jsdom'
+// @ts-ignore
+import { queueMacroTask, queueMicroTask } from '#root/utils'
 
 /**
  * @param {object} [arg]
  * @param {string} [arg.title]
  */
+// @ts-ignore
 function createHTML({ title } = {}) {
   const html = /* html */ `<!doctype html>
     <html lang="en">
@@ -19,24 +22,17 @@ function createHTML({ title } = {}) {
 
 /**@type {import('#shims').RendererConfigCreator} */
 function createJsDomOption() {
-  const { window } = new JSDOM(createHTML(), {
-    pretendToBeVisual: true
-  })
+  // const { window } = new JSDOM(createHTML(), {
+  //   pretendToBeVisual: true
+  // })
 
-  const { document } = window
+  // const { document } = window
 
   document.body.innerHTML = /* html */ `<div id="app"></div>`
 
   return {
     getContainer: function (css = '#app') {
       return document.querySelector(css)
-    },
-    get window() {
-      return window
-    },
-
-    get document() {
-      return document
     },
 
     createElement: tag => {
@@ -57,8 +53,23 @@ function createJsDomOption() {
     patchProps: () => {
       throw new Error('Method not implemented.')
     },
-    requestAnimationFrame: cb => {
-      return window.requestAnimationFrame(cb)
+    requestAnimationFrame: async cb => {
+      // @ts-ignore
+      // const handler = window.requestAnimationFrame(cb)
+      // setTimeout(() => {
+      //   window.cancelAnimationFrame(handler)
+      // }, 3000)
+      // await queueMicroTask()
+      const timestamp = await new Promise(resolve => {
+        window.requestAnimationFrame(timestamp => resolve(timestamp))
+      })
+      cb && cb(timestamp)
+      return timestamp
+      // return handler
+      // return queueMacroTask(cb)
+      // await queueMacroTask()
+      // cb && cb(performance.now())
+      // return 0
     }
   }
 }

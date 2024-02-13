@@ -11,7 +11,17 @@ function factory(_config = defArg0) {
     /* prettier-ignore */ // 标记config的所有字段都不是`undefined`
     if (!RendererCreatorFactoryConfig.markAllDefined(config)) throw new Error('what???')
 
+    const baseMount = config.mountElement
+
+    config.mountElement = function (vnode, container) {
+      // throw new Error('unmount is not implemented')
+      const el = baseMount(vnode, container)
+      vnode.el = el
+      return el
+    }
+
     config.unmount = function (vnode) {
+      // console.error(vnode)
       if (!vnode.el) return
       const parent = vnode.el.parentNode
       if (parent) {
@@ -19,13 +29,16 @@ function factory(_config = defArg0) {
       }
     }
 
+    const baseRender = config.render
+
     /**@type {typeof config['render']} */
     function render(vnode, container) {
+      // console.error({ vnode, container })
       if (!RendererCreatorFactoryConfig.isAllDefined(config))
         throw new Error('config不合法')
       if (!container) throw new Error('container不存在')
       if (vnode) {
-        config.render(vnode, container)
+        baseRender(vnode, container)
         return
       }
       const oldVnode = container.vnode
@@ -40,10 +53,14 @@ function factory(_config = defArg0) {
       }
     }
 
-    return {
-      ...config,
-      render
-    }
+    return Object.assign(config, { render, version: '8-5' })
+
+    // NOTE: 不应返回一个解构的副本, 这样, 新版本更新的方法无法替换掉旧版本的了!!!
+    // return {
+    //   ...config,
+    //   render,
+    //   version: '8-5' //放在`...config`后面,防止被覆盖
+    // }
   }
 }
 

@@ -23,7 +23,7 @@ interface RendererCreatorFactoryConfig<
     container: Ele
   ) => void
   mountProps?: (props: VVNode<HN, Ele, EP>['props'], container: Ele) => void
-  mountElement?: (vnode: VVNode<HN, Ele, EP>, container: Ele) => void
+  mountElement?: (vnode: VVNode<HN, Ele, EP>, container: Ele) => Ele
   patch?: (
     oldVnode: VVNode<HN, Ele, EP> | null,
     vnode: VVNode<HN, Ele, EP>,

@@ -22,13 +22,13 @@ function shouldSetAsProp(ele, key) {
 }
 
 /**@type {typeof baseCreate} */
-function createDOMOption({ window } = defArg0) {
-  window = window || globalThis
+function createDOMOption() {
+  // window = window || globalThis
 
-  const domOpt = baseCreate({ window })
+  const domOpt = baseCreate()
 
-  return {
-    ...domOpt,
+  /**@type {Partial<typeof domOpt>} */
+  const update = {
     patchProps: (el, key, _, nextValue) => {
       if (shouldSetAsProp(el, key)) {
         const attrType = typeof el[key]
@@ -53,6 +53,10 @@ function createDOMOption({ window } = defArg0) {
       }
     }
   }
+
+  return Object.assign(domOpt, update)
 }
+
+export { shouldSetAsProp }
 
 export default createDOMOption

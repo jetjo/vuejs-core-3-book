@@ -1,11 +1,9 @@
 import baseCreate from '../3-正确地设置元素属性/render-opt-browser.js'
 
-/**@type {typeof baseCreate} */
-function createDOMOption({ window } = { window: undefined }) {
-  window = window || globalThis
-  // const { document } = window
+function createDOMOption() {
 
-  const domOpt = baseCreate({ window })
+  /**@type {import('#shims').RendererConfig} */
+  const domOpt = baseCreate()
 
   const basePatch = domOpt.patchProps
 

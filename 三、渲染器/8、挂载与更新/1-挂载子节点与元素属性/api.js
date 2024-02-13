@@ -2,7 +2,10 @@ import { defArg0 } from '#root/utils'
 import { RendererCreatorFactoryConfig } from '#utils'
 
 /**@type {import('#shims').RendererCreatorFactory} */
-function factory(config = defArg0) {
+function factory(_config = defArg0) {
+  const __config = RendererCreatorFactoryConfig.init()
+  /**@type {Required<typeof __config>} */ // @ts-ignore
+  const config = Object.assign(__config, _config)
   /* prettier-ignore */ // 标记config的所有字段都不是`undefined`
   if (!RendererCreatorFactoryConfig.markAllDefined(config)) throw new Error('what???')
   // 抽离特定于平台的API,将特定于平台的API视为配置项, 作为参数传入
@@ -55,6 +58,7 @@ function factory(config = defArg0) {
       children && config.mountChildren(children, ele)
       insert(ele, container, null)
       container.vnode = vnode
+      return ele
     }
 
     config.patch ||= function (oldVnode, vnode, container) {
@@ -62,7 +66,7 @@ function factory(config = defArg0) {
         config.mountElement(vnode, container) // 挂载
         return
       }
-      throw new Error('Not implemented')
+      throw new Error('Not implemente~~~~~~~~~~~~~~~~~~~~!!!')
     }
 
     /**@type {typeof config['render']} */
@@ -91,13 +95,15 @@ function factory(config = defArg0) {
       console.log(vnode, container)
     }
 
-    const base = RendererCreatorFactoryConfig.init()
-    return {
-      ...base,
-      ...config,
-      render,
-      hydrate
-    }
+    return Object.assign(config, { render, hydrate, version: '8-1' })
+    // NOTE: 不应返回一个解构的副本, 这样, 新版本更新的方法无法替换掉旧版本的了!!!
+    // return {
+    //   ...base,
+    //   ...config,
+    //   render,
+    //   hydrate,
+    //   version: '8-1' //放在`...config`后面,防止被覆盖
+    // }
   }
 }
 export default factory

@@ -1,22 +1,8 @@
-import { defArg0 } from '#root/utils'
-
 /**@type {import('#shims').RendererConfigCreator} */
-function createRenderOption({ window } = defArg0) {
-  window ||= globalThis
-
-  const { document } = window
-
+function createRenderOption() {
   return {
     getContainer: (selector = '#app') => {
       return document.querySelector(selector)
-    },
-
-    get window() {
-      return window
-    },
-
-    get document() {
-      return document
     },
 
     createElement: tag => {
@@ -34,8 +20,15 @@ function createRenderOption({ window } = defArg0) {
     addEventListener: (el, event, handler) => {
       el.addEventListener(event.slice(2).toLowerCase(), handler)
     },
-    patchProps: () => {
+    patchProps: (el, key, pre, next) => {
       throw new Error('patchProps is not implemented')
+    },
+    requestAnimationFrame: async cb => {
+      const timestamp = await new Promise(resolve => {
+        window.requestAnimationFrame(timestamp => resolve(timestamp))
+      })
+      cb && cb(timestamp)
+      return timestamp
     }
   }
 }

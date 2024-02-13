@@ -12,7 +12,7 @@ if (typeof __DEV__ !== 'undefined') {
 if (typeof import.meta.env === 'object') {
   isDev = import.meta.env.DEV // === 'development'
   // isTest = import.meta.env.MODE === 'test'
-  isDev && console.log({ importEnv: import.meta.env })
+  // isDev && console.log({ importEnv: import.meta.env })
   isTest =
     import.meta.env.TEST === 'true' ||
     import.meta.env.MODE === 'test' ||
@@ -79,7 +79,7 @@ isTest ||= !!import.meta.vitest
 if (typeof process === 'object' && typeof process.env == 'object') {
   isDev = process.env.NODE_ENV === 'development'
   // isTest = process.env.NODE_ENV === 'test'
-  isDev && console.log({ processEnv: process.env })
+  // isDev && console.log({ processEnv: process.env })
 }
 
 console.warn({ isDev, isTest })

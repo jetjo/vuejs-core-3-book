@@ -33,11 +33,15 @@ type RendererConfig<
 
   querySelector?: ParentN['querySelector']
 
-  get window(): HWC
-  get document(): Doc
+  // get window(): HWC
+  // get document(): Doc
   getContainer?: (css: string = '#app') => Ele | null
 
-  requestAnimationFrame?: HWC['requestAnimationFrame']
+  requestAnimationFrame: (
+    cb?: Parameters<HWC['requestAnimationFrame']>[0],
+    timeout?: number
+  ) => // | ReturnType<HWC['requestAnimationFrame']>
+  Promise<ReturnType<HWC['requestAnimationFrame']>>
 }
 
 type HostWindowC = Window | JSDOMWindow | typeof globalThis
@@ -49,7 +53,8 @@ interface JSDOMWindow extends DOMWindow {
 }
 
 interface RendererConfigCreator {
-  (arg0: { window?: HostWindowC }): RendererConfig
+  // (arg0: { window?: HostWindowC }): RendererConfig
+  (): RendererConfig
 }
 
 export type { RendererConfig, JSDOMWindow, RendererConfigCreator }
