@@ -29,11 +29,9 @@ function factory(_config = defArg0) {
         setElementText(container, children) //文本节点
         return
       }
-      if (!config.isVNodeArrayChildrenC(children))
-        throw new Error('children is not array')
+      if (!config.isVNodeArrayChildrenC(children)) return // throw new Error('children is not array')
       children.forEach(child => {
-        if (!config.isVNodeChildAtomC_VVNode(child))
-          throw new Error('child is not vnode')
+        if (!config.isVNodeChildAtomC_VVNode(child)) return // throw new Error('child is not vnode')
         config.patch(null, child, container)
       })
     }
@@ -50,6 +48,7 @@ function factory(_config = defArg0) {
       }
     }
 
+    /**@description 不负责维护`container.vnode`的值,由`config.render`维护 */
     config.mountElement ||= function (vnode, container) {
       const { type, props, children } = vnode
       if (typeof type !== 'string') throw new Error('type不是字符串')
@@ -57,7 +56,7 @@ function factory(_config = defArg0) {
       props && config.mountProps(props, ele)
       children && config.mountChildren(children, ele)
       insert(ele, container, null)
-      container.vnode = vnode
+      // container.vnode = vnode //NOTE: 不负责维护`container.vnode`的值
       return ele
     }
 

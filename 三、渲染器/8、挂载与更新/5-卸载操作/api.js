@@ -13,6 +13,7 @@ function factory(_config = defArg0) {
 
     const baseMount = config.mountElement
 
+    /**@description 初次挂载, 与`unmount`一同负责设置`vnode.el` */
     config.mountElement = function (vnode, container) {
       // throw new Error('unmount is not implemented')
       const el = baseMount(vnode, container)
@@ -20,37 +21,36 @@ function factory(_config = defArg0) {
       return el
     }
 
+    /**@description 卸载, 与`mountElement`一同负责设置`vnode.el` */
     config.unmount = function (vnode) {
-      // console.error(vnode)
       if (!vnode.el) return
       const parent = vnode.el.parentNode
-      if (parent) {
-        parent.removeChild(vnode.el)
-      }
+      if (!parent) return
+      parent.removeChild(vnode.el)
     }
 
     const baseRender = config.render
 
-    /**@type {typeof config['render']} */
+    /**
+     * @description 总入口, 并负责设置`container.vnode`
+     * @type {typeof config['render']} */
     function render(vnode, container) {
       // console.error({ vnode, container })
       if (!RendererCreatorFactoryConfig.isAllDefined(config))
         throw new Error('config不合法')
       if (!container) throw new Error('container不存在')
-      if (vnode) {
-        baseRender(vnode, container)
-        return
-      }
-      const oldVnode = container.vnode
-      if (oldVnode) {
-        // // NOTE: 这样卸载,有很多不足:
+      if (!vnode) {
+        if (!container.vnode) return
+        // 卸载 // NOTE: 这样卸载,有很多不足:
         // // 1、如果`container`的一些子节点是由`Vue`组件渲染的,需要调用生命周期的相关钩子, 例如`unmounted`
         // // 2、如果一些节点关联了`Vue`的自定义指令,需要调用相关的钩子,例如`unmounted`
         // // 3、仅清空`innerHTML`,也无法移除绑定在节点上的事件监听器
         // container.innerHTML = ''、
-        config.unmount(oldVnode)
-        container.vnode = null
+        config.unmount(container.vnode)
       }
+      // 挂载、更新
+      baseRender(vnode, container)
+      container.vnode = vnode
     }
 
     return Object.assign(config, { render, version: '8-5' })
