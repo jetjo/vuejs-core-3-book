@@ -7,7 +7,7 @@ import vue from '@vitejs/plugin-vue'
 import {
   parseCustomConditions,
   parsePkgResolveConditionFrom
-} from './module-res-utils'
+} from './module-res-utils.js'
 
 const conditionsOfTsConf = await parseCustomConditions({
   url: await import.meta.resolve('./jsconfig.json')

@@ -81,9 +81,9 @@ export const test = (
   // test(createJsDomOption, creatorFactory)
 
   const config = createOption()
-  if (!config.getContainer)
-    throw new Error('config.getContainer is not defined')
+  if (!config.getContainer) throw new Error('config.getContainer is not defined') // prettier-ignore
   const container = config.getContainer()
+  if (!container) throw new Error('container is not exist')
 
   const { requestAnimationFrame: rAF } = config
 
@@ -112,8 +112,7 @@ export const test = (
   describe(suitName, () => {
     it('正确创建了页面', async () => {
       await rAF()
-
-      expect(document.title).toBe('')
+      expect(document.title).toBe('jsdom')
       expect(document.body.innerHTML).toBe(/* html */ `<div id="app"></div>`)
     })
 

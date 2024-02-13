@@ -20,7 +20,7 @@ type RendererConfig<
   /**@description 将`child`插入到`parent.anchor`节点前面 */
   insert: (child: HN, parent: HN, anchor: HN | null, isSvg?: boolean) => void
 
-  patchProps: (el: Ele, key: string, prevValue: any, nextValue: any) => void
+  patchProps: (el: Ele, key: string, prevValue: any, nextValue: any) => Ele
 
   setAttribute?: (el: Ele, qualifiedName: string, value: string) => void
 

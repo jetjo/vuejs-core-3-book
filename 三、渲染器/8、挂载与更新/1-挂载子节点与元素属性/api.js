@@ -29,9 +29,9 @@ function factory(_config = defArg0) {
         setElementText(container, children) //文本节点
         return
       }
-      if (!config.isVNodeArrayChildrenC(children)) return // throw new Error('children is not array')
+      if (!config.isVNodeArrayChildrenC(children)) throw new Error('children is not array')
       children.forEach(child => {
-        if (!config.isVNodeChildAtomC_VVNode(child)) return // throw new Error('child is not vnode')
+        if (!config.isVNodeChildAtomC_VVNode(child)) throw new Error('child is not vnode')
         config.patch(null, child, container)
       })
     }
@@ -40,11 +40,17 @@ function factory(_config = defArg0) {
       for (const key in props) {
         // if (Object.hasOwnProperty.call(props, key)) {}
         const element = props[key]
-        if (key.startsWith('on') && typeof element === 'function') {
-          addEventListener && addEventListener(container, key, element)
-        } else {
-          setAttribute && setAttribute(container, key, element)
-        }
+
+        // 暂不处理, 由`patchProps`处理
+        // if (key.startsWith('on') && typeof element === 'function') return;
+
+        // 设置属性, 有多种方式: setAttribute, 直接设置, 通过特定的方法设置
+        // 1. 通过setAttribute方法设置
+        setAttribute && setAttribute(container, key, element)
+        // 2. 通过元素对象的属性设置
+        // container[key] = element
+        // 3. 通过特定的方法设置...
+        // 不同的方式使用不同的情形,有不同的性能,目前暂不处理
       }
     }
 

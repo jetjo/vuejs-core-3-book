@@ -28,9 +28,7 @@ function factory(_config = defArg0) {
         // container.vnode = newVnode // NOTE: 不负责维护`container.vnode`的值
         return newVnode //.el
       }
-      if (!vnode) {
-        return mountEle()
-      }
+      if (!vnode) return mountEle()
       if (vnode.type !== newVnode.type) {
         config.unmount(vnode)
         return mountEle()

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import creatorFactory from './api.js'
-import createJsDomOption from '../4-class的处理/render-opt-jsdom.js'
+import createJsDomOption from '../4-class的处理/render-opt-browser.js'
 import { test as baseTest } from '../3-正确地设置元素属性/api.spec.js'
 import { defArg0 } from '#root/utils'
 

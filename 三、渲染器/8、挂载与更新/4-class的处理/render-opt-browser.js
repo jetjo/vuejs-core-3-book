@@ -19,9 +19,9 @@ function createDOMOption() {
       // 3. 通过元素对象的classList属性设置
       // 经过测试, 通过className设置时性能最好, 通过setAttribute设置时性能最差
       el.className = nextValue || ''
-      return
+      return el
     }
-    basePatch(el, key, prevValue, nextValue)
+    return basePatch(el, key, prevValue, nextValue)
   }
 
   return domOpt

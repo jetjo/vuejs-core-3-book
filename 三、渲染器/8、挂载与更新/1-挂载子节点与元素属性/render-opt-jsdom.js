@@ -28,6 +28,8 @@ function createJsDomOption() {
 
   // const { document } = window
 
+  document.title = 'jsdom'
+
   document.body.innerHTML = /* html */ `<div id="app"></div>`
 
   return {

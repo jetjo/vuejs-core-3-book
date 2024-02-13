@@ -1,6 +1,6 @@
 import { describe } from 'vitest'
 import creatorFactory from './api.js'
-import createJsDomOption from './render-opt-jsdom.js'
+import createJsDomOption from './render-opt-browser.js'
 
 import { test } from '../1-挂载子节点与元素属性/api.spec.js'
 
