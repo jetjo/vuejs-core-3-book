@@ -11,7 +11,7 @@ function factory(_config = defArg0) {
     // prettier-ignore
     if (!RendererCreatorFactoryConfig.markAllDefined(config)) throw new Error('what???')
 
-    const { patchProps, addEventListener: on } = option
+    const { patchProps } = option
 
     config.mountProps = function (props, container) {
       for (const key in props) {

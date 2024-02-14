@@ -13,7 +13,6 @@ function factory(_config = defArg0) {
     createElement,
     setElementText,
     setAttribute,
-    addEventListener,
     insert
   }) {
     config.isVNodeArrayChildrenC = Array.isArray //&& children.every(child => typeof child === 'object')

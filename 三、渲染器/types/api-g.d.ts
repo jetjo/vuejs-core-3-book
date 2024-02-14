@@ -9,6 +9,7 @@ declare global {
   interface Element {
     [key: string]: unknown
     vnode?: VVNode<Node, Element> | null
+    _vei?: EventHandlerMap
   }
 
   interface Window {
@@ -31,7 +32,7 @@ declare global {
       | VNodeNormalizedChildrenC1<HN, HE, EP>
   }
 
-  interface IsArrayTypeFixed<F> {
-    (v: F): v is F extends Array<infer T> ? T[] : any[]
+  interface RequireFunction {
+    (v: any): asserts v is Function
   }
 }

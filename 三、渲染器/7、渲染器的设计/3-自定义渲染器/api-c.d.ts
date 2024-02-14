@@ -1,6 +1,6 @@
 import type { DOMWindow } from 'jsdom'
 
-type RendererConfig<
+interface RendererConfig<
   ET = EventTarget,
   HN extends ET = Node,
   Ele extends HN = Element,
@@ -8,7 +8,7 @@ type RendererConfig<
   EleNS extends Ele = HTMLElement,
   Doc extends HN = Document,
   HWC = HostWindowC
-> = {
+> {
   // 接口Node继承自EventTarget，所以这里的el是Node类型
   createElement: (tag: string) => EleNS
 
@@ -19,6 +19,13 @@ type RendererConfig<
   //   接口Node实现了insertBefore方法，所以这里的anchor是Node类型
   /**@description 将`child`插入到`parent.anchor`节点前面 */
   insert: (child: HN, parent: HN, anchor: HN | null, isSvg?: boolean) => void
+  
+  patchEventProp: (
+    el: Ele,
+    key: string,
+    prevValue: Handler,
+    nextValue: Handler
+  ) => Ele
 
   patchProps: (el: Ele, key: string, prevValue: any, nextValue: any) => Ele
 
@@ -31,10 +38,10 @@ type RendererConfig<
     option?: OnParams<ET>[2]
   ) => void
 
-  querySelector?: ParentN['querySelector']
-
+  // querySelector?: ParentN['querySelector']
   // get window(): HWC
   // get document(): Doc
+
   getContainer?: (css: string = '#app') => Ele | null
 
   requestAnimationFrame: (
@@ -43,6 +50,8 @@ type RendererConfig<
   ) => // | ReturnType<HWC['requestAnimationFrame']>
   Promise<ReturnType<HWC['requestAnimationFrame']>>
 }
+
+type Handler = EventListenerOrEventListenerObjectC['value']
 
 type HostWindowC = Window | JSDOMWindow | typeof globalThis
 

@@ -59,4 +59,9 @@ function setValOfFnType(o, key = '', func) {
     })
 }
 
-export { setValOfFnType }
+/**@type {RequireFunction}  */
+function requireCallable(fn) {
+  if (typeof fn !== 'function') throw new Error('fn must be a function')
+}
+
+export { setValOfFnType, requireCallable }
