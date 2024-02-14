@@ -29,9 +29,9 @@ function factory(_config = defArg0) {
         setElementText(container, children) //文本节点
         return
       }
-      if (!config.isVNodeArrayChildrenC(children)) throw new Error('children is not array')
+      if (!config.isVNodeArrayChildrenC(children)) throw new Error('children is not array') // prettier-ignore
       children.forEach(child => {
-        if (!config.isVNodeChildAtomC_VVNode(child)) throw new Error('child is not vnode')
+        if (!config.isVNodeChildAtomC_VVNode(child)) throw new Error('child is not vnode') // prettier-ignore
         config.patch(null, child, container)
       })
     }
@@ -42,7 +42,7 @@ function factory(_config = defArg0) {
         const element = props[key]
 
         // 暂不处理, 由`patchProps`处理
-        // if (key.startsWith('on') && typeof element === 'function') return;
+        if (key.startsWith('on') && typeof element === 'function') throw new Error('暂不处理') // prettier-ignore
 
         // 设置属性, 有多种方式: setAttribute, 直接设置, 通过特定的方法设置
         // 1. 通过setAttribute方法设置
@@ -71,14 +71,14 @@ function factory(_config = defArg0) {
         config.mountElement(vnode, container) // 挂载
         return
       }
-      throw new Error('Not implemente~~~~~~~~~~~~~~~~~~~~!!!')
+      throw new Error('Not implemented yet!')
     }
 
     /**@type {typeof config['render']} */
     function render(vnode, container) {
-      if (!RendererCreatorFactoryConfig.isAllDefined(config))
-        throw new Error('config is not valid')
+      if (!RendererCreatorFactoryConfig.isAllDefined(config)) throw new Error('config is not valid') // prettier-ignore
       if (!container) throw new Error('container is not exist')
+
       if (container.vnode && vnode) {
         config.patch(container.vnode, vnode, container) // 更新
         container.vnode = vnode
@@ -97,7 +97,7 @@ function factory(_config = defArg0) {
 
     // @ts-ignore 服务端渲染、同构渲染、激活已有DOM
     function hydrate(vnode, container) {
-      console.log(vnode, container)
+      throw new Error('Not implemented yet!')
     }
 
     return Object.assign(config, { render, hydrate, version: '8-1' })

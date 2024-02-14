@@ -13,8 +13,8 @@ export const test = (createOption, creatorFactory, suitName = '5-卸载操作') 
   )
   const config = _config || createOption()
   if (!config) throw new Error('config is not defined')
-  if (!config.getContainer)
-    throw new Error('config.getContainer is not defined')
+  if (!config.getContainer) throw new Error('config.getContainer is not defined') // prettier-ignore
+  
   const container = config.getContainer()
   const { requestAnimationFrame: rAF } = config
 
@@ -24,9 +24,7 @@ export const test = (createOption, creatorFactory, suitName = '5-卸载操作') 
   describe(suitName, () => {
     it('正确卸载', async () => {
       render(null, container)
-
       await rAF()
-
       expect(document.body.innerHTML).toBe(/* html */ `<div id="app"></div>`)
     })
   })

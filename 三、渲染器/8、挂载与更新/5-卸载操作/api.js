@@ -36,11 +36,11 @@ function factory(_config = defArg0) {
      * @type {typeof config['render']} */
     function render(vnode, container) {
       // console.error({ vnode, container })
-      if (!RendererCreatorFactoryConfig.isAllDefined(config))
-        throw new Error('config不合法')
+      if (!RendererCreatorFactoryConfig.isAllDefined(config)) throw new Error('config不合法') // prettier-ignore
       if (!container) throw new Error('container不存在')
+
       if (!vnode) {
-        if (!container.vnode) return
+        if (!container.vnode) throw new Error('container.vnode不存在')
         // 卸载 // NOTE: 这样卸载,有很多不足:
         // // 1、如果`container`的一些子节点是由`Vue`组件渲染的,需要调用生命周期的相关钩子, 例如`unmounted`
         // // 2、如果一些节点关联了`Vue`的自定义指令,需要调用相关的钩子,例如`unmounted`
