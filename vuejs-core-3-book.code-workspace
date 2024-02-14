@@ -14,6 +14,9 @@
 		},
 		{
 			"path": "typescript-config-test"
+		},
+		{
+			"path": "code-for-vue-3-book-master"
 		}
 	],
 	"settings": {
