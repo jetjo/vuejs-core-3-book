@@ -122,6 +122,7 @@
           }
         } else if (invoker) {
           el.removeEventListener(name, invoker)
+          el._vei[key] = null // fix error
         }
       } else if (key === 'class') {
         el.className = nextValue || ''
@@ -138,6 +139,31 @@
     }
   })
 
+  const vnodeRemove = {
+    type: 'p',
+    props: {
+      onClick: null
+    },
+    children: 'text'
+  }
+
+  function test() {
+    const container = document.querySelector('#app')
+    if (!container) throw new Error('container not found')
+    container.style.backgroundColor = 'red'
+
+    window.requestAnimationFrame(() => {
+      renderer.render(vnodeRemove, document.querySelector('#app'))
+      console.log('remove')
+      const h = () => {
+        renderer.render(vnode, document.querySelector('#app'))
+        console.log('update')
+        document.removeEventListener('click', h)
+      }
+      document.addEventListener('click', h)
+    })
+  }
+
   const vnode = {
     type: 'p',
     props: {
@@ -146,7 +172,7 @@
           alert('clicked 1')
         },
         () => {
-          alert('clicked 2')
+          test() // alert('clicked 2')
         }
       ]
     },
