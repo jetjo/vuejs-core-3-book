@@ -7,14 +7,34 @@ interface Renderer<
   EP = { [key: string]: any }
 > {
   /** @description 总入口, 并负责设置`container.vnode` */
-  render: (
-    vnode: VVNode<HN, Ele, EP> | null,
-    container: Ele | null | undefined
-  ) => void
+  render: WithConfig<
+    (
+      vnode: VVNode<HN, Ele, EP> | null,
+      container: Ele | null | undefined
+    ) => void,
+    HN,
+    Ele,
+    EP
+  >
 
   /** @description 服务端渲染、同构渲染、激活已有DOM */
-  hydrate: (vnode: any, container: any) => void
+  hydrate: WithConfig<
+    (
+      vnode: VVNode<HN, Ele, EP> | null,
+      container: Ele | null | undefined
+    ) => void,
+    HN,
+    Ele,
+    EP
+  >
 }
+
+type WithConfig<
+  F extends Function,
+  HN = Node,
+  Ele extends HN = Element,
+  EP = { [key: string]: any }
+> = F & { config?: RendererCreatorFactoryConfig<HN, Ele, EP> }
 
 interface RendererCreatorFactoryConfig<
   HN = Node,
@@ -51,7 +71,7 @@ interface RendererCreatorFactoryConfig<
 
   /** @description 只有在合理的上下文中使用才有意义, 例如`mountChildren`方法中 */
   isVNodeArrayChildrenC?: (v: any) => v is VNodeArrayChildrenC<HN, Ele, EP>
-  
+
   /** @description 只有在合理的上下文中使用才有意义, 例如`mountChildren`方法中 */
   isVNodeChildAtomC_VVNode?: (v: any) => v is VVNode<HN, Ele, EP> //| ((v: any)=> boolean)
 }

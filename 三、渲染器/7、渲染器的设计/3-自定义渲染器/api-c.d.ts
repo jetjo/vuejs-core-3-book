@@ -14,12 +14,12 @@ interface RendererConfig<
 
   //   接口Node实现了textContent属性，所以这里的el是Node类型
   /**@description 设置元素的文本节点 */
-  setElementText: (el: HN, text: string) => void
+  setElementText: (el: HN, text: string) => HN
 
   //   接口Node实现了insertBefore方法，所以这里的anchor是Node类型
   /**@description 将`child`插入到`parent.anchor`节点前面 */
   insert: (child: HN, parent: HN, anchor: HN | null, isSvg?: boolean) => void
-  
+
   patchEventProp: (
     el: Ele,
     key: string,
@@ -27,16 +27,21 @@ interface RendererConfig<
     nextValue: Handler
   ) => Ele
 
-  patchProps: (el: Ele, key: string, prevValue: any, nextValue: any) => Ele
+  patchProps: (
+    el: Ele,
+    key: string,
+    prevValue: unknown,
+    nextValue: unknown
+  ) => Ele
 
-  setAttribute?: (el: Ele, qualifiedName: string, value: string) => void
+  setAttribute?: (el: Ele, qualifiedName: string, value: string) => Ele
 
   addEventListener?: (
     el: ET,
     event: OnParams<ET>[0],
     handler: OnParams<ET>[1],
     option?: OnParams<ET>[2]
-  ) => void
+  ) => Ele
 
   // querySelector?: ParentN['querySelector']
   // get window(): HWC

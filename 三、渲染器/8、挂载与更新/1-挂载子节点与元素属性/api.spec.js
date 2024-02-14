@@ -110,6 +110,7 @@ export const test = (
   }
 
   describe(suitName, () => {
+
     it('正确创建了页面', async () => {
       await rAF()
       expect(document.title).toBe('jsdom')

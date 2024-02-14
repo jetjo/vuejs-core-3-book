@@ -1,7 +1,7 @@
 /**@typedef {import('#shims').RendererCreatorFactoryConfig} RendererCreatorFactoryConfig */
 /**@typedef {import('#shims').IsAllDefined<RendererCreatorFactoryConfig>} isValidRendererCreatorFactoryConfig */
 
-import { defArg0 } from '#root/utils'
+import { defArg0, throwErr } from '#root/utils'
 
 /**@type {isValidRendererCreatorFactoryConfig} */
 function isAllDefined(config = defArg0, ignors = []) {
@@ -60,8 +60,19 @@ function setValOfFnType(o, key = '', func) {
 }
 
 /**@type {RequireFunction}  */
-function requireCallable(fn) {
-  if (typeof fn !== 'function') throw new Error('fn must be a function')
+function requireCallable(fn, msg = 'fn must be a function') {
+  if (typeof fn !== 'function') throwErr(msg)
 }
 
-export { setValOfFnType, requireCallable }
+/**@type {RequireEventHandler} */
+function requireEventHandler(fn) {
+  if (Array.isArray(fn)) {
+    for (const hl of fn) {
+      requireCallable(hl, '事件处理器必须是函数')
+    }
+    return
+  }
+  requireCallable(fn, '事件处理器必须是函数')
+}
+
+export { setValOfFnType, requireCallable, requireEventHandler }

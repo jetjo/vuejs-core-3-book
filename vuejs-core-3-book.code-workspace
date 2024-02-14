@@ -54,6 +54,7 @@
 			"tests/unit/coverage": true,
 			"**/.idea": true
 		},
-		"explorerExclude.backup": {}
+		"explorerExclude.backup": {},
+		"liveServer.settings.multiRootWorkspaceName": "chapter-3"
 	}
 }

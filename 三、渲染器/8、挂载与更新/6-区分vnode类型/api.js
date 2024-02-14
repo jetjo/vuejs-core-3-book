@@ -37,6 +37,8 @@ function factory(_config = defArg0) {
       throw new Error('暂未实现')
     }
 
+    config.render.config = config
+
     return Object.assign(config, { version: '8-6' })
   }
 }

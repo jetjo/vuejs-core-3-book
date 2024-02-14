@@ -35,3 +35,5 @@ export const test = (createOption, creatorFactory, suitName = '5-卸载操作') 
 test(createJsDomOption, creatorFactory)
 
 describe.skip('卸载操作-skip', () => {})
+
+// export { test }

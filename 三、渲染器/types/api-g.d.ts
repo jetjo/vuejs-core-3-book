@@ -32,7 +32,14 @@ declare global {
       | VNodeNormalizedChildrenC1<HN, HE, EP>
   }
 
+  interface IsArrayTypeFixed<F> {
+    (v: F): v is F extends Array<infer T> ? T[] : any[]
+  }
+
   interface RequireFunction {
-    (v: any): asserts v is Function
+    (v: any, msg?: string): asserts v is Function
+  }
+  interface RequireEventHandler {
+    (v: any): asserts v is EventListenerOrEventListenerObjectC
   }
 }
