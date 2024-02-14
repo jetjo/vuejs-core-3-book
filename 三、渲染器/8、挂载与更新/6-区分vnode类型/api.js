@@ -18,7 +18,6 @@ function factory(_config = defArg0) {
      * @description 以下是当前的限制:
      * @description 1、并且只支持`type`为`string`的节点
      * @description 2、`vnode.type`的值需要分多种情况处理, type是字符串代表原生标签, type是对象代表组件等等
-     * @description 3、不负责维护`container.vnode`的值
      */
     config.patch = function (vnode, newVnode, container) {
       if (!newVnode) throw new Error('newVnode不存在. patch操作不负责卸载节点!')
@@ -35,6 +34,7 @@ function factory(_config = defArg0) {
         return mountEle()
       }
       // ...剩余情形: 新旧节点都存在,且`type`相同,需要`patch`操作, 目前未实现
+      throw new Error('暂未实现')
     }
 
     return Object.assign(config, { version: '8-6' })

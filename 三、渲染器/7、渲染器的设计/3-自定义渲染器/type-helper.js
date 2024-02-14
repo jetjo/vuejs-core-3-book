@@ -48,3 +48,15 @@ export const RendererCreatorFactoryConfig = {
   markAllDefined,
   init
 }
+
+/**@description 用于切断类型连接,设置缺省值 */
+// @ts-ignore
+function setValOfFnType(o, key = '', func) {
+  o[key] ||=
+    func ||
+    (() => {
+      throw new Error('Not implemented yet!')
+    })
+}
+
+export { setValOfFnType }

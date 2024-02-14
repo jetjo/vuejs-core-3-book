@@ -1,5 +1,5 @@
 import { defArg0 } from '#root/utils'
-import { RendererCreatorFactoryConfig } from '#utils'
+import { RendererCreatorFactoryConfig, setValOfFnType } from '#utils'
 
 /**@type {import('#shims').RendererCreatorFactory} */
 function factory(_config = defArg0) {
@@ -16,15 +16,15 @@ function factory(_config = defArg0) {
     addEventListener,
     insert
   }) {
-    config.isVNodeArrayChildrenC ||= Array.isArray //&& children.every(child => typeof child === 'object')
+    config.isVNodeArrayChildrenC = Array.isArray //&& children.every(child => typeof child === 'object')
     // @ts-ignore
-    config.isVNodeChildAtomC_VVNode ||= child => {
+    config.isVNodeChildAtomC_VVNode = child => {
       if (!child) return false
       if (typeof child !== 'object') return false
       if (config.isVNodeArrayChildrenC(child)) return false
       return true
     }
-    config.mountChildren ||= function (children, container) {
+    config.mountChildren = function (children, container) {
       if (typeof children === 'string') {
         setElementText(container, children) //文本节点
         return
@@ -36,7 +36,8 @@ function factory(_config = defArg0) {
       })
     }
 
-    config.mountProps ||= function (props, container) {
+    // @ts-ignore // 有新版本
+    function mountProps(props, container) {
       for (const key in props) {
         // if (Object.hasOwnProperty.call(props, key)) {}
         const element = props[key]
@@ -53,9 +54,9 @@ function factory(_config = defArg0) {
         // 不同的方式使用不同的情形,有不同的性能,目前暂不处理
       }
     }
+    setValOfFnType(config, 'mountProps', mountProps)
 
-    /**@description 不负责维护`container.vnode`的值,由`config.render`维护 */
-    config.mountElement ||= function (vnode, container) {
+    config.mountElement = function (vnode, container) {
       const { type, props, children } = vnode
       if (typeof type !== 'string') throw new Error('type不是字符串')
       const ele = createElement(type)
@@ -66,7 +67,9 @@ function factory(_config = defArg0) {
       return ele
     }
 
-    config.patch ||= function (oldVnode, vnode, container) {
+    // @ts-ignore // 新版本的`patch`功能完全覆盖了此版本, 所以这里断开与``config.patch``的继承关系
+    // config.patch ||= function (oldVnode, vnode, container) {
+    function patch(oldVnode, vnode, container) {
       if (!oldVnode) {
         config.mountElement(vnode, container) // 挂载
         return
@@ -74,8 +77,9 @@ function factory(_config = defArg0) {
       throw new Error('Not implemented yet!')
     }
 
-    /**@type {typeof config['render']} */
-    function render(vnode, container) {
+    setValOfFnType(config, 'patch', patch)
+
+    config.render = function (vnode, container) {
       if (!RendererCreatorFactoryConfig.isAllDefined(config)) throw new Error('config is not valid') // prettier-ignore
       if (!container) throw new Error('container is not exist')
 
@@ -95,12 +99,9 @@ function factory(_config = defArg0) {
       }
     }
 
-    // @ts-ignore 服务端渲染、同构渲染、激活已有DOM
-    function hydrate(vnode, container) {
-      throw new Error('Not implemented yet!')
-    }
+    setValOfFnType(config, 'hydrate')
 
-    return Object.assign(config, { render, hydrate, version: '8-1' })
+    return Object.assign(config, { version: '8-1' })
     // NOTE: 不应返回一个解构的副本, 这样, 新版本更新的方法无法替换掉旧版本的了!!!
     // return {
     //   ...base,

@@ -13,7 +13,6 @@ function factory(_config = defArg0) {
 
     const baseMount = config.mountElement
 
-    /**@description 初次挂载, 与`unmount`一同负责设置`vnode.el` */
     config.mountElement = function (vnode, container) {
       // throw new Error('unmount is not implemented')
       const el = baseMount(vnode, container)
@@ -21,7 +20,6 @@ function factory(_config = defArg0) {
       return el
     }
 
-    /**@description 卸载, 与`mountElement`一同负责设置`vnode.el` */
     config.unmount = function (vnode) {
       if (!vnode.el) return
       const parent = vnode.el.parentNode
@@ -31,10 +29,7 @@ function factory(_config = defArg0) {
 
     const baseRender = config.render
 
-    /**
-     * @description 总入口, 并负责设置`container.vnode`
-     * @type {typeof config['render']} */
-    function render(vnode, container) {
+    config.render = function (vnode, container) {
       // console.error({ vnode, container })
       if (!RendererCreatorFactoryConfig.isAllDefined(config)) throw new Error('config不合法') // prettier-ignore
       if (!container) throw new Error('container不存在')
@@ -53,7 +48,7 @@ function factory(_config = defArg0) {
       container.vnode = vnode
     }
 
-    return Object.assign(config, { render, version: '8-5' })
+    return Object.assign(config, { version: '8-5' })
 
     // NOTE: 不应返回一个解构的副本, 这样, 新版本更新的方法无法替换掉旧版本的了!!!
     // return {

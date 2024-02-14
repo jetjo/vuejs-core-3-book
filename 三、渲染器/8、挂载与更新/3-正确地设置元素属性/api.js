@@ -13,7 +13,6 @@ function factory(_config = defArg0) {
 
     const { patchProps, addEventListener: on } = option
 
-    /**@description 目前将对每个属性的处理完全交由`patchProps`方法处理, 包括事件 */
     config.mountProps = function (props, container) {
       for (const key in props) {
         // if (Object.hasOwnProperty.call(props, key)) {}
@@ -21,10 +20,7 @@ function factory(_config = defArg0) {
       }
     }
 
-    // @ts-ignore
-    config.version = '8-3'
-
-    return config
+    return Object.assign(config, { version: '8-3' })
 
     // NOTE: 不应返回一个解构的副本, 这样, 新版本更新的方法无法替换掉旧版本的了!!!
     // return {

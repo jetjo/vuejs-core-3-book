@@ -6,10 +6,13 @@ interface Renderer<
   Ele extends HN = Element,
   EP = { [key: string]: any }
 > {
+  /** @description 总入口, 并负责设置`container.vnode` */
   render: (
     vnode: VVNode<HN, Ele, EP> | null,
     container: Ele | null | undefined
   ) => void
+
+  /** @description 服务端渲染、同构渲染、激活已有DOM */
   hydrate: (vnode: any, container: any) => void
 }
 
@@ -22,18 +25,34 @@ interface RendererCreatorFactoryConfig<
     children: VVNode<HN, Ele, EP>['children'],
     container: Ele
   ) => void
+
+  /** @description 目前将对每个属性的处理完全交由`patchProps`方法处理, 包括事件 */
   mountProps?: (props: VVNode<HN, Ele, EP>['props'], container: Ele) => void
+
+  /**
+   * @description 初次挂载, 与`unmount`一同负责设置`vnode.el`
+   * @description 不负责维护`container.vnode`的值,由`config.render`维护 */
   mountElement?: (vnode: VVNode<HN, Ele, EP>, container: Ele) => Ele
+
+  /**
+   * @description 入口检测:
+   * @description 1、`vnode`(新的虚拟节点)不能为空
+   * @description 注意:
+   * @description 1、不负责维护`container.vnode`的值
+   */
   patch?: (
     oldVnode: VVNode<HN, Ele, EP> | null,
     vnode: VVNode<HN, Ele, EP>,
     container: Ele
   ) => void
+
+  /** @description 卸载, 与`mountElement`一同负责设置`vnode.el` */
   unmount?: (oldVnode: VVNode<HN, Ele, EP>) => void
 
-  /**@description 只有在合理的上下文中使用才有意义, 例如`mountChildren`方法中 */
+  /** @description 只有在合理的上下文中使用才有意义, 例如`mountChildren`方法中 */
   isVNodeArrayChildrenC?: (v: any) => v is VNodeArrayChildrenC<HN, Ele, EP>
-  /**@description 只有在合理的上下文中使用才有意义, 例如`mountChildren`方法中 */
+  
+  /** @description 只有在合理的上下文中使用才有意义, 例如`mountChildren`方法中 */
   isVNodeChildAtomC_VVNode?: (v: any) => v is VVNode<HN, Ele, EP> //| ((v: any)=> boolean)
 }
 
