@@ -3,7 +3,9 @@ import { defArg0 } from '#root/utils'
 import { RendererCreatorFactoryConfig } from '#utils'
 import baseFactory from '../1-挂载子节点与元素属性/api.js'
 
-/**@type {typeof baseFactory} */
+const VER = '8-3'
+
+/**@type {import('#shims').RendererCreatorFactory} */
 function factory(_config = defArg0) {
   return function createRenderer(option) {
     /**@type {typeof _config} */
@@ -20,7 +22,7 @@ function factory(_config = defArg0) {
       }
     }
 
-    return Object.assign(config, { version: '8-3' })
+    return Object.assign(config, { version: VER })
 
     // NOTE: 不应返回一个解构的副本, 这样, 新版本更新的方法无法替换掉旧版本的了!!!
     // return {
@@ -29,5 +31,7 @@ function factory(_config = defArg0) {
     // }
   }
 }
+
+factory.version = VER
 
 export default factory
