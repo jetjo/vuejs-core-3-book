@@ -58,13 +58,19 @@
     "verbatimModuleSyntax": true,
     "noEmit": true,
     "jsxImportSource": "vue",
+    // NOTE: 如果设置为`true`, 会导致:
+    // `vscode`在显示一个字段/接口的引用数量时,也把软连接的文件也算进去
+    "preserveSymlinks": false,
     "jsx": "preserve",
     /* Linting */
     "checkJs": false,
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "types": [
+      "vite/client"
+    ]
   },
   "exclude": [
     "**/node_modules/**",
