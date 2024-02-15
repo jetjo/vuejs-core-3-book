@@ -41,19 +41,21 @@ interface RendererConfig<
     event: OnParams<ET>[0],
     handler: OnParams<ET>[1],
     option?: OnParams<ET>[2]
-  ) => Ele
+  ) => ET
 
   // querySelector?: ParentN['querySelector']
   // get window(): HWC
   // get document(): Doc
 
-  getContainer?: (css: string = '#app') => Ele | null
+  getContainer: (css = '#app', apiVer = '') => Ele
 
   requestAnimationFrame: (
     cb?: Parameters<HWC['requestAnimationFrame']>[0],
     timeout?: number
   ) => // | ReturnType<HWC['requestAnimationFrame']>
   Promise<ReturnType<HWC['requestAnimationFrame']>>
+
+  version: string
 }
 
 type Handler = EventListenerOrEventListenerObjectC['value']
@@ -68,7 +70,7 @@ interface JSDOMWindow extends DOMWindow {
 
 interface RendererConfigCreator {
   // (arg0: { window?: HostWindowC }): RendererConfig
-  (): RendererConfig
+  (): Promise<RendererConfig>
 }
 
 export type { RendererConfig, JSDOMWindow, RendererConfigCreator }
