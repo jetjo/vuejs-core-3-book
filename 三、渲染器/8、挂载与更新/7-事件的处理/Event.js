@@ -1,7 +1,8 @@
 import { requireCallable } from '#utils'
 
 /**@type {import('#shims').Invoker} */
-const _Invoker = function (el, key, handler, onAdd, onRemove) {
+// @ts-ignore
+const _Invoker = function (el, key, handler, onAdd, onRemove, inheritor) {
   if (!el._vei) throw new Error('el._vei is not defined')
   /**@type {EventListenerOrEventListenerObjectC} */
   const on = e => {
@@ -18,18 +19,28 @@ const _Invoker = function (el, key, handler, onAdd, onRemove) {
     requireCallable(invoker.value)
     invoker.value(e)
   }
-  on.value = handler
 
-  on.update = handler => {
+  /**@type {*} */
+  const _inheritor = { __proto__: null }
+
+  _inheritor.attached = on.attached = 0
+
+  _inheritor.value = on.value = handler
+
+  _inheritor.update = on.update = handler => {
+    if (inheritor) inheritor.value = handler
     on.value = handler
   }
 
-  on.remove = () => {
+  _inheritor.remove = on.remove = () => {
     onRemove(on)
+    if (inheritor) onRemove(inheritor)
     el._vei && (el._vei[key] = null)
   }
 
-  onAdd((el._vei[key] = on))
+  if (inheritor) Object.assign(inheritor, _inheritor)
+
+  onAdd((el._vei[key] = inheritor || on))
   return on
 }
 

@@ -8,7 +8,8 @@ export interface Invoker {
     key: string,
     handler: PatchEventParams[2],
     onAdd: (v: EventListenerOrEventListenerObjectC) => void,
-    onRemove: (v: EventListenerOrEventListenerObjectC) => void
+    onRemove: (v: EventListenerOrEventListenerObjectC) => void,
+    inheritor?: EventListenerOrEventListenerObjectC
   ): EventListenerOrEventListenerObjectC
   getInvoker: (
     el: PatchEventParams[0],

@@ -61,7 +61,7 @@ async function createJsDomOption() {
 
   // NOTE: 前面为`document.body.innerHTML`赋值后, 需要等待一段时间, 等`jsdom`渲染完毕???
   await requestAnimationFrame()
-  warn('jsdom~~~', document.body.innerHTML)
+  // warn('jsdom~~~', document.body.innerHTML)
 
   return {
     version: VER,
@@ -69,7 +69,7 @@ async function createJsDomOption() {
     getContainer: function (css = '#app', apiVer = '') {
       const ele = document.querySelector(css)
       if (!ele) {
-        warn(`body: ${document.body.innerHTML}`)
+        // warn(`body: ${document.body.innerHTML}`)
         throw new Error(`未找到${css}元素`)
       }
       return ele

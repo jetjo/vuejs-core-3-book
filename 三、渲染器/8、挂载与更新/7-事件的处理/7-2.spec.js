@@ -77,9 +77,10 @@ export const test = (optionFactory, factory) => {
       const { render, container, config, rAF } = await getApi(optionFactory, factory, '7-引出要在下一节解决的问题', '正确绑定事件')
       effect(() => {
         // 确保依赖与`parentHasProps`
-        warn('effect before', parentHasProps.value)
+        // warn('effect before', parentHasProps.value)
         fixRenderForTest(render, config)
-        render(getVnode(), container, parentHasProps.value ? 'effect re-run' : undefined)
+        render(getVnode(), container)
+        // render(getVnode(), container, parentHasProps.value ? 'effect re-run' : undefined)
         warn('effect after')
       })
       await rAF()
@@ -89,7 +90,7 @@ export const test = (optionFactory, factory) => {
       p.dispatchEvent(new Event(eventName))
       await queueMacroTask()
       await rAF()
-      warn('effect after???')
+      // warn('effect after???')
       // NOTE: holly shit!!!🤬, 不要忘记重新获取一遍!!!
       // 并且,指定`container`, 因为`container`也是div类型
       parent = getEle(parentNodeType, container) 

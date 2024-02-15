@@ -10,7 +10,7 @@ async function createDOMOption() {
   const basePatch = domOpt.patchProps
 
   domOpt.patchProps = (el, key, prevValue, nextValue) => {
-    warn('patch', VER, 'patchProps', key)
+    // warn('patch', VER, 'patchProps', key)
     if (key === 'class') {
       if (typeof nextValue !== 'string') {
         // 需要提前调用`normalizeClass`方法将非字符串正常化为字符串

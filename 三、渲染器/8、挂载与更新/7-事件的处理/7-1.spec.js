@@ -8,7 +8,7 @@ export function fixRenderForTest(render, config) {
     const el = (n2.el = n1.el)
     const oldProps = n1.props
     const newProps = n2.props
-    warn('patchElement~~~~', '7-1.spec.js', { oldProps, newProps }, arguments[2])
+    // warn('patchElement~~~~', '7-1.spec.js', { oldProps, newProps }, arguments[2])
     for (const key in newProps) {
       if (newProps[key] !== oldProps[key]) {
         if (arguments[2]) warn('patchElement~~~~', '7-1.spec.js', key, arguments[2])
@@ -33,11 +33,11 @@ export function fixRenderForTest(render, config) {
     if (n1 && n2 && n1.type === n2.type && typeof n2.type === 'string') {
       // @ts-ignore
       patchElement(n1, n2, arguments[3])
-      warn('patchElement', '7-1.spec.js', 'patch')
+      // warn('patchElement', '7-1.spec.js', 'patch')
       return
     }
     patch(n1, n2, container)
-    warn('mountElement', '7-1.spec.js', 'patch')
+    // warn('mountElement', '7-1.spec.js', 'patch')
   }
 }
 

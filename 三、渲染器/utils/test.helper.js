@@ -16,7 +16,7 @@ function isLatestVer(optFactory, factory) {
   const testFlag = getTestVerTag()
   if (!optFactory.version || !factory.version) throw new Error('版本号不能为空')
   const curFlag = `${optFactory.version},${factory.version}`
-  warn(`testFlag: ${testFlag}, curFlag: ${curFlag}`)
+  // warn(`testFlag: ${testFlag}, curFlag: ${curFlag}`)
   const flag = testFlag?.startsWith(curFlag)
   if (!flag) {
     describe.skip('有新版本api, 此版本无需测试了...')

@@ -32,7 +32,7 @@ async function createDOMOption() {
   /**@type {Partial<typeof domOpt>} */
   const update = {
     patchProps: (el, key, _, nextValue) => {
-      warn('patch', VER, 'patchProps', key, nextValue)
+      // warn('patch', VER, 'patchProps', key, nextValue)
       // console.warn('patchProps', key, nextValue);
       // 暂未考虑事件
       if (key.startsWith('on')) throw new Error('暂未考虑事件')
@@ -58,7 +58,7 @@ async function createDOMOption() {
         // if (nextValue == null || nextValue === false) {
         el.removeAttribute(key)
       } else {
-        warn('patch-setAttribute', VER, 'setAttribute', key, nextValue)
+        // warn('patch-setAttribute', VER, 'setAttribute', key, nextValue)
         // https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute#name
         // NOTE: 此方法会自动将`key`转换为小写字母
         el.setAttribute(key, String(nextValue))

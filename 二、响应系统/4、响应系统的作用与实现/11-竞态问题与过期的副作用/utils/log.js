@@ -82,7 +82,7 @@ if (typeof process === 'object' && typeof process.env == 'object') {
   // isDev && console.log({ processEnv: process.env })
 }
 
-console.warn({ isDev, isTest })
+// console.warn({ isDev, isTest })
 
 const logBrand = 'v3book'
 

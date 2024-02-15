@@ -13,7 +13,9 @@ interface EventListenerObjectC extends EventListenerObject {
   value: EventCb[] | EventCb
 }
 
-type EventListenerOrEventListenerObjectC = (EventListenerC | EventListenerObjectC ) & {
+type EventListenerOrEventListenerObjectC = (EventListenerC | EventListenerObjectC) & {
   update: (handler: EventCb[] | EventCb) => void
   remove: () => void
+  /**@description 事件被绑定或更新时的高精时间 */
+  attached: number
 }

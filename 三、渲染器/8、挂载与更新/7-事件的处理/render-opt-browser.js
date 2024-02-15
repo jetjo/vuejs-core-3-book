@@ -11,8 +11,11 @@ async function createDOMOption() {
 
   const basePatch = domOpt.patchProps
 
+  domOpt.Invoker = Invoker
+
   domOpt.patchEventProp = (el, key, preHandler, handler) => {
-    let invoker = Invoker.getInvoker(el, key)
+    if (!domOpt.Invoker) throw new Error('Invoker is not defined')
+    let invoker = domOpt.Invoker.getInvoker(el, key)
     if (handler) {
       if (!invoker) {
         const name = key.slice(2).toLowerCase()
@@ -21,7 +24,7 @@ async function createDOMOption() {
         // @ts-ignore
         const remove = on => el.removeEventListener(name, on)
 
-        Invoker(el, key, handler, add, remove)
+        domOpt.Invoker(el, key, handler, add, remove)
         return el
       }
       invoker.update(handler)
@@ -32,7 +35,7 @@ async function createDOMOption() {
   }
 
   domOpt.patchProps = function (el, key, prevValue, nextValue) {
-    warn('patch', VER, 'patchProps', key, nextValue, arguments[4])
+    // warn('patch', VER, 'patchProps', key, nextValue, arguments[4])
     if (key.startsWith('on')) {
       prevValue && requireEventHandler(prevValue)
       nextValue && requireEventHandler(nextValue)

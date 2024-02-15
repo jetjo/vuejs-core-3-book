@@ -1,4 +1,5 @@
 import type { DOMWindow } from 'jsdom'
+import type { Invoker } from '#shims'
 
 interface RendererConfig<
   ET = EventTarget,
@@ -20,19 +21,9 @@ interface RendererConfig<
   /**@description 将`child`插入到`parent.anchor`节点前面 */
   insert: (child: HN, parent: HN, anchor: HN | null, isSvg?: boolean) => void
 
-  patchEventProp: (
-    el: Ele,
-    key: string,
-    prevValue: Handler,
-    nextValue: Handler
-  ) => Ele
+  patchEventProp: (el: Ele, key: string, prevValue: Handler, nextValue: Handler) => Ele
 
-  patchProps: (
-    el: Ele,
-    key: string,
-    prevValue: unknown,
-    nextValue: unknown
-  ) => Ele
+  patchProps: (el: Ele, key: string, prevValue: unknown, nextValue: unknown) => Ele
 
   setAttribute?: (el: Ele, qualifiedName: string, value: string) => Ele
 
@@ -56,6 +47,8 @@ interface RendererConfig<
   Promise<ReturnType<HWC['requestAnimationFrame']>>
 
   version: string
+
+  Invoker?: Invoker
 }
 
 type Handler = EventListenerOrEventListenerObjectC['value']
