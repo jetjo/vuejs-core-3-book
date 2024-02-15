@@ -1,13 +1,16 @@
+import { warn } from '#root/utils'
 import baseCreate from '../3-正确地设置元素属性/render-opt-browser.js'
 
-function createDOMOption() {
-
+const VER = '8-4 browser'
+/**@type {import('#shims').RendererConfigCreator} */
+async function createDOMOption() {
   /**@type {import('#shims').RendererConfig} */
-  const domOpt = baseCreate()
+  const domOpt = await baseCreate()
 
   const basePatch = domOpt.patchProps
 
   domOpt.patchProps = (el, key, prevValue, nextValue) => {
+    warn('patch', VER, 'patchProps', key)
     if (key === 'class') {
       if (typeof nextValue !== 'string') {
         // 需要提前调用`normalizeClass`方法将非字符串正常化为字符串
@@ -24,7 +27,8 @@ function createDOMOption() {
     return basePatch(el, key, prevValue, nextValue)
   }
 
-  return domOpt
+  return Object.assign(domOpt, { version: VER })
 }
 
+createDOMOption.version = VER
 export default createDOMOption

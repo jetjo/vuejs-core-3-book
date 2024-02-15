@@ -10,5 +10,5 @@ import { warn } from './log.js'
 export const defArg0 = {}
 
 export function voidFunc(params) {
-  warn('voidFunc: ', { params })
+  // warn('voidFunc: ', { params })
 }

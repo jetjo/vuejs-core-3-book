@@ -3,7 +3,9 @@ import { RendererCreatorFactoryConfig } from '#utils'
 import { defArg0 } from '#root/utils'
 import baseFactory from '../5-卸载操作/api.js'
 
-/**@type {typeof baseFactory} */
+const VER = '8-6'
+
+/**@type {import('#shims').RendererCreatorFactory} */
 function factory(_config = defArg0) {
   return function createRenderer(option) {
     /**@type {typeof _config} */
@@ -39,8 +41,8 @@ function factory(_config = defArg0) {
 
     config.render.config = config
 
-    return Object.assign(config, { version: '8-6' })
+    return Object.assign(config, { version: VER })
   }
 }
-
+factory.version = VER
 export default factory

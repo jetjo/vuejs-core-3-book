@@ -1,10 +1,13 @@
-import { requireCallable, requireEventHandler } from '#utils'
+import { warn } from '#root/utils'
+import { requireEventHandler } from '#utils'
 import baseCreate from '../4-class的处理/render-opt-browser.js'
 import Invoker from './Event.js'
 
-function createDOMOption() {
+const VER = '8-7 browser'
+/**@type {import('#shims').RendererConfigCreator} */
+async function createDOMOption() {
   /**@type {import('#shims').RendererConfig} */
-  const domOpt = baseCreate()
+  const domOpt = await baseCreate()
 
   const basePatch = domOpt.patchProps
 
@@ -28,7 +31,8 @@ function createDOMOption() {
     return el
   }
 
-  domOpt.patchProps = (el, key, prevValue, nextValue) => {
+  domOpt.patchProps = function (el, key, prevValue, nextValue) {
+    warn('patch', VER, 'patchProps', key, nextValue, arguments[4])
     if (key.startsWith('on')) {
       prevValue && requireEventHandler(prevValue)
       nextValue && requireEventHandler(nextValue)
@@ -38,7 +42,7 @@ function createDOMOption() {
     return basePatch(el, key, prevValue, nextValue)
   }
 
-  return domOpt
+  return Object.assign(domOpt, { version: VER })
 }
-
+createDOMOption.version = VER
 export default createDOMOption

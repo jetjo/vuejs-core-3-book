@@ -1,5 +1,7 @@
-import { defArg0, voidFunc } from '#root/utils'
+import { voidFunc, warn } from '#root/utils'
 import baseCreate from '../1-挂载子节点与元素属性/render-opt-jsdom.js'
+
+const VER = '8-3 browser'
 
 /**
  * @description ele.key是只读的?
@@ -21,23 +23,24 @@ function shouldSetAsProp(ele, key) {
   return key in ele
 }
 
-/**@type {typeof baseCreate} */
-function createDOMOption() {
+/**@type {import('#shims').RendererConfigCreator} */
+async function createDOMOption() {
   // window = window || globalThis
 
-  const domOpt = baseCreate()
+  const domOpt = await baseCreate()
 
   /**@type {Partial<typeof domOpt>} */
   const update = {
     patchProps: (el, key, _, nextValue) => {
-      console.warn('patchProps', key, nextValue);
+      warn('patch', VER, 'patchProps', key, nextValue)
+      // console.warn('patchProps', key, nextValue);
       // 暂未考虑事件
-      if(key.startsWith('on')) throw new Error('暂未考虑事件')
+      if (key.startsWith('on')) throw new Error('暂未考虑事件')
       if (shouldSetAsProp(el, key)) {
         const attrType = typeof el[key]
         // prettier-ignore
         let attrVal = nextValue
-        voidFunc/* html */ `<input type='checkbox' name='scales' checked />` 
+        voidFunc/* html */ `<input type='checkbox' name='scales' checked />`
         // 对于如上的模版内容, 编译得的vnode的props如下:
         voidFunc/* JSON */ `{type: 'checkbox', name: 'scales', checked: ''}`
         // 当由浏览器来解析时, 文档标签内的一切attr的值都被视为字符串,
@@ -55,15 +58,20 @@ function createDOMOption() {
         // if (nextValue == null || nextValue === false) {
         el.removeAttribute(key)
       } else {
-        el.setAttribute(key, nextValue)
+        warn('patch-setAttribute', VER, 'setAttribute', key, nextValue)
+        // https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute#name
+        // NOTE: 此方法会自动将`key`转换为小写字母
+        el.setAttribute(key, String(nextValue))
       }
       return el
     }
   }
 
-  return Object.assign(domOpt, update)
+  return Object.assign(domOpt, update, { version: VER })
 }
 
 export { shouldSetAsProp }
+
+createDOMOption.version = VER
 
 export default createDOMOption

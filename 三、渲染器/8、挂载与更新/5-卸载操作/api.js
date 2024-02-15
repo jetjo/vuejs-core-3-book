@@ -3,7 +3,9 @@ import { RendererCreatorFactoryConfig } from '#utils'
 import { defArg0 } from '#root/utils'
 import baseFactory from '../3-正确地设置元素属性/api.js'
 
-/**@type {typeof baseFactory} */
+const VER = '8-5'
+
+/**@type {import('#shims').RendererCreatorFactory} */
 function factory(_config = defArg0) {
   return function createRenderer(option) {
     /**@type {typeof _config} */
@@ -15,7 +17,7 @@ function factory(_config = defArg0) {
 
     config.mountElement = function (vnode, container) {
       // throw new Error('unmount is not implemented')
-      const el = baseMount(vnode, container)
+      const el = baseMount(vnode, container, arguments[2])
       vnode.el = el
       return el
     }
@@ -30,6 +32,13 @@ function factory(_config = defArg0) {
     const baseRender = config.render
 
     config.render = function (vnode, container) {
+      if (container && !document.body.contains(container)) {
+        console.error(arguments)
+        throw new Error(
+          `节点(${container.outerHTML})没有挂载到页面上!!!, body: ${document.body.innerHTML}`
+        )
+      }
+
       // console.error({ vnode, container })
       if (!RendererCreatorFactoryConfig.isAllDefined(config)) throw new Error('config不合法') // prettier-ignore
       if (!container) throw new Error('container不存在')
@@ -44,11 +53,23 @@ function factory(_config = defArg0) {
         config.unmount(container.vnode)
       }
       // 挂载、更新
-      baseRender(vnode, container)
+      baseRender(vnode, container, arguments[2])
       container.vnode = vnode
+      if (arguments[2]) {
+        console.warn(
+          {
+            vnode,
+            containerInnerHTML: container.innerHTML,
+            containerSame: container.vnode === vnode,
+            body: document.body.innerHTML
+          },
+          arguments[2],
+          VER,
+        )
+      }
     }
 
-    return Object.assign(config, { version: '8-5' })
+    return Object.assign(config, { version: VER })
 
     // NOTE: 不应返回一个解构的副本, 这样, 新版本更新的方法无法替换掉旧版本的了!!!
     // return {
@@ -58,5 +79,7 @@ function factory(_config = defArg0) {
     // }
   }
 }
+
+factory.version = VER
 
 export default factory
