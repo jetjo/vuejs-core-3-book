@@ -106,6 +106,6 @@ export const test = (optionFactory, factory) => {
   })
 }
 
-if (isLatestVer(createJsDomOption, creatorFactory)) {
+if (await isLatestVer(createJsDomOption, creatorFactory)) {
   test(createJsDomOption, creatorFactory)
 }

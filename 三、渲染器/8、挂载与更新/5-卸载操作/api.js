@@ -51,6 +51,8 @@ function factory(_config = defArg0) {
         // // 3、仅清空`innerHTML`,也无法移除绑定在节点上的事件监听器
         // container.innerHTML = ''、
         config.unmount(container.vnode)
+        container.vnode = null
+        return
       }
       // 挂载、更新
       baseRender(vnode, container, arguments[2])
@@ -64,7 +66,7 @@ function factory(_config = defArg0) {
             body: document.body.innerHTML
           },
           arguments[2],
-          VER,
+          VER
         )
       }
     }

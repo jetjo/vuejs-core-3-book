@@ -221,6 +221,6 @@ export const test = (optionFactory, factory) => {
   })
 }
 
-if (isLatestVer({ version: 'skip ' }, { version: 'skip ' })) {
+if (await isLatestVer({ version: 'skip ' }, { version: 'skip ' })) {
   test(createJsDomOption, creatorFactory)
 }

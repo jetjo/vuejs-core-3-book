@@ -1,4 +1,4 @@
-let isDev, isTest
+let isDev = false, isTest = false
 let _LogLevel
 
 // __DEV__是被打包工具rollup.js或webpack预定义的
@@ -90,8 +90,7 @@ let _logToken = '' //'getSetTrap 5-6' // 'getReactive 5-6' // 'getOwnKeysTrap 5-
 
 function log(...messages) {
   if (isTest || messages[0] !== _logToken) return
-  if (_LogLevel === 'warn' || _LogLevel === 'error' || _LogLevel === 'none')
-    return
+  if (_LogLevel === 'warn' || _LogLevel === 'error' || _LogLevel === 'none') return
   console.log(`[${logBrand}]`, ...messages)
 }
 
@@ -118,4 +117,4 @@ function disableLog(logLevel) {
   _LogLevel = logLevel
 }
 
-export { warn, throwErr, error, disableLog, log }
+export { warn, throwErr, error, disableLog, log, isDev, isTest }
