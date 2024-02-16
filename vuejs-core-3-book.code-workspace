@@ -55,6 +55,9 @@
 			"**/.idea": true
 		},
 		"explorerExclude.backup": {},
-		"liveServer.settings.multiRootWorkspaceName": "chapter-3"
+		"liveServer.settings.multiRootWorkspaceName": "chapter-3",
+		"cSpell.words": [
+			"ignors"
+		]
 	}
 }

@@ -67,6 +67,21 @@ async function createDOMOption() {
     }
   }
 
+  // @ts-ignore
+  update.patchProps?.isElement = function (n) {
+    // 断言要求使用显式类型注释声明调用目标中的每个名称。ts(2775)
+    // update.patchProps?.requireElement = n => {
+    if (n instanceof Element) {
+      const deps = ['setAttribute, removeAttribute', 'tagName', 'className']
+      for (const key of deps) {
+        if (!(key in n)) return false //throw new Error(`Element缺少${key}属性`)
+      }
+      return true
+    }
+    return false
+    // throw new Error('不是Element')
+  }
+
   return Object.assign(domOpt, update, { version: VER })
 }
 

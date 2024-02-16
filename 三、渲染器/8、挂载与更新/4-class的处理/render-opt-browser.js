@@ -26,6 +26,7 @@ async function createDOMOption() {
     }
     return basePatch(el, key, prevValue, nextValue)
   }
+  domOpt.patchProps.isElement = basePatch.isElement
 
   return Object.assign(domOpt, { version: VER })
 }

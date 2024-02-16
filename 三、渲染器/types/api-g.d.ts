@@ -22,14 +22,9 @@ declare global {
   //   EP = { [key: string]: any }
   // > extends VNodeChildAtomC 1<HN, HE, EP> {}
 
-  interface VVNode<
-    HN = RendererNode,
-    HE = RendererElement,
-    EP = { [key: string]: any }
-  > extends VNode<HN, HE, EP> {
-    children?:
-      | VNodeNormalizedChildrenC<HN, HE, EP>
-      | VNodeNormalizedChildrenC1<HN, HE, EP>
+  interface VVNode<HN = RendererNode, HE = RendererElement, EP = { [key: string]: any }>
+    extends VNode<HN, HE, EP> {
+    children?: VNodeNormalizedChildrenC<HN, HE, EP> | VNodeNormalizedChildrenC1<HN, HE, EP>
   }
 
   interface IsArrayTypeFixed<F> {
@@ -41,5 +36,12 @@ declare global {
   }
   interface RequireEventHandler {
     (v: any): asserts v is EventListenerOrEventListenerObjectC
+  }
+
+  interface AssertElementNode<HN = Node, Ele extends HN = Element> {
+    (el: HN): asserts el is Ele
+  }
+  interface AssertUnknown {
+    <T>(value: unknown, validate?: ((s: T) => boolean) | undefined): asserts value is T
   }
 }

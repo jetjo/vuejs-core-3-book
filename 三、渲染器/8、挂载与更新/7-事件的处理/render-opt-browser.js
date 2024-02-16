@@ -40,10 +40,12 @@ async function createDOMOption() {
       prevValue && requireEventHandler(prevValue)
       nextValue && requireEventHandler(nextValue)
       // @ts-ignore
-      return domOpt.patchEventProp(el, key, prevValue, nextValue)
+      domOpt.patchEventProp(el, key, prevValue, nextValue)
+      return el
     }
     return basePatch(el, key, prevValue, nextValue)
   }
+  domOpt.patchProps.isElement = basePatch.isElement
 
   return Object.assign(domOpt, { version: VER })
 }

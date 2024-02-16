@@ -27,6 +27,8 @@ function init(ignors = []) {
     mountChildren: undefined,
     mountProps: undefined,
     mountElement: undefined,
+    patchElement: undefined,
+    patchChildren: undefined,
     patch: undefined,
     isVNodeArrayChildrenC: undefined,
     isVNodeChildAtomC_VVNode: undefined,
@@ -75,4 +77,11 @@ function requireEventHandler(fn) {
   requireCallable(fn, '事件处理器必须是函数')
 }
 
-export { setValOfFnType, requireCallable, requireEventHandler }
+/**@type {AssertUnknown} */
+function assertUnknown(value, validate) {
+  // @ts-ignore
+  if (validate && !validate(value)) throw new Error('failed')
+  return
+}
+
+export { setValOfFnType, requireCallable, requireEventHandler, assertUnknown }

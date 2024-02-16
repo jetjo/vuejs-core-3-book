@@ -27,10 +27,19 @@ interface RendererConfig<
   insert: (child: HN, parent: HN, anchor: HN | null, isSvg?: boolean) => void
 
   /**@version 8.7 */
-  patchEventProp: (el: Ele, key: string, prevValue: Handler, nextValue: Handler) => Ele
+  patchEventProp: (el: HN, key: string, prevValue: Handler, nextValue: Handler) => HN
 
-  /**@version 8.7≥8.4≥8.3 */
-  patchProps: (el: Ele, key: string, prevValue: unknown, nextValue: unknown) => Ele
+  /**
+   * @version 8.7≥8.4≥8.3
+   * @dependencies el.setAttribute
+   * @dependencies el.removeAttribute
+   * @dependencies el.tagName
+   * @dependencies el.className
+   */
+  patchProps: ((el: Ele, key: string, prevValue: unknown, nextValue: unknown) => Ele) & {
+    // requireElement?: AssertElementNode<HN, Ele>
+    isElement?: (n: Ele) => boolean
+  }
 
   /**@version 8.1 */
   setAttribute?: (el: Ele, qualifiedName: string, value: string) => Ele
