@@ -42,6 +42,10 @@ declare global {
     (el: HN): asserts el is Ele
   }
   interface AssertUnknown {
-    <T>(value: unknown, validate?: ((s: T) => boolean) | undefined): asserts value is T
+    <T>(
+      value: unknown,
+      validate?: ((s: T) => boolean) | undefined,
+      flag?: string
+    ): asserts value is T
   }
 }

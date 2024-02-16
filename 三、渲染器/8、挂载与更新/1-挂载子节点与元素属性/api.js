@@ -22,12 +22,14 @@ function factory(_config = defArg0) {
     config.mountChildren = function (children, container) {
       if (typeof children === 'string') {
         setElementText(container, children) //文本节点
+        // container.vnode = children ???
         return
       }
       if (!config.isVNodeArrayChildrenC(children)) throw new Error('children is not array') // prettier-ignore
       children.forEach(child => {
         if (!config.isVNodeChildAtomC_VVNode(child)) throw new Error('child is not vnode') // prettier-ignore
         config.patch(null, child, container)
+        // container.vnode = children ???
       })
     }
 
@@ -93,7 +95,8 @@ function factory(_config = defArg0) {
       if (!RendererCreatorFactoryConfig.isAllDefined(config)) throw new Error('config is not valid') // prettier-ignore
       if (!container) throw new Error('container is not exist')
 
-      if (arguments[2]) {
+      const testFlag = arguments[2]
+      if (testFlag) {
         console.warn(
           {
             vnode,
@@ -102,7 +105,7 @@ function factory(_config = defArg0) {
             body: document.body.innerHTML,
             container
           },
-          arguments[2],
+          testFlag,
           VER
         )
       }
@@ -110,12 +113,12 @@ function factory(_config = defArg0) {
       if (container.vnode && vnode) {
         // warn('patch', VER, 'render', arguments[2])
         // @ts-ignore
-        config.patch(container.vnode, vnode, container, arguments[2]) // 更新
+        config.patch(container.vnode, vnode, container, testFlag) // 更新
         container.vnode = vnode
         return
       }
       if (vnode) {
-        config.mountElement(vnode, container, arguments[2]) // 首次渲染
+        config.mountElement(vnode, container, testFlag) // 首次渲染
         container.vnode = vnode
         return
       }
@@ -126,6 +129,14 @@ function factory(_config = defArg0) {
     }
 
     setValOfFnType(config, 'hydrate')
+
+    setValOfFnType(config, 'patchElement')
+
+    setValOfFnType(config, 'patchChildren')
+
+    setValOfFnType(config, 'unmount')
+
+    setValOfFnType(config, 'unmountChildren')
 
     return Object.assign(config, { version: VER })
     // NOTE: 不应返回一个解构的副本, 这样, 新版本更新的方法无法替换掉旧版本的了!!!

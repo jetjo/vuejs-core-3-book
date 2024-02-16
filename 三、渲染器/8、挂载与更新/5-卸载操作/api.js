@@ -32,6 +32,7 @@ function factory(_config = defArg0) {
     const baseRender = config.render
 
     config.render = function (vnode, container) {
+      const testFlag = arguments[2]
       if (container && !document.body.contains(container)) {
         console.error(arguments)
         throw new Error(
@@ -55,9 +56,9 @@ function factory(_config = defArg0) {
         return
       }
       // 挂载、更新
-      baseRender(vnode, container, arguments[2])
+      baseRender(vnode, container, testFlag)
       container.vnode = vnode
-      if (arguments[2]) {
+      if (testFlag) {
         console.warn(
           {
             vnode,
@@ -65,7 +66,7 @@ function factory(_config = defArg0) {
             containerSame: container.vnode === vnode,
             body: document.body.innerHTML
           },
-          arguments[2],
+          testFlag,
           VER
         )
       }

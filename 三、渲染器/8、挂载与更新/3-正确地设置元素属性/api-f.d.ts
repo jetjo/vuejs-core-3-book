@@ -2,7 +2,7 @@ import type { RendererConfig } from '#shims'
 import type { VNode, VNodeArrayChildren } from 'vue'
 
 interface Renderer<HN = Node, Ele extends HN = Element, EP = { [key: string]: any }> {
-  /** 
+  /**
    * @version 8.5≥8.1
    * @description 总入口, 并负责设置`container.vnode` */
   render: WithConfig<
@@ -39,44 +39,75 @@ interface RendererCreatorFactoryConfig<
   Ele extends HN = Element,
   EP = { [key: string]: any }
 > extends Renderer<HN, Ele, EP> {
-  /**@version 8.1 */
-  mountChildren?: (children: VVNode<HN, Ele, EP>['children'], container: Ele) => void
+  /**
+   * @version 8.1
+   * @todo container.vnode = children ???
+   * */
+  mountChildren?: (
+    children: VVNode<HN, Ele, EP>['children'],
+    container: Ele,
+    testFlag?: string
+  ) => void
 
-  /** 
+  /**
+   * @version 8.9
+   * @todo container.vnode = children ???
+   * */
+  unmountChildren?: (children: VVNode<HN, Ele, EP>['children'], container: Ele) => void
+
+  /**
    * @version 8.3
    * @description 目前将对每个属性的处理完全交由`patchProps`方法处理, 包括事件 */
   mountProps?: (props: VVNode<HN, Ele, EP>['props'], container: Ele) => void
 
   /**
    * @version 8.5≥8.3
+   * @callBy `render`, `patch`
    * @description 初次挂载, 与`unmount`一同负责设置`vnode.el`
    * @description 不负责维护`container.vnode`的值,由`config.render`维护 */
   mountElement?: (vnode: VVNode<HN, Ele, EP>, container: Ele, testTag?: string) => Ele
 
+  /**@version 8.9 */
+  patchElement?: (
+    vnode: VVNode<HN, Ele, EP>,
+    newVNode: VVNode<HN, Ele, EP>,
+    testTag?: string
+  ) => VVNode<HN, Ele, EP>
+
+  /**@version 8.9 */
+  patchChildren?: (
+    vnode: VVNode<HN, Ele, EP>,
+    newVNode: VVNode<HN, Ele, EP>,
+    reallyNode: HN,
+    testTag?: string
+  ) => VVNode<HN, Ele, EP>
+
   /**
-   * @version 8.6
+   * @version 8.6≥8.9
    * @description 入口检测:
    * @description 1、`vnode`(新的虚拟节点)不能为空
    * @description 注意:
    * @description 1、不负责维护`container.vnode`的值
+   * @requires `mountElement`
    */
   patch?: (
     oldVnode: VVNode<HN, Ele, EP> | null,
     vnode: VVNode<HN, Ele, EP>,
-    container: Ele
+    container: Ele,
+    testTag?: string
   ) => void
 
-  /** 
+  /**
    * @version 8.5
    * @description 卸载, 与`mountElement`一同负责设置`vnode.el` */
   unmount?: (oldVnode: VVNode<HN, Ele, EP>) => void
 
-  /** 
+  /**
    * @version 8.1
    * @description 只有在合理的上下文中使用才有意义, 例如`mountChildren`方法中 */
   isVNodeArrayChildrenC?: (v: any) => v is VNodeArrayChildrenC<HN, Ele, EP>
 
-  /** 
+  /**
    * @version 8.1
    * @description 只有在合理的上下文中使用才有意义, 例如`mountChildren`方法中 */
   isVNodeChildAtomC_VVNode?: (v: any) => v is VVNode<HN, Ele, EP> //| ((v: any)=> boolean)
@@ -136,6 +167,7 @@ export type VNodeNormalizedChildrenC1<
   EP = { [key: string]: any }
 > = Exclude<VNode['children'], VNodeArrayChildren> | VNodeArrayChildrenC1<HN, HE, EP>
 
+/**@version 8.9 */
 interface RendererCreatorFactory<
   ET = EventTarget,
   HN extends ET = Node,

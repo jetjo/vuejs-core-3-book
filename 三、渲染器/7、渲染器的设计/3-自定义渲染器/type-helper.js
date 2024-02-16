@@ -27,6 +27,8 @@ function init(ignors = []) {
     mountChildren: undefined,
     mountProps: undefined,
     mountElement: undefined,
+    unmountChildren: undefined,
+    unmount: undefined,
     patchElement: undefined,
     patchChildren: undefined,
     patch: undefined,
@@ -80,7 +82,7 @@ function requireEventHandler(fn) {
 /**@type {AssertUnknown} */
 function assertUnknown(value, validate) {
   // @ts-ignore
-  if (validate && !validate(value)) throw new Error('failed')
+  if (validate && !validate(value, arguments[2])) throw new Error('failed')
   return
 }
 

@@ -27,11 +27,19 @@ async function isLatestVer(optFactory, factory, isBrowser = false) {
 }
 
 // @ts-ignore
+/**
+ * @param {*} createOption
+ * @param {*} creatorFactory
+ * @param {string} suitName
+ * @param {string} testName
+ * @returns {Promise<{render: import('#shims').Renderer['render'], rAF: import('#shims').RendererConfig['requestAnimationFrame'], config: import('#shims').RendererConfig, apiVer: string, optVer:string, container: Element }>}
+ * */
 const getApi = async (createOption, creatorFactory, suitName, testName) => {
   const config = await createOption()
   const { requestAnimationFrame: rAF, version: optVer } = config
   const { render, version: apiVer } = creatorFactory(defArg0)(config)
   const container = config.getContainer()
+  if(!container) throw new Error('container is not defined')
   warn(`${apiVer} - ${optVer} - ${suitName} - ${testName}`)
   return { render, rAF, config, apiVer, optVer, container }
 }
