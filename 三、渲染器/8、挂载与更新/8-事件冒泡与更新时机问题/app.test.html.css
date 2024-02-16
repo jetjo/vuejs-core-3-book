@@ -1,0 +1,71 @@
+#app > div {
+  color: red;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+  background-color: #f0f0f0;
+  box-shadow: 0 0 10px #000;
+  border-radius: 10px;
+  width: 200px;
+  height: 200px;
+  /* line-height: 200px; */
+  position: relative;
+  top: 50px;
+  left: 50px;
+  transform: rotate(45deg);
+  transition: all 1s;
+  animation: move 2s infinite;
+}
+
+#app > div > span {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: -25px;
+  top: -25px;
+  line-height: 100px;
+  transform: rotate(-45deg);
+}
+
+#app > div > p {
+  color: blue;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+  background-color: #f0f0f0;
+  box-shadow: 0 0 10px #000;
+  border-radius: 10px;
+  width: 200px;
+  height: 200px;
+  line-height: 200px;
+  position: relative;
+  top: 50px;
+  left: 50px;
+  transform: rotate(45deg);
+  transition: all 1s;
+  animation: move 2s infinite;
+}
