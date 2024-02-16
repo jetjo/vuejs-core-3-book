@@ -68,16 +68,23 @@ async function createDOMOption() {
   }
 
   // @ts-ignore
-  update.patchProps?.isElement = function (n) {
+  update.patchProps.isElement = function (n) {
     // 断言要求使用显式类型注释声明调用目标中的每个名称。ts(2775)
     // update.patchProps?.requireElement = n => {
+    const testFlag = arguments[1]
     if (n instanceof Element) {
-      const deps = ['setAttribute, removeAttribute', 'tagName', 'className']
+      testFlag && warn('n is instance of Element', testFlag)
+      const deps = ['setAttribute', 'removeAttribute', 'tagName', 'className']
       for (const key of deps) {
-        if (!(key in n)) return false //throw new Error(`Element缺少${key}属性`)
+        if (!(key in n)) {
+          testFlag && warn(`${key} not in n`, testFlag)
+          return false
+          // throw new Error(`Element缺少${key}属性`)
+        }
       }
       return true
     }
+    testFlag && warn('n is not instance of Element', testFlag)
     return false
     // throw new Error('不是Element')
   }
