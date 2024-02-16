@@ -1,4 +1,4 @@
-import { ref, effect } from '@vue/reactivity'
+import { ref, effect } from '#vue-fixed/reactive'
 import creatorFactory from '../6-区分vnode类型/api.js'
 // import optionCreator from '../7-事件的处理/render-opt-browser.js'
 // import optionCreator from './render-opt-browser.js'

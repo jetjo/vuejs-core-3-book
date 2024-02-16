@@ -3,7 +3,7 @@ import creatorFactory from '../6-区分vnode类型/api.js'
 import createJsDomOption from './render-opt-browser.js'
 import { test as baseTest, fixRenderForTest } from './7-1.spec.js'
 import { queueMacroTask, warn } from '#root/utils'
-import { ref, effect } from '@vue/reactivity'
+import { ref, effect } from '#vue-fixed/reactive'
 import { getApi, isLatestVer } from '../../utils/test.helper.js'
 
 /**@type {typeof baseTest} */
