@@ -66,7 +66,7 @@ export const test = (optionFactory, factory) => {
       // vi.useRealTimers()
     })
 
-    const getEle = (css = '', /** @type {Element} */ container) => {
+    const getEle = (css = '', /** @type {Element|Document} */ container = document) => {
       const ele = container.querySelector(css)
       if (!ele) throw new Error(`未找到${css}元素`)
       return ele
