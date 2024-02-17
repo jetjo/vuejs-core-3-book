@@ -8,7 +8,7 @@ import { Text, Comment } from '../../convention.js'
 
 const suitName = '文本节点与注释节点'
 /**@type {typeof baseTest} */
-const test = (optionCreator, factory) => {
+export const test = (optionCreator, factory) => {
   baseTest(optionCreator, factory)
 
   describe(suitName, async () => {
