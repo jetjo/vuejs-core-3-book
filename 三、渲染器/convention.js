@@ -1,1 +1,1 @@
-export { Text, Comment, Static } from '#vue'
+export { Text, Comment, Static, Fragment } from '#vue'
