@@ -56,6 +56,8 @@ function factory(_config = defArg0) {
         assertUnknownEx(vnode.children, requireValidCharContent, type)
         const el = type === Text ? option.createText(vnode.children) : option.createComment(vnode.children) // prettier-ignore
         option.insert(el, container)
+        // NOTE: 执行`baseMount`以存在的赋值逻辑
+        vnode.el = el
         return el
       }
       return baseMount(vnode, container)
