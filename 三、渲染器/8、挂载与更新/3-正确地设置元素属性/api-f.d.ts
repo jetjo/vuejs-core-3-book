@@ -3,26 +3,16 @@ import type { VNode, VNodeArrayChildren } from 'vue'
 
 interface Renderer<HN = Node, Ele extends HN = Element, EP = { [key: string]: any }> {
   /**
-   * @version 8.5≥8.1
+   * @version 8.11
    * @description 总入口, 并负责设置`container.vnode` */
-  render: WithConfig<
-    (
-      vnode: VVNode<HN, Ele, EP> | null,
-      container: Ele | null | undefined,
-      testTag?: string
-    ) => void,
-    HN,
-    Ele,
-    EP
-  >
+  render: (
+    vnode: VVNode<HN, Ele, EP> | null,
+    container: Ele | null | undefined,
+    testTag?: string
+  ) => void
 
   /** @description 服务端渲染、同构渲染、激活已有DOM */
-  hydrate: WithConfig<
-    (vnode: VVNode<HN, Ele, EP> | null, container: Ele | null | undefined) => void,
-    HN,
-    Ele,
-    EP
-  >
+  hydrate: (vnode: VVNode<HN, Ele, EP> | null, container: Ele | null | undefined) => void
 
   version: string
 }
@@ -78,12 +68,12 @@ interface RendererCreatorFactoryConfig<
   patchChildren?: (
     vnode: VVNode<HN, Ele, EP>,
     newVNode: VVNode<HN, Ele, EP>,
-    reallyNode: HN,
+    container: HN,
     testTag?: string
   ) => VVNode<HN, Ele, EP>
 
   /**
-   * @version 8.10≥8.9≥8.6
+   * @version 8.11≥8.10≥8.9≥8.6
    * @description 入口检测:
    * @description 1、`vnode`(新的虚拟节点)不能为空
    * @description 注意:
@@ -91,14 +81,14 @@ interface RendererCreatorFactoryConfig<
    * @requires `mountElement`,`patchElement`
    */
   patch?: (
-    oldVnode: VVNode<HN, Ele, EP> | null,
+    oldVnode?: VVNode<HN, Ele, EP> | null,
     vnode: VVNode<HN, Ele, EP>,
     container: Ele,
     testTag?: string
   ) => void
 
   /**
-   * @version 8.5
+   * @version 8.11≥8.5
    * @description 卸载, 与`mountElement`一同负责设置`vnode.el` */
   unmount?: (oldVnode: VVNode<HN, Ele, EP>) => void
 
