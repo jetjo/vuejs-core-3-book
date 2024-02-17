@@ -91,7 +91,8 @@ function factory(_config = defArg0) {
 
     setValOfFnType(config, 'patch', patch)
 
-    config.render = function (vnode, container) {
+    // @ts-ignore
+    function render(vnode, container) {
       if (!RendererCreatorFactoryConfig.isAllDefined(config)) throw new Error('config is not valid') // prettier-ignore
       if (!container) throw new Error('container is not exist')
 
@@ -110,23 +111,27 @@ function factory(_config = defArg0) {
         )
       }
 
-      if (container.vnode && vnode) {
+      if (vnode) {
+      // if (container.vnode && vnode) {
         // warn('patch', VER, 'render', arguments[2])
         // @ts-ignore
         config.patch(container.vnode, vnode, container, testFlag) // 更新
         container.vnode = vnode
         return
       }
-      if (vnode) {
-        config.mountElement(vnode, container, testFlag) // 首次渲染
-        container.vnode = vnode
-        return
-      }
+      // if (vnode) {
+      //   // NOTE: / vue并没有这样, 而是和上个分支一样处理, 调用`patch`方法
+      //   config.mountElement(vnode, container, testFlag) // 首次渲染
+      //   container.vnode = vnode
+      //   return
+      // }
       if (container.vnode) {
         container.innerHTML = '' // 卸载
         delete container.vnode
       }
     }
+
+    setValOfFnType(config, 'render', render)
 
     setValOfFnType(config, 'hydrate')
 

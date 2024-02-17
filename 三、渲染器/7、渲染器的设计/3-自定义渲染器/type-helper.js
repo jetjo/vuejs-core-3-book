@@ -34,9 +34,8 @@ function init(ignors = []) {
     patch: undefined,
     isVNodeArrayChildrenC: undefined,
     isVNodeChildAtomC_VVNode: undefined,
-    render: () => {
-      throw new Error('render is not implemented')
-    },
+    // @ts-ignore
+    render: undefined,
     hydrate: () => {
       throw new Error('hydrate is not implemented')
     }

@@ -29,9 +29,9 @@ function factory(_config = defArg0) {
       parent.removeChild(vnode.el)
     }
 
-    const baseRender = config.render
-
-    config.render = function (vnode, container) {
+    // @ts-ignore
+    function render(vnode, container) {
+      // NOTE: `document`是特定平台的, 不能在此判断!!!
       const testFlag = arguments[2]
       if (container && !document.body.contains(container)) {
         console.error(arguments)
@@ -56,20 +56,9 @@ function factory(_config = defArg0) {
         return
       }
       // 挂载、更新
-      baseRender(vnode, container, testFlag)
+      // config['render'](vnode, container, testFlag)
       container.vnode = vnode
-      if (testFlag) {
-        console.warn(
-          {
-            vnode,
-            containerInnerHTML: container.innerHTML,
-            containerSame: container.vnode === vnode,
-            body: document.body.innerHTML
-          },
-          testFlag,
-          VER
-        )
-      }
+
     }
 
     return Object.assign(config, { version: VER })
