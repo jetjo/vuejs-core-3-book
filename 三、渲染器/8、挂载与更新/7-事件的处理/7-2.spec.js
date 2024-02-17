@@ -74,11 +74,11 @@ export const test = (optionFactory, factory) => {
 
     it(`正确绑定事件`, async () => {
       // prettier-ignore
-      const { render, container, config, rAF } = await getApi(optionFactory, factory, '7-引出要在下一节解决的问题', '正确绑定事件')
+      const { render, container, config, rAF, renderer } = await getApi(optionFactory, factory, '7-引出要在下一节解决的问题', '正确绑定事件')
       effect(() => {
         // 确保依赖与`parentHasProps`
         // warn('effect before', parentHasProps.value)
-        fixRenderForTest(render, config)
+        fixRenderForTest(config, renderer)
         render(getVnode(), container)
         // render(getVnode(), container, parentHasProps.value ? 'effect re-run' : undefined)
         warn('effect after')

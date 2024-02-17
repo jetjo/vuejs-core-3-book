@@ -79,8 +79,6 @@ function factory(_config = defArg0) {
       return basePatchElement(vnode, newVnode)
     }
 
-    config.render.config = config
-
     return Object.assign(config, { version: VER })
   }
 }

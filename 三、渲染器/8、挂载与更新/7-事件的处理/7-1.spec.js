@@ -1,8 +1,6 @@
-/**
- * @param {((vnode: VVNode<Node, Element, {[key: string]: any;}> | null, container: Element | null | undefined) => void) & {config?: import("#shims").RendererCreatorFactoryConfig<Node, Element, {[key: string]: any;}> | undefined;}} render
- * @param {import("#shims").RendererConfig<EventTarget, Node, Element, ParentNode, HTMLElement, Document, typeof globalThis | Window | import("#shims").JSDOMWindow>} config
- */
-export function fixRenderForTest(render, config) {
+
+// @ts-ignore
+export function fixRenderForTest(option, renderer) {
   // @ts-ignore
   function patchElement(n1, n2) {
     const el = (n2.el = n1.el)
@@ -13,20 +11,21 @@ export function fixRenderForTest(render, config) {
       if (newProps[key] !== oldProps[key]) {
         if (arguments[2]) warn('patchElement~~~~', '7-1.spec.js', key, arguments[2])
         // @ts-ignore
-        config.patchProps(el, key, oldProps[key], newProps[key], arguments[2])
+        option.patchProps(el, key, oldProps[key], newProps[key], arguments[2])
       }
     }
     for (const key in oldProps) {
       if (!(key in newProps)) {
-        config.patchProps(el, key, oldProps[key], null)
+        option.patchProps(el, key, oldProps[key], null)
       }
     }
   }
 
-  const patch = render.config?.patch
-  if (!render.config || !patch) throw new Error('patch is not defined')
+  const patch = renderer?.patch
+  if (!renderer || !patch) throw new Error('patch is not defined')
 
-  render.config.patch = function (n1, n2, container) {
+  // @ts-ignore
+  renderer.patch = function (n1, n2, container) {
     if (arguments[3]) {
       warn('patch~~~~~~', '7-1.spec.js', 'patch', arguments[3], { n1, n2 })
     }
@@ -92,9 +91,10 @@ export const test = (optionFactory, factory) => {
      * @param {*} container
      * @param {*} config
      * @param {*} testId
+     * @param {*} renderer
      */
-    function test(render, container, config, testId) {
-      fixRenderForTest(render, config)
+    function test(render, container, config, testId, renderer) {
+      fixRenderForTest(config, renderer)
       if (!container) throw new Error('container not found')
       // window.requestAnimationFrame(() => {
       render(vnodeRemove, container)
@@ -168,12 +168,12 @@ export const test = (optionFactory, factory) => {
 
     it(`正确卸载事件`, async () => {
       // prettier-ignore
-      const { render, rAF, container, config } = await getApi(createJsDomOption, creatorFactory, suitName, '正确卸载事件')
+      const { render, rAF, container, config, renderer } = await getApi(createJsDomOption, creatorFactory, suitName, '正确卸载事件')
       render(vnode, container)
       await rAF()
       let p = getEle()
       p.dispatchEvent(new Event(eventName))
-      p.test = () => test(render, container, config, '正确卸载事件')
+      p.test = () => test(render, container, config, '正确卸载事件', renderer)
       vi.runAllTimers()
       await rAF() // 等待页面更新, 此更新是前面的click事件触发的
       expect(handlerSpy).toHaveBeenCalledTimes(2)
@@ -189,13 +189,13 @@ export const test = (optionFactory, factory) => {
     it(`正确得再次绑定事件`, async () => {
       expect(handlerSpy).toHaveBeenCalledTimes(0)
       // prettier-ignore
-      const { render, rAF, container, config } = await getApi(createJsDomOption, creatorFactory, suitName, '正确得再次绑定事件')
+      const { render, rAF, container, config, renderer } = await getApi(createJsDomOption, creatorFactory, suitName, '正确得再次绑定事件')
       render(vnode, container)
       await rAF()
       let p = getEle()
       p.dispatchEvent(new Event(eventName))
       expect(handlerSpy).toHaveBeenCalledTimes(1)
-      p.test = () => test(render, container, config, '正确得再次绑定事件')
+      p.test = () => test(render, container, config, '正确得再次绑定事件', renderer)
       vi.runAllTimers()
       expect(handlerSpy).toHaveBeenCalledTimes(2)
       await rAF() // 等待页面更新, 此更新是前面的click事件触发的
