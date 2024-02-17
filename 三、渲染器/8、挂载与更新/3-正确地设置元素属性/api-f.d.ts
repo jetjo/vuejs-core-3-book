@@ -61,13 +61,13 @@ interface RendererCreatorFactoryConfig<
   mountProps?: (props: VVNode<HN, Ele, EP>['props'], container: Ele) => void
 
   /**
-   * @version 8.5≥8.3
+   * @version 8.10≥8.5≥8.3
    * @callBy `render`, `patch`
    * @description 初次挂载, 与`unmount`一同负责设置`vnode.el`
    * @description 不负责维护`container.vnode`的值,由`config.render`维护 */
-  mountElement?: (vnode: VVNode<HN, Ele, EP>, container: Ele, testTag?: string) => Ele
+  mountElement?: (vnode: VVNode<HN, Ele, EP>, container: Ele, testTag?: string) => HN
 
-  /**@version 8.9 */
+  /**@version 8.10≥8.9 */
   patchElement?: (
     vnode: VVNode<HN, Ele, EP>,
     newVNode: VVNode<HN, Ele, EP>,
@@ -83,12 +83,12 @@ interface RendererCreatorFactoryConfig<
   ) => VVNode<HN, Ele, EP>
 
   /**
-   * @version 8.6≥8.9
+   * @version 8.10≥8.9≥8.6
    * @description 入口检测:
    * @description 1、`vnode`(新的虚拟节点)不能为空
    * @description 注意:
    * @description 1、不负责维护`container.vnode`的值
-   * @requires `mountElement`
+   * @requires `mountElement`,`patchElement`
    */
   patch?: (
     oldVnode: VVNode<HN, Ele, EP> | null,
