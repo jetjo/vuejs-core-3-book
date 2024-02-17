@@ -26,7 +26,8 @@ function factory(_config = defArg0) {
       if (!newVnode) throw new Error('newVnode不存在. patch操作不负责卸载节点!')
       if (typeof newVnode.type !== 'string') throw new Error('type不是字符串')
       const testFlag = arguments[3]
-      if (vnode && vnode.type === newVnode.type) return config.patchElement(vnode, newVnode, testFlag)
+      if (vnode && vnode.type === newVnode.type)
+        return config.patchElement(vnode, newVnode, testFlag)
       // 1、初次挂载 2、type不同时,先卸载后挂载
       return basePatch(vnode, newVnode, container, testFlag)
     }
@@ -38,7 +39,7 @@ function factory(_config = defArg0) {
       const isElement = option.patchProps.isElement
       if (!isElement) throw new Error('Element类型验证为实现!')
       // @ts-ignore
-      assertUnknown(ele, isElement, testFlag)//, '÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷')
+      assertUnknown(ele, isElement, testFlag) //, '÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷')
       const oldProps = vnode.props || {}
       const newProps = newVnode.props || {}
       for (const key in newProps) {
@@ -68,9 +69,11 @@ function factory(_config = defArg0) {
       })
     }
 
-    config.patchChildren = function (vnode, newVnode, reallyNode) {
+    config.patchChildren = function (vnode, newVnode, container) {
+      // 由于Fragment存在, vnode的el不一定是readilyNode
+      // config.patchChildren = function (vnode, newVnode, readilyNode) {
       const testFlag = arguments[3]
-      assertUnknown(reallyNode, option.patchProps.isElement, testFlag)
+      assertUnknown(container, option.patchProps.isElement, testFlag)
       // 新旧节点个有三种情况, 1、null, 2、string, 3、array
       // 共用9中组合
       if (config.isVNodeArrayChildrenC(newVnode.children)) {
@@ -78,26 +81,24 @@ function factory(_config = defArg0) {
           throw new Error('暂不处理')
         }
         if (typeof vnode.children === 'string') {
-          option.setElementText(reallyNode, '')
+          option.setElementText(container, '')
           warn('新节点是数组, 旧节点是文本', testFlag)
         }
-        config.mountChildren(newVnode.children, reallyNode, testFlag)
+        config.mountChildren(newVnode.children, container, testFlag)
         return newVnode
       }
       if (typeof newVnode.children === 'string') {
         if (config.isVNodeArrayChildrenC(vnode.children)) {
-          config.unmountChildren(vnode.children, reallyNode)
+          config.unmountChildren(vnode.children, container)
           warn('新节点是文本, 旧节点是数组', testFlag)
         }
-        option.setElementText(reallyNode, newVnode.children)
+        option.setElementText(container, newVnode.children)
         return newVnode
       }
       // 卸载旧的`children`
-      config.unmountChildren(vnode.children, reallyNode)
+      config.unmountChildren(vnode.children, container)
       return newVnode
     }
-
-    config.render.config = config
 
     return Object.assign(config, { version: VER })
   }
