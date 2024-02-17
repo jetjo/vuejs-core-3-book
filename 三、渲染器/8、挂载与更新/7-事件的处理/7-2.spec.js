@@ -66,7 +66,7 @@ export const test = (optionFactory, factory) => {
       // vi.useRealTimers()
     })
 
-    const getEle = (css = '', container = document) => {
+    const getEle = (css = '', /** @type {Element} */ container) => {
       const ele = container.querySelector(css)
       if (!ele) throw new Error(`未找到${css}元素`)
       return ele
@@ -93,7 +93,7 @@ export const test = (optionFactory, factory) => {
       // warn('effect after???')
       // NOTE: holly shit!!!🤬, 不要忘记重新获取一遍!!!
       // 并且,指定`container`, 因为`container`也是div类型
-      parent = getEle(parentNodeType, container) 
+      parent = getEle(parentNodeType, container)
       expect(document.body.innerHTML).toBe(
         /* html */ `<div id="app"><div test-name="绑定了click事件"><p></p></div></div>`
       )

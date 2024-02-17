@@ -1,4 +1,4 @@
-import { defArg0, warn } from '#root/utils'
+import { defArg0 } from '#root/utils'
 import { RendererCreatorFactoryConfig, setValOfFnType } from '#utils'
 
 const VER = '8-1'

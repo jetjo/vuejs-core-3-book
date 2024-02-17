@@ -78,7 +78,7 @@ async function createJsDomOption() {
     createElement: tag => {
       return document.createElement(tag)
     },
-    insert: (child, parent, anchor) => {
+    insert: (child, parent, anchor = null) => {
       parent.insertBefore(child, anchor)
     },
     setElementText: (el, text) => {
@@ -97,6 +97,18 @@ async function createJsDomOption() {
       throw new Error('Method not implemented.')
     },
     patchProps: () => {
+      throw new Error('Method not implemented.')
+    },
+    createText: text => {
+      throw new Error('Method not implemented.')
+    },
+    setText: () => {
+      throw new Error('Method not implemented.')
+    },
+    createComment: () => {
+      throw new Error('Method not implemented.')
+    },
+    setComment: () => {
       throw new Error('Method not implemented.')
     },
     requestAnimationFrame

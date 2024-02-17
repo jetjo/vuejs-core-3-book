@@ -86,4 +86,11 @@ function assertUnknown(value, validate) {
   return
 }
 
-export { setValOfFnType, requireCallable, requireEventHandler, assertUnknown }
+/**@type {AssertUnknownEx} */
+function assertUnknownEx(value, validate, ...args) {
+  // @ts-ignore
+  if (validate && !validate(value, ...args)) throw new Error('failed')
+  return
+}
+
+export { setValOfFnType, requireCallable, requireEventHandler, assertUnknown, assertUnknownEx }

@@ -48,4 +48,12 @@ declare global {
       flag?: string
     ): asserts value is T
   }
+
+  interface AssertUnknownEx {
+    <T>(
+      value: unknown,
+      validate?: ((s: T, ...args: any[]) => boolean) | undefined,
+      ...args: any[]
+    ): asserts value is T
+  }
 }

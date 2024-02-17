@@ -24,7 +24,7 @@ interface RendererConfig<
   /**
    * @version 8.1
    * @description 将`child`插入到`parent.anchor`节点前面 */
-  insert: (child: HN, parent: HN, anchor: HN | null, isSvg?: boolean) => void
+  insert: (child: HN, parent: HN, anchor?: HN | null, isSvg?: boolean) => void
 
   /**@version 8.7 */
   patchEventProp: (el: HN, key: string, prevValue: Handler, nextValue: Handler) => HN
@@ -70,6 +70,23 @@ interface RendererConfig<
 
   /**@version 8.8≥8.7 */
   Invoker?: Invoker
+
+  /**@version 8.10 */
+  createText: (text: string) => HN
+
+  /**
+   * @version 8.10 
+   * @description 在DOM平台,通过Node.nodeValue赋值实现,
+   * 对于`CDATASection`、`Comment`、`Text`、`Attribute`节点, `nodeValue`用于设置或获取节点的内容,
+   * 对于其他类型的节点, `nodeValue`返回`null`, 设置其他值无效
+   * */
+  setText: (node: HN, text: string) => HN
+
+  /**@version 8.10 */
+  createComment: (text: string) => HN
+  
+  /**@version 8.10 */
+  setComment: (el: HN, text: string) => HN
 }
 
 type Handler = EventListenerOrEventListenerObjectC['value']
