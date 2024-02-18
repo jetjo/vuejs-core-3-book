@@ -32,13 +32,14 @@ function factory(_config = defArg0) {
             const oldChild = oldChildren[oldIndex]
             if (!config.isVNodeChildAtomC_VVNode(oldChild)) throw new Error('oldChildren的元素必须是VNode类型') // prettier-ignore
             if (newChild.key !== oldChild.key) continue
+            // NOTE: if (newChild.type !== oldChild.type) continue???
             // 至此找到节点,先执行`patch`, 后处理移动的问题
             config.patch(oldChild, newChild, container, testFlag)
             // 如果此前以匹配到的节点的索引都比此节点小, 说明此节点与此前找到的节点们的次序没变,不需移动
             if (oldIndex > maxOldIndexOfFindNode) {
               // 然后更新查到的最大索引
               maxOldIndexOfFindNode = oldIndex
-              continue
+              break; //continue
             }
             // 否则, 说明此前找到的节点中,有的节点从此节点之后移动到了此节点之前, 需要移动此节点
             const preNewChild = newChildren[newIndex - 1]
