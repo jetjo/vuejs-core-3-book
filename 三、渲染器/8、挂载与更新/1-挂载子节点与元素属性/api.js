@@ -1,4 +1,4 @@
-import { defArg0 } from '#root/utils'
+import { defArg0, warn } from '#root/utils'
 import { RendererCreatorFactoryConfig, getValOfFnType, setValOfFnType } from '#utils'
 
 const VER = '8-1'
@@ -135,10 +135,12 @@ function factory(_config = defArg0) {
     setValOfFnType(config, 'patchElement')
 
     setValOfFnType(config, 'patchChildren')
+    setValOfFnType(config, 'handleChildAdd', null, '暂不支持新增子节点')
+    setValOfFnType(config, 'handleChildRemove', null, '暂不支持删除子节点')
 
     setValOfFnType(config, 'unmount')
 
-    setValOfFnType(config, 'unmountChildren')
+    warn('factory', VER, config)
 
     return Object.assign(config, { version: VER })
     // NOTE: 不应返回一个解构的副本, 这样, 新版本更新的方法无法替换掉旧版本的了!!!

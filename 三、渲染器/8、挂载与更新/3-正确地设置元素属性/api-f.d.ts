@@ -61,6 +61,26 @@ interface RendererCreatorFactoryConfig<
   ) => VVNode<HN, Ele, EP>
 
   /**
+   * @version 9.5
+   * @description 用于`patchChildren`方法, 负责挂载`newChildren`中新增的节点
+   * @param {number} newChildIndex 在使用`Diff`算法排序子节点的过程中顺带发现的新节点的索引
+   * */
+  handleChildAdd?: (
+    newChildren: VVNode<HN, Ele, EP>['children'],
+    container: HN,
+    newChildIndex: number
+  ) => void
+
+  /**
+   * @version 9.5
+   * @description 用于`patchChildren`方法, 负责查找并卸载不存在于`newChildren`中的节点
+   * */
+  handleChildRemove?: (
+    newChildren: VVNode<HN, Ele, EP>['children'],
+    oldChildren: VVNode<HN, Ele, EP>['children']
+  ) => void
+
+  /**
    * @version 8.11≥8.10≥8.9≥8.6
    * @description 入口检测:
    * @description 1、`vnode`(新的虚拟节点)不能为空

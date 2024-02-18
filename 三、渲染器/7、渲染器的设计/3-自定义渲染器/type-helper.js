@@ -31,6 +31,8 @@ function init(ignors = []) {
     unmount: undefined,
     patchElement: undefined,
     patchChildren: undefined,
+    handleChildAdd: undefined,
+    handleChildRemove: undefined,
     patch: undefined,
     isVNodeArrayChildrenC: undefined,
     isVNodeChildAtomC_VVNode: undefined,
@@ -54,11 +56,11 @@ export const RendererCreatorFactoryConfig = {
 
 /**@description 用于切断类型连接,设置缺省值 */
 // @ts-ignore
-function setValOfFnType(o, key = '', func) {
+function setValOfFnType(o, key = '', func, message) {
   o[key] ||=
     func ||
     (() => {
-      throw new Error('Not implemented yet!')
+      throw new Error(message || 'Not implemented yet!')
     })
 }
 /**@description 用于切断类型连接 */

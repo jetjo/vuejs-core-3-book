@@ -28,10 +28,12 @@ function factory(_config = defArg0) {
         for (let newIndex = 0; newIndex < newChildren.length; newIndex++) {
           const newChild = newChildren[newIndex]
           if (!config.isVNodeChildAtomC_VVNode(newChild)) throw new Error('newChildren的元素必须是VNode类型') // prettier-ignore
+          let find = false
           for (let oldIndex = 0; oldIndex < oldChildren.length; oldIndex++) {
             const oldChild = oldChildren[oldIndex]
             if (!config.isVNodeChildAtomC_VVNode(oldChild)) throw new Error('oldChildren的元素必须是VNode类型') // prettier-ignore
             if (newChild.key !== oldChild.key) continue
+            find = true
             // NOTE: if (newChild.type !== oldChild.type) continue???
             // 至此找到节点,先执行`patch`, 后处理移动的问题
             config.patch(oldChild, newChild, container, null, testFlag)
@@ -39,7 +41,7 @@ function factory(_config = defArg0) {
             if (oldIndex > maxOldIndexOfFindNode) {
               // 然后更新查到的最大索引
               maxOldIndexOfFindNode = oldIndex
-              break; //continue
+              break //continue
             }
             // 否则, 说明此前找到的节点中,有的节点从此节点之后移动到了此节点之前, 需要移动此节点
             const preNewChild = newChildren[newIndex - 1]
@@ -53,6 +55,8 @@ function factory(_config = defArg0) {
             }
             break
           }
+          if (!find) config.handleChildAdd(newChildren, container, newIndex)
+          config.handleChildRemove(oldChildren, newChildren)
         }
         return newVnode
       }
