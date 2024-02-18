@@ -8,11 +8,17 @@ interface RendererConfig<
   ParentN extends HN = ParentNode,
   EleNS extends Ele = HTMLElement,
   Doc extends HN = Document,
+  EleNameMapNS extends Record<string, EleNS> = HTMLElementTagNameMap,
   HWC = HostWindowC
 > {
   // 接口Node继承自EventTarget，所以这里的el是Node类型
   /**@version 8.1 */
-  createElement: (tag: string) => EleNS
+  createElement: {
+    <K extends keyof EleNameMapNS>(tag: K): EleNameMapNS[K]
+    // NOTE: 类型宽松的重载应该放在最后
+    (tag: string): EleNS
+    // <K extends keyof EleNameMapNS>(tag: K | string): EleNS | EleNameMapNS[K]
+  }
 
   //   接口Node实现了textContent属性，所以这里的el是Node类型
   /**
@@ -75,7 +81,7 @@ interface RendererConfig<
   createText: (text: string) => HN
 
   /**
-   * @version 8.10 
+   * @version 8.10
    * @description 在DOM平台,通过Node.nodeValue赋值实现,
    * 对于`CDATASection`、`Comment`、`Text`、`Attribute`节点, `nodeValue`用于设置或获取节点的内容,
    * 对于其他类型的节点, `nodeValue`返回`null`, 设置其他值无效
@@ -84,7 +90,7 @@ interface RendererConfig<
 
   /**@version 8.10 */
   createComment: (text: string) => HN
-  
+
   /**@version 8.10 */
   setComment: (el: HN, text: string) => HN
 }

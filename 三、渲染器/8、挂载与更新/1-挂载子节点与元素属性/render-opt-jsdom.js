@@ -75,7 +75,12 @@ async function createJsDomOption() {
       return ele
     },
 
-    createElement: tag => {
+    /**
+     * @typedef {keyof HTMLElementTagNameMap} Tag
+     * @param {Tag|string} tag
+     * @todo 可能这样的JSDoc不太合适, 但是, 也不知道怎么写
+     * */
+    createElement(tag) {
       return document.createElement(tag)
     },
     insert: (child, parent, anchor = null) => {
