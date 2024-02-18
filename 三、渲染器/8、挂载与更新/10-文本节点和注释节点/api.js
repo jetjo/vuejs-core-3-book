@@ -13,6 +13,20 @@ function factory(_config = defArg0) {
     /* prettier-ignore */ // 标记config的所有字段都不是`undefined`
     if (!RendererCreatorFactoryConfig.markAllDefined(config)) throw new Error('what???')
 
+    // @ts-ignore
+    const isTextNode = type => {
+      if (typeof type === 'symbol') return type === Text
+      if (typeof type === 'string') return Symbol.for(type) === Text
+      return false
+    }
+
+    // @ts-ignore
+    const isCommenNode = type => {
+      if (typeof type === 'symbol') return type === Comment
+      if (typeof type === 'string') return Symbol.for(type) === Comment
+      return false
+    }
+
     const basePatch = config.patch
     /**
      * @description 目前实现三个目标:
@@ -31,7 +45,7 @@ function factory(_config = defArg0) {
       }
       const { type } = newVnode
       const testFlag = arguments[4]
-      if (type === Text || type === Comment) {
+      if (isTextNode(type) || isCommenNode(type)) {
         let el
         if (!vnode) el = MountCharacterNode(newVnode, container, anchor)
         else el = PatchCharacterNode(vnode, newVnode, anchor)
@@ -47,7 +61,7 @@ function factory(_config = defArg0) {
      * @param {import('vue').VNodeTypes} type
      */
     const requireValidCharContent = (content, type) => {
-      const isText = type === Text
+      const isText = isTextNode(type)
       if (typeof content !== 'string') throw new Error(`${isText ? '文本' : '注释'}节点的children必须是字符串`) // prettier-ignore
       return true
     }
@@ -57,7 +71,7 @@ function factory(_config = defArg0) {
       const { type } = vnode
       // if (type === Text || type === Comment) {
       assertUnknownEx(vnode.children, requireValidCharContent, type)
-      const el = type === Text ? option.createText(vnode.children) : option.createComment(vnode.children) // prettier-ignore
+      const el = isTextNode(type) ? option.createText(vnode.children) : option.createComment(vnode.children) // prettier-ignore
       option.insert(el, container, anchor)
       // NOTE: 执行`config.mountElement`的赋值逻辑
       vnode.el = el
@@ -68,7 +82,7 @@ function factory(_config = defArg0) {
 
     // @ts-ignore
     function PatchCharacterNode(vnode, newVnode, anchor) {
-      if(anchor) throw new Error('暂不支持在此处移动文本节点位置')
+      if (anchor) throw new Error('暂不支持在此处移动文本节点位置')
       const el = (newVnode.el = vnode.el)
       // if (el === null) throw new Error('节点已被卸载,无法进行patch操作')
       // if (el === undefined) throw new Error('挂载虚拟节点后,忘记了设置`el`属性')
@@ -78,7 +92,7 @@ function factory(_config = defArg0) {
       if (vnode.children === newVnode.children) return el
 
       assertUnknownEx(newVnode.children, requireValidCharContent, type)
-      if (type === Text) option.setText(el, newVnode.children)
+      if (isTextNode(type)) option.setText(el, newVnode.children)
       else option.setComment(el, newVnode.children)
       return el
       // }

@@ -1,0 +1,60 @@
+[
+  {
+    "type": "v-fgt",
+    "children": [
+      {
+        "type": "p",
+        "key": 0,
+        "props": {
+          "t-i": 0
+        },
+        "children": "0"
+      },
+      {
+        "type": "p",
+        "key": 1,
+        "props": {
+          "t-i": 1
+        },
+        "children": "1"
+      },
+      {
+        "type": "p",
+        "key": 2,
+        "props": {
+          "t-i": 2
+        },
+        "children": "2"
+      },
+      {
+        "type": "p",
+        "key": 3,
+        "props": {
+          "t-i": 3
+        },
+        "children": "3"
+      }
+    ]
+  },
+  {
+    "type": "v-fgt",
+    "children": [
+      {
+        "type": "p",
+        "key": 2,
+        "props": {
+          "t-i": 2
+        },
+        "children": "2"
+      },
+      {
+        "type": "p",
+        "key": 1,
+        "props": {
+          "t-i": 1
+        },
+        "children": "1"
+      }
+    ]
+  }
+]

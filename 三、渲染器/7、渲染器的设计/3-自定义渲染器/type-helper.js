@@ -1,7 +1,7 @@
 /**@typedef {import('#shims').RendererCreatorFactoryConfig} RendererCreatorFactoryConfig */
 /**@typedef {import('#shims').IsAllDefined<RendererCreatorFactoryConfig>} isValidRendererCreatorFactoryConfig */
 
-import { defArg0, throwErr } from '#root/utils'
+import { defArg0, throwErr, isDev, error } from '#root/utils'
 
 /**@type {isValidRendererCreatorFactoryConfig} */
 function isAllDefined(config = defArg0, ignors = []) {
@@ -60,7 +60,8 @@ function setValOfFnType(o, key = '', func, message) {
   o[key] ||=
     func ||
     (() => {
-      throw new Error(message || 'Not implemented yet!')
+      if (isDev) error(message || 'Not implemented yet!')
+      else throwErr(message || 'Not implemented yet!')
     })
 }
 /**@description 用于切断类型连接 */

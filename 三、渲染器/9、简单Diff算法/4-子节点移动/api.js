@@ -25,6 +25,7 @@ function factory(_config = defArg0) {
       if (Array.isArray(newChildren) && Array.isArray(oldChildren)) {
         assertUnknown(container, option.patchProps.isElement)
         let maxOldIndexOfFindNode = 0
+        // 处理子节点次序和新增的子节点
         for (let newIndex = 0; newIndex < newChildren.length; newIndex++) {
           const newChild = newChildren[newIndex]
           if (!config.isVNodeChildAtomC_VVNode(newChild)) throw new Error('newChildren的元素必须是VNode类型') // prettier-ignore
@@ -56,8 +57,10 @@ function factory(_config = defArg0) {
             break
           }
           if (!find) config.handleChildAdd(newChildren, container, newIndex)
-          config.handleChildRemove(oldChildren, newChildren)
+          // config.handleChildRemove(newChildren, oldChildren)
         }
+        // 处理删除的子节点
+        config.handleChildRemove(newChildren, oldChildren)
         return newVnode
       }
       return basePatchChildren(vnode, newVnode, container, testFlag)

@@ -30,7 +30,12 @@ function factory(_config = defArg0) {
       }
       const { type } = newVnode
       const testFlag = arguments[4]
-      if (type === Fragment) {
+      if (
+        // @ts-ignore
+        (typeof type === 'symbol' && type === Fragment) ||
+        // @ts-ignore
+        (typeof type === 'string' && Symbol.for(type) === Fragment)
+      ) {
         if (!config.isVNodeArrayChildrenC(newVnode.children)) throw new Error('Fragment的children字段必须是数组') // prettier-ignore
         if (!vnode) {
           newVnode.children.forEach(child => {
