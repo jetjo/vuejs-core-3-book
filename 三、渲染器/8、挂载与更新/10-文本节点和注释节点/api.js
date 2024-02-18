@@ -30,7 +30,7 @@ function factory(_config = defArg0) {
         vnode = null
       }
       const { type } = newVnode
-      const testFlag = arguments[3]
+      const testFlag = arguments[4]
       if (type === Text || type === Comment) {
         let el
         if (!vnode) el = MountCharacterNode(newVnode, container)
@@ -39,7 +39,7 @@ function factory(_config = defArg0) {
         newVnode.el = el
         return
       }
-      basePatch(vnode, newVnode, container, testFlag)
+      basePatch(vnode, newVnode, container, null, testFlag)
     }
 
     /**

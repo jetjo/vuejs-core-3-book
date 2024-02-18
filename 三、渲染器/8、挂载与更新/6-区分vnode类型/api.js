@@ -24,7 +24,7 @@ function factory(_config = defArg0) {
     config.patch = function (vnode, newVnode, container) {
       if (!newVnode) throw new Error('newVnode不存在. patch操作不负责卸载节点!')
       if (typeof newVnode.type !== 'string') throw new Error('type不是字符串')
-      const testFlag = arguments[3]
+      const testFlag = arguments[4]
       const mountEle = () => {
         config.mountElement(newVnode, container, testFlag)
         // container.vnode = newVnode // NOTE: 不负责维护`container.vnode`的值

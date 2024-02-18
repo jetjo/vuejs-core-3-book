@@ -25,11 +25,11 @@ function factory(_config = defArg0) {
     config.patch = function (vnode, newVnode, container) {
       if (!newVnode) throw new Error('newVnode不存在. patch操作不负责卸载节点!')
       if (typeof newVnode.type !== 'string') throw new Error('type不是字符串')
-      const testFlag = arguments[3]
+      const testFlag = arguments[4]
       if (vnode && vnode.type === newVnode.type)
         return config.patchElement(vnode, newVnode, testFlag)
       // 1、初次挂载 2、type不同时,先卸载后挂载
-      return basePatch(vnode, newVnode, container, testFlag)
+      return basePatch(vnode, newVnode, container, null, testFlag)
     }
 
     config.patchElement = function (vnode, newVnode) {

@@ -69,6 +69,7 @@ interface RendererCreatorFactoryConfig<
     oldVnode?: VVNode<HN, Ele, EP> | null,
     vnode: VVNode<HN, Ele, EP>,
     container: Ele,
+    anchor?: HN | null,
     testTag?: string
   ) => void
 

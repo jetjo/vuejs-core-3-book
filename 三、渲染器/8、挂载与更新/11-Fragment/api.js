@@ -29,20 +29,20 @@ function factory(_config = defArg0) {
         vnode = null
       }
       const { type } = newVnode
-      const testFlag = arguments[3]
+      const testFlag = arguments[4]
       if (type === Fragment) {
         if (!config.isVNodeArrayChildrenC(newVnode.children)) throw new Error('Fragment的children字段必须是数组') // prettier-ignore
         if (!vnode) {
           newVnode.children.forEach(child => {
             if (!config.isVNodeChildAtomC_VVNode(child)) throw new Error('Fragment的children必须是VNode类型') // prettier-ignore
-            config.patch(null, child, container, testFlag)
+            config.patch(null, child, container, null, testFlag)
           })
           return
         }
         config.patchChildren(vnode, newVnode, container, testFlag)
         return
       }
-      basePatch(vnode, newVnode, container, testFlag)
+      basePatch(vnode, newVnode, container, null, testFlag)
     }
 
     config.render = function (vnode, container) {
@@ -52,7 +52,7 @@ function factory(_config = defArg0) {
       const testFlag = arguments[2]
       if (vnode) {
         // if (container.vnode && vnode) {
-        config.patch(container.vnode, vnode, container, testFlag) // 更新
+        config.patch(container.vnode, vnode, container, null, testFlag) // 更新
         container.vnode = vnode
         return
       }

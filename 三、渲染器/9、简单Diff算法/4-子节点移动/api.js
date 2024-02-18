@@ -34,7 +34,7 @@ function factory(_config = defArg0) {
             if (newChild.key !== oldChild.key) continue
             // NOTE: if (newChild.type !== oldChild.type) continue???
             // 至此找到节点,先执行`patch`, 后处理移动的问题
-            config.patch(oldChild, newChild, container, testFlag)
+            config.patch(oldChild, newChild, container, null, testFlag)
             // 如果此前以匹配到的节点的索引都比此节点小, 说明此节点与此前找到的节点们的次序没变,不需移动
             if (oldIndex > maxOldIndexOfFindNode) {
               // 然后更新查到的最大索引

@@ -112,7 +112,7 @@ function factory(_config = defArg0) {
         // if (container.vnode && vnode) {
         // warn('patch', VER, 'render', arguments[2])
         // @ts-ignore
-        config.patch(container.vnode, vnode, container, testFlag) // 更新
+        config.patch(container.vnode, vnode, container, null, testFlag) // 更新
         container.vnode = vnode
         return
       }
