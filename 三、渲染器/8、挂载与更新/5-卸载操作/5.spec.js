@@ -12,6 +12,7 @@ export const test = (createOption, creatorFactory) => {
     it(`正确卸载`, async () => {
       // prettier-ignore
       const { render, rAF, container } = await getApi(createOption, creatorFactory, '卸载操作', '正确卸载')
+      // @ts-ignore
       render({ type: 'div' }, container)
       await rAF()
       render(null, container)

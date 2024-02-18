@@ -1,4 +1,4 @@
-import creatorFactory from './api.js'
+import creatorFactory from '../1-挂载子节点与元素属性/api.js'
 import createJsDomOption from './render-opt-browser.js'
 
 import { test } from '../1-挂载子节点与元素属性/1.spec.js'

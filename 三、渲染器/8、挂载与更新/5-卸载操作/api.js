@@ -1,7 +1,7 @@
 // @ts-check
 import { RendererCreatorFactoryConfig } from '#utils'
 import { defArg0 } from '#root/utils'
-import baseFactory from '../3-正确地设置元素属性/api.js'
+import baseFactory from '../1-挂载子节点与元素属性/api.js'
 
 const VER = '8-5'
 

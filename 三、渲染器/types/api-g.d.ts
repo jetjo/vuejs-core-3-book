@@ -6,10 +6,13 @@ import type {
 } from '#shims'
 
 declare global {
+  interface EventTarget {
+    _vei?: EventHandlerMap
+  }
+
   interface Element {
     [key: string]: unknown
     vnode?: VVNode<Node, Element> | null
-    _vei?: EventHandlerMap
   }
 
   interface Window {

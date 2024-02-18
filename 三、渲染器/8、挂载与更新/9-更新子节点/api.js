@@ -55,20 +55,6 @@ function factory(_config = defArg0) {
       return newVnode
     }
 
-    config.unmountChildren = function (children, container) {
-      if (typeof children === 'string') {
-        option.setElementText(container, '') //文本节点
-        // container.vnode = children ???
-        return
-      }
-      if (!config.isVNodeArrayChildrenC(children)) throw new Error('children is not array') // prettier-ignore
-      children.forEach(child => {
-        if (!config.isVNodeChildAtomC_VVNode(child)) throw new Error('child is not vnode') // prettier-ignore
-        config.unmount(child)
-        // container.vnode = children ???
-      })
-    }
-
     config.patchChildren = function (vnode, newVnode, container) {
       // 由于Fragment存在, vnode的el不一定是readilyNode
       // config.patchChildren = function (vnode, newVnode, readilyNode) {
@@ -76,27 +62,42 @@ function factory(_config = defArg0) {
       assertUnknown(container, option.patchProps.isElement, testFlag)
       // 新旧节点个有三种情况, 1、null, 2、string, 3、array
       // 共用9中组合
-      if (config.isVNodeArrayChildrenC(newVnode.children)) {
-        if (config.isVNodeArrayChildrenC(vnode.children)) {
+      const children = newVnode.children
+      // container.vnode = children ???
+      const oldChildren = vnode.children
+      const unmountChildren = () => {
+        if (typeof oldChildren === 'string') {
+          option.setElementText(container, '') //文本节点
+          return
+        }
+        if (!config.isVNodeArrayChildrenC(oldChildren)) return; // prettier-ignore
+        oldChildren.forEach(child => {
+          if (!config.isVNodeChildAtomC_VVNode(child)) throw new Error('child is not vnode') // prettier-ignore
+          config.unmount(child)
+        })
+      }
+      if (config.isVNodeArrayChildrenC(children)) {
+        if (config.isVNodeArrayChildrenC(oldChildren)) {
           throw new Error('暂不处理')
         }
-        if (typeof vnode.children === 'string') {
+        if (typeof oldChildren === 'string') {
           option.setElementText(container, '')
           warn('新节点是数组, 旧节点是文本', testFlag)
         }
-        config.mountChildren(newVnode.children, container, testFlag)
+        // config.mountChildren(newVnode.children, container, testFlag)
+        children.forEach(child => {
+          if (!config.isVNodeChildAtomC_VVNode(child)) throw new Error('child is not vnode') // prettier-ignore
+          config.patch(null, child, container)
+        })
         return newVnode
       }
-      if (typeof newVnode.children === 'string') {
-        if (config.isVNodeArrayChildrenC(vnode.children)) {
-          config.unmountChildren(vnode.children, container)
-          warn('新节点是文本, 旧节点是数组', testFlag)
-        }
-        option.setElementText(container, newVnode.children)
+      if (typeof children === 'string') {
+        unmountChildren()
+        option.setElementText(container, children)
         return newVnode
       }
       // 卸载旧的`children`
-      config.unmountChildren(vnode.children, container)
+      unmountChildren()
       return newVnode
     }
 

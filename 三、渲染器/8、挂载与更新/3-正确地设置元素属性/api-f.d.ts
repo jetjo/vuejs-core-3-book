@@ -29,26 +29,6 @@ interface RendererCreatorFactoryConfig<
   Ele extends HN = Element,
   EP = { [key: string]: any }
 > extends Renderer<HN, Ele, EP> {
-  /**
-   * @version 8.1
-   * @todo container.vnode = children ???
-   * */
-  mountChildren?: (
-    children: VVNode<HN, Ele, EP>['children'],
-    container: Ele,
-    testFlag?: string
-  ) => void
-
-  /**
-   * @version 8.9
-   * @todo container.vnode = children ???
-   * */
-  unmountChildren?: (children: VVNode<HN, Ele, EP>['children'], container: Ele) => void
-
-  /**
-   * @version 8.3
-   * @description 目前将对每个属性的处理完全交由`patchProps`方法处理, 包括事件 */
-  mountProps?: (props: VVNode<HN, Ele, EP>['props'], container: Ele) => void
 
   /**
    * @version 8.10≥8.5≥8.3

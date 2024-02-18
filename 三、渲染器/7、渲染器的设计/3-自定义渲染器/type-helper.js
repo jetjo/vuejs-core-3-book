@@ -24,10 +24,10 @@ function init(ignors = []) {
   const instance = {
     // @ts-ignore
     __proto__: null,
-    mountChildren: undefined,
-    mountProps: undefined,
+    // mountChildren: undefined,
+    // unmountChildren: undefined,
+    // mountProps: undefined,
     mountElement: undefined,
-    unmountChildren: undefined,
     unmount: undefined,
     patchElement: undefined,
     patchChildren: undefined,

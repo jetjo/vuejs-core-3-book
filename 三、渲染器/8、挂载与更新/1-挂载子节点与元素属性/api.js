@@ -10,7 +10,13 @@ function factory(_config = defArg0) {
   /* prettier-ignore */ // 标记config的所有字段都不是`undefined`
   if (!RendererCreatorFactoryConfig.markAllDefined(config)) throw new Error('what???')
   // 抽离特定于平台的API,将特定于平台的API视为配置项, 作为参数传入
-  return function createRenderer({ createElement, setElementText, setAttribute, insert }) {
+  return function createRenderer({
+    createElement,
+    setElementText,
+    setAttribute,
+    insert,
+    patchProps
+  }) {
     config.isVNodeArrayChildrenC = Array.isArray //&& children.every(child => typeof child === 'object')
     // @ts-ignore
     config.isVNodeChildAtomC_VVNode = child => {
@@ -18,19 +24,6 @@ function factory(_config = defArg0) {
       if (typeof child !== 'object') return false
       if (config.isVNodeArrayChildrenC(child)) return false
       return true
-    }
-    config.mountChildren = function (children, container) {
-      if (typeof children === 'string') {
-        setElementText(container, children) //文本节点
-        // container.vnode = children ???
-        return
-      }
-      if (!config.isVNodeArrayChildrenC(children)) throw new Error('children is not array') // prettier-ignore
-      children.forEach(child => {
-        if (!config.isVNodeChildAtomC_VVNode(child)) throw new Error('child is not vnode') // prettier-ignore
-        config.patch(null, child, container)
-        // container.vnode = children ???
-      })
     }
 
     // @ts-ignore // 有新版本
@@ -56,27 +49,31 @@ function factory(_config = defArg0) {
     config.mountElement = function (vnode, container) {
       const { type, props, children } = vnode
       if (typeof type !== 'string') throw new Error('type不是字符串')
-      const ele = createElement(type)
-      props && config.mountProps(props, ele)
-      children && config.mountChildren(children, ele)
-      insert(ele, container, null)
-      if (arguments[2]) {
-        console.warn(
-          {
-            vnode,
-            containerInnerHTML: container.innerHTML,
-            containerSame: container.vnode === vnode,
-            body: document.body.innerHTML,
-            containerOut: container.outerHTML,
-            isInBody: document.body.contains(container)
-          },
-          arguments[2],
-          VER,
-          'mountElement'
-        )
+      const el = createElement(type)
+      const mountProps = () => {
+        for (const key in props) {
+          // if (Object.hasOwnProperty.call(props, key)) {}
+          patchProps(el, key, null, props[key])
+        }
       }
+      props && mountProps()
+      const mountChildren = () => {
+        if (typeof children === 'string') {
+          setElementText(el, children) //文本节点
+          // container.vnode = children ???
+          return
+        }
+        if (!config.isVNodeArrayChildrenC(children)) throw new Error('children is not array') // prettier-ignore
+        children.forEach(child => {
+          if (!config.isVNodeChildAtomC_VVNode(child)) throw new Error('child is not vnode') // prettier-ignore
+          config.patch(null, child, el)
+          // container.vnode = children ???
+        })
+      }
+      children && mountChildren()
+      insert(el, container, null)
       // container.vnode = vnode //NOTE: 不负责维护`container.vnode`的值
-      return ele
+      return el
     }
 
     // @ts-ignore // 新版本的`patch`功能完全覆盖了此版本, 所以这里断开与``config.patch``的继承关系
@@ -112,7 +109,7 @@ function factory(_config = defArg0) {
       }
 
       if (vnode) {
-      // if (container.vnode && vnode) {
+        // if (container.vnode && vnode) {
         // warn('patch', VER, 'render', arguments[2])
         // @ts-ignore
         config.patch(container.vnode, vnode, container, testFlag) // 更新
