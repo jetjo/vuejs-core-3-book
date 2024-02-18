@@ -34,6 +34,7 @@ function factory(_config = defArg0) {
 
     config.patchElement = function (vnode, newVnode) {
       const testFlag = arguments[2]
+      // NOTE: 别忘将`newVnode`的`el`属性指向`vnode`的`el`
       const el = (newVnode.el = vnode.el)
       if (el === null) throw new Error('节点已被卸载,无法进行patch操作')
       if (el === undefined) throw new Error('挂载虚拟节点后,忘记了设置`el`属性')

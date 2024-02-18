@@ -32,9 +32,11 @@ function factory(_config = defArg0) {
       const { type } = newVnode
       const testFlag = arguments[3]
       if (type === Text || type === Comment) {
-        // NOTE: 执行`config.mountElement`的赋值逻辑, 使得能够卸载
-        if (!vnode) newVnode.el = MountCharacterNode(newVnode, container)
-        else PatchCharacterNode(vnode, newVnode)
+        let el
+        if (!vnode) el = MountCharacterNode(newVnode, container)
+        else el = PatchCharacterNode(vnode, newVnode)
+        // NOTE: 最后别忘了复用DOM
+        newVnode.el = el
         return
       }
       basePatch(vnode, newVnode, container, testFlag)
@@ -72,12 +74,12 @@ function factory(_config = defArg0) {
 
       const { type } = newVnode
       // if (type === Text || type === Comment) {
-      if (vnode.children === newVnode.children) return newVnode
+      if (vnode.children === newVnode.children) return el
 
       assertUnknownEx(newVnode.children, requireValidCharContent, type)
       if (type === Text) option.setText(el, newVnode.children)
       else option.setComment(el, newVnode.children)
-      return newVnode
+      return el
       // }
 
       // throw new Error('不是文本节点或注释节点')

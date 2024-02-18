@@ -37,7 +37,11 @@ interface RendererCreatorFactoryConfig<
    * @description 不负责维护`container.vnode`的值,由`config.render`维护 */
   mountElement?: (vnode: VVNode<HN, Ele, EP>, container: Ele, testTag?: string) => HN
 
-  /**@version 8.9 */
+  /**
+   * @version 8.9 
+   * @description 实现对`vnode.type`为`string`类型的`vnode`的更新
+   * @description 并负责设置`newVNode.el`实现DOM的复用
+   * */
   patchElement?: (
     vnode: VVNode<HN, Ele, EP>,
     newVNode: VVNode<HN, Ele, EP>,
@@ -58,6 +62,7 @@ interface RendererCreatorFactoryConfig<
    * @description 1、`vnode`(新的虚拟节点)不能为空
    * @description 注意:
    * @description 1、不负责维护`container.vnode`的值
+   * @description 2、负责间接或直接设置`vnode.el`
    * @requires `mountElement`,`patchElement`
    */
   patch?: (
