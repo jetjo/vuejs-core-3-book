@@ -34,24 +34,25 @@ function factory(_config = defArg0) {
 
     config.patchElement = function (vnode, newVnode) {
       const testFlag = arguments[2]
-      const ele = (newVnode.el = vnode.el)
-      if (!ele) throw new Error('节点没有挂载')
+      const el = (newVnode.el = vnode.el)
+      if (el === null) throw new Error('节点已被卸载,无法进行patch操作')
+      if (el === undefined) throw new Error('挂载虚拟节点后,忘记了设置`el`属性')
       const isElement = option.patchProps.isElement
       if (!isElement) throw new Error('Element类型验证为实现!')
       // @ts-ignore
-      assertUnknown(ele, isElement, testFlag) //, '÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷')
+      assertUnknown(el, isElement, testFlag) //, '÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷')
       const oldProps = vnode.props || {}
       const newProps = newVnode.props || {}
       for (const key in newProps) {
         if (newProps[key] !== oldProps[key]) {
-          option.patchProps(ele, key, oldProps[key], newProps[key])
+          option.patchProps(el, key, oldProps[key], newProps[key])
         }
       }
       for (const key in oldProps) {
         // if (Object.hasOwnProperty.call(oldProps, key))
-        if (!(key in newProps)) option.patchProps(ele, key, oldProps[key], null)
+        if (!(key in newProps)) option.patchProps(el, key, oldProps[key], null)
       }
-      config.patchChildren(vnode, newVnode, ele, testFlag)
+      config.patchChildren(vnode, newVnode, el, testFlag)
       return newVnode
     }
 

@@ -32,8 +32,9 @@ function factory(_config = defArg0) {
       const { type } = newVnode
       const testFlag = arguments[3]
       if (type === Text || type === Comment) {
-        if (!vnode) config.mountElement(newVnode, container, testFlag)
-        else config.patchElement(vnode, newVnode, testFlag)
+        // NOTE: 执行`config.mountElement`的赋值逻辑, 使得能够卸载
+        if (!vnode) newVnode.el = MountCharacterNode(newVnode, container)
+        else PatchCharacterNode(vnode, newVnode)
         return
       }
       basePatch(vnode, newVnode, container, testFlag)
@@ -49,36 +50,37 @@ function factory(_config = defArg0) {
       return true
     }
 
-    const baseMount = config.mountElement
-    config.mountElement = function (vnode, container) {
+    // @ts-ignore
+    function MountCharacterNode(vnode, container) {
       const { type } = vnode
-      if (type === Text || type === Comment) {
-        assertUnknownEx(vnode.children, requireValidCharContent, type)
-        const el = type === Text ? option.createText(vnode.children) : option.createComment(vnode.children) // prettier-ignore
-        option.insert(el, container)
-        // NOTE: 执行`baseMount`以存在的赋值逻辑
-        vnode.el = el
-        return el
-      }
-      return baseMount(vnode, container)
+      // if (type === Text || type === Comment) {
+      assertUnknownEx(vnode.children, requireValidCharContent, type)
+      const el = type === Text ? option.createText(vnode.children) : option.createComment(vnode.children) // prettier-ignore
+      option.insert(el, container)
+      // NOTE: 执行`config.mountElement`的赋值逻辑
+      vnode.el = el
+      return el
+      // }
+      // throw new Error('不是文本节点或注释节点')
     }
 
-    const basePatchElement = config.patchElement
-    config.patchElement = function (vnode, newVnode) {
+    // @ts-ignore
+    function PatchCharacterNode(vnode, newVnode) {
       const el = (newVnode.el = vnode.el)
-      if (!el) throw new Error('节点没有挂载')
+      // if (el === null) throw new Error('节点已被卸载,无法进行patch操作')
+      // if (el === undefined) throw new Error('挂载虚拟节点后,忘记了设置`el`属性')
 
       const { type } = newVnode
-      if (type === Text || type === Comment) {
-        if (vnode.children === newVnode.children) return newVnode
+      // if (type === Text || type === Comment) {
+      if (vnode.children === newVnode.children) return newVnode
 
-        assertUnknownEx(newVnode.children, requireValidCharContent, type)
-        if (type === Text) option.setText(el, newVnode.children)
-        else option.setComment(el, newVnode.children)
-        return newVnode
-      }
+      assertUnknownEx(newVnode.children, requireValidCharContent, type)
+      if (type === Text) option.setText(el, newVnode.children)
+      else option.setComment(el, newVnode.children)
+      return newVnode
+      // }
 
-      return basePatchElement(vnode, newVnode)
+      // throw new Error('不是文本节点或注释节点')
     }
 
     return Object.assign(config, { version: VER })

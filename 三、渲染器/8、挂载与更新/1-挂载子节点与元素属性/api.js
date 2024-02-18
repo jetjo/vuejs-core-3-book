@@ -1,5 +1,5 @@
 import { defArg0 } from '#root/utils'
-import { RendererCreatorFactoryConfig, setValOfFnType } from '#utils'
+import { RendererCreatorFactoryConfig, getValOfFnType, setValOfFnType } from '#utils'
 
 const VER = '8-1'
 /**@type {import('#shims').RendererCreatorFactory} */
@@ -80,7 +80,7 @@ function factory(_config = defArg0) {
     // config.patch ||= function (oldVnode, vnode, container) {
     function patch(oldVnode, vnode, container) {
       if (!oldVnode) {
-        config.mountElement(vnode, container) // 挂载
+        getValOfFnType(config, 'mountElement')(vnode, container) // 挂载
         return
       }
       throw new Error('Not implemented yet!🤬🤬🤬')

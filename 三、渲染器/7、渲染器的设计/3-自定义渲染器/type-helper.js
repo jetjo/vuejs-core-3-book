@@ -61,6 +61,16 @@ function setValOfFnType(o, key = '', func) {
       throw new Error('Not implemented yet!')
     })
 }
+/**@description 用于切断类型连接 */
+// @ts-ignore
+function getValOfFnType(o, key = '') {
+  return (
+    o[key] ||
+    (() => {
+      throw new Error('Not implemented yet!')
+    })
+  )
+}
 
 /**@type {RequireFunction}  */
 function requireCallable(fn, msg = 'fn must be a function') {
@@ -92,4 +102,11 @@ function assertUnknownEx(value, validate, ...args) {
   return
 }
 
-export { setValOfFnType, requireCallable, requireEventHandler, assertUnknown, assertUnknownEx }
+export {
+  setValOfFnType,
+  getValOfFnType,
+  requireCallable,
+  requireEventHandler,
+  assertUnknown,
+  assertUnknownEx
+}
