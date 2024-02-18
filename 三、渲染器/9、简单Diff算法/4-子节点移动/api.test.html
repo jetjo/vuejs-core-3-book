@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>子节点次序更新</title>
+    <!-- <script src="https://unpkg.com/@vue/reactivity@3.0.5/dist/reactivity.global.js"></script> -->
+    <link
+      rel="stylesheet"
+      href="../../8、挂载与更新/8-事件冒泡与更新时机问题/app.test.html.css"
+    />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module">
+      import { test } from './api.test.html.js'
+      import optionCreator from '../../8、挂载与更新/10-文本节点和注释节点/render-opt-browser.js'
+
+      await test(optionCreator, '4-子节点次序更新', true)
+    </script>
+  </body>
+</html>

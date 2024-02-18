@@ -29,6 +29,7 @@ interface RendererConfig<
   //   接口Node实现了insertBefore方法，所以这里的anchor是Node类型
   /**
    * @version 8.1
+   * @param {HN | null} anchor 用于支持元素的移动
    * @description 将`child`插入到`parent.anchor`节点前面 */
   insert: (child: HN, parent: HN, anchor?: HN | null, isSvg?: boolean) => void
 

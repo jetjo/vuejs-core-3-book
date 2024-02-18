@@ -14,7 +14,7 @@ export const test = (optionFactory, factory) => {
 
   describe(suitName, async () => {
     it('挂载、更新、卸载', async () => {
-      const { render, rAF, container } = await getApi(optionFactory, factory, suitName)
+      const { render, rAF, container, apiVer } = await getApi(optionFactory, factory, suitName)
 
       render(
         // @ts-ignore
@@ -23,8 +23,10 @@ export const test = (optionFactory, factory) => {
       )
       await rAF()
       expect(container.innerHTML).toBe('<p></p>text')
-      // @ts-ignore 截止版本8-11, 还未实现对数组类型的children的更新, 所以这里应该抛出异常
-      expect(() => render({ type: Fragment, children: [] }, container)).toThrow()
+      if (apiVer.split('-')[0] === '8') {
+        // @ts-ignore 截止版本8-11, 还未实现对数组类型的children的更新, 所以这里应该抛出异常
+        expect(() => render({ type: Fragment, children: [] }, container)).toThrow()
+      }
       // await rAF()
       render(null, container)
       await rAF()
