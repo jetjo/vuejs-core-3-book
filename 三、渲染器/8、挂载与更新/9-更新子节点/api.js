@@ -22,14 +22,14 @@ function factory(_config = defArg0) {
      * @description 1、并且只支持`type`为`string`的节点
      * @description 2、`vnode.type`的值需要分多种情况处理, type是字符串代表原生标签, type是对象代表组件等等
      */
-    config.patch = function (vnode, newVnode, container) {
+    config.patch = function (vnode, newVnode, container, anchor) {
       if (!newVnode) throw new Error('newVnode不存在. patch操作不负责卸载节点!')
       if (typeof newVnode.type !== 'string') throw new Error('type不是字符串')
       const testFlag = arguments[4]
       if (vnode && vnode.type === newVnode.type)
         return config.patchElement(vnode, newVnode, testFlag)
       // 1、初次挂载 2、type不同时,先卸载后挂载
-      return basePatch(vnode, newVnode, container, null, testFlag)
+      return basePatch(vnode, newVnode, container, anchor, testFlag)
     }
 
     config.patchElement = function (vnode, newVnode) {

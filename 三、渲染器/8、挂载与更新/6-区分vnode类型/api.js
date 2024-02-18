@@ -21,12 +21,12 @@ function factory(_config = defArg0) {
      * @description 1、并且只支持`type`为`string`的节点
      * @description 2、`vnode.type`的值需要分多种情况处理, type是字符串代表原生标签, type是对象代表组件等等
      */
-    config.patch = function (vnode, newVnode, container) {
+    config.patch = function (vnode, newVnode, container, anchor) {
       if (!newVnode) throw new Error('newVnode不存在. patch操作不负责卸载节点!')
       if (typeof newVnode.type !== 'string') throw new Error('type不是字符串')
       const testFlag = arguments[4]
       const mountEle = () => {
-        config.mountElement(newVnode, container, testFlag)
+        config.mountElement(newVnode, container, anchor, testFlag)
         // container.vnode = newVnode // NOTE: 不负责维护`container.vnode`的值
         return newVnode //.el
       }

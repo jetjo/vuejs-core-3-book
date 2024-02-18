@@ -23,7 +23,7 @@ function factory(_config = defArg0) {
      * @description 1、并且只支持`type`为`string`的节点以及文本和注释节点
      * @description 2、`vnode.type`的值需要分多种情况处理, type是字符串代表原生标签, type是对象代表组件等等
      */
-    config.patch = function (vnode, newVnode, container) {
+    config.patch = function (vnode, newVnode, container, anchor) {
       if (!newVnode) throw new Error('newVnode不存在. patch操作不负责卸载节点!')
       if (vnode && vnode.type !== newVnode.type) {
         config.unmount(vnode)
@@ -33,13 +33,13 @@ function factory(_config = defArg0) {
       const testFlag = arguments[4]
       if (type === Text || type === Comment) {
         let el
-        if (!vnode) el = MountCharacterNode(newVnode, container)
-        else el = PatchCharacterNode(vnode, newVnode)
+        if (!vnode) el = MountCharacterNode(newVnode, container, anchor)
+        else el = PatchCharacterNode(vnode, newVnode, anchor)
         // NOTE: 最后别忘了复用DOM
         newVnode.el = el
         return
       }
-      basePatch(vnode, newVnode, container, null, testFlag)
+      basePatch(vnode, newVnode, container, anchor, testFlag)
     }
 
     /**
@@ -53,12 +53,12 @@ function factory(_config = defArg0) {
     }
 
     // @ts-ignore
-    function MountCharacterNode(vnode, container) {
+    function MountCharacterNode(vnode, container, anchor) {
       const { type } = vnode
       // if (type === Text || type === Comment) {
       assertUnknownEx(vnode.children, requireValidCharContent, type)
       const el = type === Text ? option.createText(vnode.children) : option.createComment(vnode.children) // prettier-ignore
-      option.insert(el, container)
+      option.insert(el, container, anchor)
       // NOTE: 执行`config.mountElement`的赋值逻辑
       vnode.el = el
       return el
@@ -67,7 +67,8 @@ function factory(_config = defArg0) {
     }
 
     // @ts-ignore
-    function PatchCharacterNode(vnode, newVnode) {
+    function PatchCharacterNode(vnode, newVnode, anchor) {
+      if(anchor) throw new Error('暂不支持在此处移动文本节点位置')
       const el = (newVnode.el = vnode.el)
       // if (el === null) throw new Error('节点已被卸载,无法进行patch操作')
       // if (el === undefined) throw new Error('挂载虚拟节点后,忘记了设置`el`属性')

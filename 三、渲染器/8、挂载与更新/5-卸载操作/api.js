@@ -15,9 +15,9 @@ function factory(_config = defArg0) {
 
     const baseMount = config.mountElement
 
-    config.mountElement = function (vnode, container) {
+    config.mountElement = function (vnode, container, anchor) {
       // throw new Error('unmount is not implemented')
-      const el = baseMount(vnode, container, arguments[2])
+      const el = baseMount(vnode, container, anchor, arguments[3])
       vnode.el = el
       return el
     }

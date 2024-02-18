@@ -22,7 +22,7 @@ function factory(_config = defArg0) {
      * @description 1、支持`type`为`string`、`Text`,`Comment`,`Fragment`的节点
      * @description 2、`vnode.type`的值需要分多种情况处理, type是字符串代表原生标签, type是对象代表组件等等
      */
-    config.patch = function (vnode, newVnode, container) {
+    config.patch = function (vnode, newVnode, container, anchor) {
       if (!newVnode) throw new Error('newVnode不存在. patch操作不负责卸载节点!')
       if (vnode && vnode.type !== newVnode.type) {
         config.unmount(vnode)
@@ -35,14 +35,14 @@ function factory(_config = defArg0) {
         if (!vnode) {
           newVnode.children.forEach(child => {
             if (!config.isVNodeChildAtomC_VVNode(child)) throw new Error('Fragment的children必须是VNode类型') // prettier-ignore
-            config.patch(null, child, container, null, testFlag)
+            config.patch(null, child, container, anchor, testFlag)
           })
           return
         }
         config.patchChildren(vnode, newVnode, container, testFlag)
         return
       }
-      basePatch(vnode, newVnode, container, null, testFlag)
+      basePatch(vnode, newVnode, container, anchor, testFlag)
     }
 
     config.render = function (vnode, container) {

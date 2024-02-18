@@ -29,16 +29,20 @@ interface RendererCreatorFactoryConfig<
   Ele extends HN = Element,
   EP = { [key: string]: any }
 > extends Renderer<HN, Ele, EP> {
-
   /**
    * @version 8.5≥8.1
    * @callBy `render`, `patch`
    * @description 初次挂载, 与`unmount`一同负责设置`vnode.el`
    * @description 不负责维护`container.vnode`的值,由`config.render`维护 */
-  mountElement?: (vnode: VVNode<HN, Ele, EP>, container: Ele, testTag?: string) => HN
+  mountElement?: (
+    vnode: VVNode<HN, Ele, EP>,
+    container: Ele,
+    anchor?: HN | null,
+    testTag?: string
+  ) => HN
 
   /**
-   * @version 8.9 
+   * @version 8.9
    * @description 实现对`vnode.type`为`string`类型的`vnode`的更新
    * @description 并负责设置`newVNode.el`实现DOM的复用
    * */
@@ -63,6 +67,7 @@ interface RendererCreatorFactoryConfig<
    * @description 注意:
    * @description 1、不负责维护`container.vnode`的值
    * @description 2、负责间接或直接设置`vnode.el`
+   * @param {HN | null} [anchor] 用于支持`patchChildren`方法在`container`中的起始位置新增节点
    * @requires `mountElement`,`patchElement`
    */
   patch?: (

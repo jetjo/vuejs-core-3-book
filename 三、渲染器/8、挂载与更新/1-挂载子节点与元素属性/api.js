@@ -46,7 +46,7 @@ function factory(_config = defArg0) {
     }
     setValOfFnType(config, 'mountProps', mountProps)
 
-    config.mountElement = function (vnode, container) {
+    config.mountElement = function (vnode, container, anchor) {
       const { type, props, children } = vnode
       if (typeof type !== 'string') throw new Error('type不是字符串')
       const el = createElement(type)
@@ -66,12 +66,12 @@ function factory(_config = defArg0) {
         if (!config.isVNodeArrayChildrenC(children)) throw new Error('children is not array') // prettier-ignore
         children.forEach(child => {
           if (!config.isVNodeChildAtomC_VVNode(child)) throw new Error('child is not vnode') // prettier-ignore
-          config.patch(null, child, el)
+          config.patch(null, child, el, null)
           // container.vnode = children ???
         })
       }
       children && mountChildren()
-      insert(el, container, null)
+      insert(el, container, anchor)
       // container.vnode = vnode //NOTE: 不负责维护`container.vnode`的值
       return el
     }
