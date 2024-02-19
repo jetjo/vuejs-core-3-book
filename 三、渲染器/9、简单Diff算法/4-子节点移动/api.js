@@ -37,6 +37,10 @@ function factory(_config = defArg0) {
         const newChildren = newVnode.children
         const oldChildren = vnode.children
         // NOTE: 如果支持,使用`双端Diff`算法处理排序
+        if (config.patchKeyedChildrenQk) {
+          return config.patchKeyedChildrenQk(vnode, newVnode, container, testFlag)
+        }
+        // NOTE: 如果支持,使用`双端Diff`算法处理排序
         if (config.patchKeyedChildren) {
           return config.patchKeyedChildren(vnode, newVnode, container, testFlag)
         }

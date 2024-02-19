@@ -72,6 +72,18 @@ interface RendererCreatorFactoryConfig<
     testTag?: string
   ) => VVNodeWithKeyedChildren<HN, Ele, EP>
 
+  /**
+   * @version 10.5
+   * @description 使用`快速Diff`算法对`vnode.children`进行排序
+   * @description 用于`patchChildren`方法, 优先级高于`Vue2`使用的`双端Diff`算法
+   * */
+  patchKeyedChildrenQk?: (
+    vnode: VVNodeWithKeyedChildrenC<HN, Ele, EP>,
+    newVNode: VVNodeWithKeyedChildren<HN, Ele, EP>,
+    container: Ele,
+    testTag?: string
+  ) => VVNodeWithKeyedChildren<HN, Ele, EP>
+
   /**@version 9.4 */
   requireKeyedChildren?: (vnode: VVNodeWithKeyedChildren<HN, Ele>) => boolean
 

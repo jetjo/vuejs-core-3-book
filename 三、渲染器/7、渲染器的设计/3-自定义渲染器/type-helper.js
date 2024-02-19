@@ -32,6 +32,7 @@ function init(ignors = []) {
     patchElement: undefined,
     patchChildren: undefined,
     patchKeyedChildren: undefined,
+    patchKeyedChildrenQk: undefined,
     requireKeyedChildren: undefined,
     handleChildAdd: undefined,
     handleChildRemove: undefined,
