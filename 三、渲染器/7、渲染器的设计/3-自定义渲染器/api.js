@@ -8,6 +8,8 @@ function createRenderer({ createElement, setElementText, insert }) {
   // 将vdom node挂载到配置指定的平台
   function mountElement(vnode, container) {
     const { type, props, children } = vnode
+    // NOTE: 如果`vnode.el`存在, 说明该节点已经被挂载过, 直接返回???
+    // const el = vnode.el || createElement(type)
     const el = createElement(type)
     if (typeof children === 'string') {
       // 文本节点

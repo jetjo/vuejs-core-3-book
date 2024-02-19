@@ -49,6 +49,8 @@ function factory(_config = defArg0) {
     config.mountElement = function (vnode, container, anchor) {
       const { type, props, children } = vnode
       if (typeof type !== 'string') throw new Error('type不是字符串')
+      // NOTE: 如果`vnode.el`存在, 说明该节点已经被挂载过, 直接返回???
+      // const el = vnode.el || createElement(type)
       const el = createElement(type)
       const mountProps = () => {
         for (const key in props) {
