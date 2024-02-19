@@ -20,6 +20,7 @@ export const test = (createOption, creatorFactory) => {
       },
       children: [
         {
+          ...createOption.defVNode,
           el: null,
           type: 'p',
           props: {},

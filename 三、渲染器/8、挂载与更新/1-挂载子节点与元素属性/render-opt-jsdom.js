@@ -1,6 +1,11 @@
 // import { JSDOM } from 'jsdom'
 // @ts-ignore
 import { queueMacroTask, queueMicroTask, warn } from '#root/utils'
+import { defVNode as _defVNode } from '#utils'
+
+/**@type {VVNode<Node, Element>} */
+// @ts-ignore
+const defVNode = _defVNode
 
 const VER = '8-1 jsdom'
 
@@ -22,7 +27,7 @@ function createHTML({ title } = {}) {
   return html
 }
 
-/**@type {import('#shims').RendererConfigCreator} */
+/**@type {import('#shims').RendererConfigCreatorBase} */
 async function createJsDomOption() {
   // const { window } = new JSDOM(createHTML(), {
   //   pretendToBeVisual: true
@@ -121,5 +126,6 @@ async function createJsDomOption() {
 }
 
 createJsDomOption.version = VER
+createJsDomOption.defVNode = defVNode
 
 export default createJsDomOption

@@ -8,7 +8,7 @@ interface RendererConfig<
   ParentN extends HN = ParentNode,
   EleNS extends Ele = HTMLElement,
   Doc extends HN = Document,
-  EleNameMapNS extends Record<string, EleNS> = HTMLElementTagNameMap,
+  EleNameMapNS = HTMLElementTagNameMap,
   HWC = HostWindowC
 > {
   // 接口Node继承自EventTarget，所以这里的el是Node类型
@@ -106,9 +106,32 @@ interface JSDOMWindow extends DOMWindow {
   name?: string
 }
 
-interface RendererConfigCreator {
+interface RendererConfigCreatorBase<
+  ET = EventTarget,
+  HN extends ET = Node,
+  Ele extends HN = Element,
+  ParentN extends HN = ParentNode,
+  EleNS extends Ele = HTMLElement,
+  Doc extends HN = Document,
+  EleNameMapNS = HTMLElementTagNameMap,
+  HWC = HostWindowC
+> {
   // (arg0: { window?: HostWindowC }): RendererConfig
-  (): Promise<RendererConfig>
+  (): Promise<RendererConfig<ET, HN, Ele, ParentN, EleNS, Doc, EleNameMapNS, HWC>>
 }
 
-export type { RendererConfig, JSDOMWindow, RendererConfigCreator }
+interface RendererConfigCreator<
+  ET = EventTarget,
+  HN extends ET = Node,
+  Ele extends HN = Element,
+  ParentN extends HN = ParentNode,
+  EleNS extends Ele = HTMLElement,
+  Doc extends HN = Document,
+  EleNameMapNS = HTMLElementTagNameMap,
+  HWC = HostWindowC
+> extends RendererConfigCreatorBase<ET, HN, Ele, ParentN, EleNS, Doc, EleNameMapNS, HWC> {
+  version: string
+  defVNode: VVNode<HN, Ele> //, { [key: string]: any }>
+}
+
+export type { RendererConfig, JSDOMWindow, RendererConfigCreator, RendererConfigCreatorBase }
