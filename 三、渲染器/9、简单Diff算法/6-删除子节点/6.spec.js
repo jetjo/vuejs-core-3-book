@@ -56,5 +56,6 @@ export const test = (optionFactory, factory) => {
 }
 
 if (await isLatestVer(createJsDomOption, creatorFactory)) {
+  // @ts-ignore
   test(createJsDomOption, creatorFactory)
 }

@@ -3,7 +3,8 @@ import type {
   VNodeChildAtomC1,
   VNodeNormalizedChildrenC,
   VNodeNormalizedChildrenC1,
-  VNodeNormalizedChildrenKeyed
+  VNodeNormalizedChildrenKeyed,
+  VNodeNormalizedChildrenKeyedC
 } from '#shims'
 
 declare global {
@@ -34,6 +35,11 @@ declare global {
   interface VVNodeWithKeyedChildren<HN = RendererNode, HE = RendererElement, EP = { [key: string]: any }>
     extends VNode<HN, HE, EP> {
     children?: VNodeNormalizedChildrenKeyed<HN, HE, EP>
+  }
+
+  interface VVNodeWithKeyedChildrenC<HN = RendererNode, HE = RendererElement, EP = { [key: string]: any }>
+    extends VNode<HN, HE, EP> {
+    children?: VNodeNormalizedChildrenKeyedC<HN, HE, EP>
   }
 
   interface IsArrayTypeFixed<F> {

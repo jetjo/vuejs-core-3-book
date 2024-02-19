@@ -4,7 +4,7 @@ import { RendererCreatorFactoryConfig, getValOfFnType, setValOfFnType } from '#u
 const VER = '8-1'
 /**@type {import('#shims').RendererCreatorFactory} */
 function factory(_config = defArg0) {
-  const __config = RendererCreatorFactoryConfig.init()
+  const __config = RendererCreatorFactoryConfig.init([])
   /**@type {Required<typeof __config>} */ // @ts-ignore
   const config = Object.assign(__config, _config)
   /* prettier-ignore */ // 标记config的所有字段都不是`undefined`
@@ -137,8 +137,8 @@ function factory(_config = defArg0) {
     setValOfFnType(config, 'patchElement')
 
     setValOfFnType(config, 'patchChildren')
-    // setValOfFnType(config, 'patchKeyedChildren')
-    // setValOfFnType(config, 'requireKeyedChildren')
+    setValOfFnType(config, 'patchKeyedChildren')
+    setValOfFnType(config, 'requireKeyedChildren')
     setValOfFnType(config, 'handleChildAdd', null, '暂不支持新增子节点')
     setValOfFnType(config, 'handleChildRemove', null, '暂不支持删除子节点')
 

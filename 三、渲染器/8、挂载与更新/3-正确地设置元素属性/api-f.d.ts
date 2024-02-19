@@ -66,7 +66,7 @@ interface RendererCreatorFactoryConfig<
    * @description 用于`patchChildren`方法, 优先级高于`简单Diff`算法
    * */
   patchKeyedChildren?: (
-    vnode: VVNodeWithKeyedChildren<HN, Ele, EP>,
+    vnode: VVNodeWithKeyedChildrenC<HN, Ele, EP>,
     newVNode: VVNodeWithKeyedChildren<HN, Ele, EP>,
     container: Ele,
     testTag?: string
@@ -180,11 +180,23 @@ export type VNodeArrayChildrenKeyed<
   EP = { [key: string]: any }
 > = Array<VNodeChildAtomKeyed<HN, HE, EP>>
 
+export type VNodeArrayChildrenKeyedC<
+  HN = RendererNode,
+  HE = RendererElement,
+  EP = { [key: string]: any }
+> = Array<VNodeChildAtomKeyed<HN, HE, EP> | undefined>
+
 export type VNodeNormalizedChildrenKeyed<
   HN = RendererNode,
   HE = RendererElement,
   EP = { [key: string]: any }
 > = VNodeArrayChildrenKeyed<HN, HE, EP>
+
+export type VNodeNormalizedChildrenKeyedC<
+  HN = RendererNode,
+  HE = RendererElement,
+  EP = { [key: string]: any }
+> = VNodeArrayChildrenKeyedC<HN, HE, EP>
 
 export type VNodeArrayChildrenC1<
   HN = RendererNode,
