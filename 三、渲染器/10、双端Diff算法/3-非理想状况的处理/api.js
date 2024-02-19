@@ -1,4 +1,4 @@
-import { RendererCreatorFactoryConfig } from '#utils'
+import { RendererCreatorFactoryConfig, requireCallable, setValOfFnType } from '#utils'
 import { defArg0, warn } from '#root/utils'
 import baseFactory from '../1-双端比较的原理/api.js'
 
@@ -12,7 +12,9 @@ function factory(_config = defArg0) {
     /* prettier-ignore */ // 标记config的所有字段都不是`undefined`
     if (!RendererCreatorFactoryConfig.markAllDefined(config)) throw new Error('what???')
 
-    config.patchKeyedChildren = (vnode, newVnode, container) => {
+    // @ts-ignore
+    function patchKeyedChildren(vnode, newVnode, container) {
+      requireCallable(config.patch)
       let newChildren = newVnode.children || []
       let oldChildren = vnode.children || []
       if (newChildren.length === 0 && oldChildren.length === 0) {
@@ -66,6 +68,7 @@ function factory(_config = defArg0) {
           oldEndIdx--
           continue
         }
+        // @ts-ignore
         const idxInOld = oldChildren.findIndex(node => node && node.key === newStartNode.key)
         const oldNodeToMove = oldChildren[idxInOld]
         if (idxInOld !== -1 && oldNodeToMove) {
@@ -85,6 +88,8 @@ function factory(_config = defArg0) {
       if(oldStartIdx <= oldEndIdx) throw new Error('oldChildren还有剩余节点, 暂不处理')
       return newVnode
     }
+
+    setValOfFnType(config, 'patchKeyedChildren', patchKeyedChildren)
 
     // @ts-ignore
     // config.patchKeyedChildren = null // void 0

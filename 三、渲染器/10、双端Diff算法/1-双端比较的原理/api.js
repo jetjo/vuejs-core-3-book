@@ -1,4 +1,4 @@
-import { RendererCreatorFactoryConfig } from '#utils'
+import { RendererCreatorFactoryConfig, requireCallable, setValOfFnType } from '#utils'
 import { defArg0, warn } from '#root/utils'
 import baseFactory from '../../9、简单Diff算法/6-删除子节点/api.js'
 
@@ -12,7 +12,9 @@ function factory(_config = defArg0) {
     /* prettier-ignore */ // 标记config的所有字段都不是`undefined`
     if (!RendererCreatorFactoryConfig.markAllDefined(config)) throw new Error('what???')
 
-    config.patchKeyedChildren = (vnode, newVnode, container) => {
+    // @ts-ignore
+    function patchKeyedChildren(vnode, newVnode, container) {
+      requireCallable(config.patch)
       let newChildren = newVnode.children || []
       let oldChildren = vnode.children || []
       if (newChildren.length === 0 && oldChildren.length === 0) {
@@ -28,6 +30,7 @@ function factory(_config = defArg0) {
           oldStartNode = oldChildren[oldStartIdx]
         let newEndNode = newChildren[newEndIdx],
           oldEndNode = oldChildren[oldEndIdx]
+        if (!oldStartNode || !oldEndNode) throw new Error('oldStartNode或oldEndNode不存在')
         if (!oldStartNode.el || !oldEndNode.el)
           throw new Error('oldStartNode.el或oldEndNode.el不存在')
         if (newStartNode.key === oldStartNode.key) {
@@ -64,6 +67,8 @@ function factory(_config = defArg0) {
       }
       return newVnode
     }
+
+    setValOfFnType(config, 'patchKeyedChildren', patchKeyedChildren)
 
     // @ts-ignore
     // config.patchKeyedChildren = null // void 0

@@ -61,7 +61,7 @@ interface RendererCreatorFactoryConfig<
   ) => VVNode<HN, Ele, EP>
 
   /**
-   * @version 10.1
+   * @version 10.5
    * @description 使用`双端Diff`算法对`vnode.children`进行排序
    * @description 用于`patchChildren`方法, 优先级高于`简单Diff`算法
    * */
@@ -72,7 +72,7 @@ interface RendererCreatorFactoryConfig<
     testTag?: string
   ) => VVNodeWithKeyedChildren<HN, Ele, EP>
 
-  /**@version 10.1 */
+  /**@version 9.4 */
   requireKeyedChildren?: (vnode: VVNodeWithKeyedChildren<HN, Ele>) => boolean
 
   /**
