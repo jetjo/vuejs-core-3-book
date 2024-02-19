@@ -137,6 +137,8 @@ function factory(_config = defArg0) {
     setValOfFnType(config, 'patchElement')
 
     setValOfFnType(config, 'patchChildren')
+    // setValOfFnType(config, 'patchKeyedChildren')
+    // setValOfFnType(config, 'requireKeyedChildren')
     setValOfFnType(config, 'handleChildAdd', null, '暂不支持新增子节点')
     setValOfFnType(config, 'handleChildRemove', null, '暂不支持删除子节点')
 

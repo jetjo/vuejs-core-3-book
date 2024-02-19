@@ -2,7 +2,8 @@ import type { RendererElement, RendererNode, VNode } from 'vue'
 import type {
   VNodeChildAtomC1,
   VNodeNormalizedChildrenC,
-  VNodeNormalizedChildrenC1
+  VNodeNormalizedChildrenC1,
+  VNodeNormalizedChildrenKeyed
 } from '#shims'
 
 declare global {
@@ -27,7 +28,12 @@ declare global {
 
   interface VVNode<HN = RendererNode, HE = RendererElement, EP = { [key: string]: any }>
     extends VNode<HN, HE, EP> {
-    children?: VNodeNormalizedChildrenC<HN, HE, EP> | VNodeNormalizedChildrenC1<HN, HE, EP>
+    children?: VNodeNormalizedChildrenC<HN, HE, EP>  // | VNodeNormalizedChildrenC1<HN, HE, EP>
+  }
+
+  interface VVNodeWithKeyedChildren<HN = RendererNode, HE = RendererElement, EP = { [key: string]: any }>
+    extends VNode<HN, HE, EP> {
+    children?: VNodeNormalizedChildrenKeyed<HN, HE, EP>
   }
 
   interface IsArrayTypeFixed<F> {
@@ -58,5 +64,12 @@ declare global {
       validate?: ((s: T, ...args: any[]) => boolean) | undefined,
       ...args: any[]
     ): asserts value is T
+  }
+
+  interface AssertUnknowns {
+    <T>(
+      validate?: ((...s: T[]) => boolean) | undefined,
+      ...value: unknown[]
+    ): asserts value is T[]
   }
 }

@@ -52,13 +52,28 @@ interface RendererCreatorFactoryConfig<
     testTag?: string
   ) => VVNode<HN, Ele, EP>
 
-  /**@version 8.9 */
+  /**@version 9.4≥8.9 */
   patchChildren?: (
     vnode: VVNode<HN, Ele, EP>,
     newVNode: VVNode<HN, Ele, EP>,
     container: HN,
     testTag?: string
   ) => VVNode<HN, Ele, EP>
+
+  /**
+   * @version 10.1
+   * @description 使用`双端Diff`算法对`vnode.children`进行排序
+   * @description 用于`patchChildren`方法, 优先级高于`简单Diff`算法
+   * */
+  patchKeyedChildren?: (
+    vnode: VVNodeWithKeyedChildren<HN, Ele, EP>,
+    newVNode: VVNodeWithKeyedChildren<HN, Ele, EP>,
+    container: Ele,
+    testTag?: string
+  ) => VVNodeWithKeyedChildren<HN, Ele, EP>
+
+  /**@version 10.1 */
+  requireKeyedChildren?: (vnode: VVNodeWithKeyedChildren<HN, Ele>) => boolean
 
   /**
    * @version 9.5
@@ -120,27 +135,56 @@ export type VNodeChildAtomC<
   EP = { [key: string]: any }
 > = VVNode<HN, HE, EP> | string | number | boolean | null | undefined | void
 
+export type VNodeChildAtomKeyed<
+  HN = RendererNode,
+  HE = RendererElement,
+  EP = { [key: string]: any }
+> = VVNode<HN, HE, EP> & { key: unknown }
+
+type VNodeOptProps<HN = RendererNode, HE = RendererElement, EP = { [key: string]: any }> = Omit<
+  VVNode<HN, HE, EP>,
+  'type' | 'props' | 'children' | 'el'
+>
+
 export type VVNodeOptionalSFC<
   HN = RendererNode,
   HE = RendererElement,
   EP = { [key: string]: any }
-> = Partial<Omit<VVNode<HN, HE, EP>, 'type' | 'props' | 'children' | 'el'>> &
+> = Partial<VNodeOptProps<HN, HE, EP>> &
   Pick<VVNode<HN, HE, EP>, 'type' | 'props' | 'children' | 'el'>
 
 export type VNodeChildAtomC1<
   HN = RendererNode,
   HE = RendererElement,
   EP = { [key: string]: any }
-> = Omit<VVNodeOptionalSFC<HN, HE, EP>, 'children'> & {
-  children?: VNodeNormalizedChildrenC1<HN, HE, EP>
-  // | VNodeNormalizedChildrenC<HN, HE, EP>
-}
+> =
+  | (Omit<VVNodeOptionalSFC<HN, HE, EP>, 'children'> & {
+      children?: VNodeNormalizedChildrenC1<HN, HE, EP>
+    })
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | void
 
 export type VNodeArrayChildrenC<
   HN = RendererNode,
   HE = RendererElement,
   EP = { [key: string]: any }
 > = Array<VNodeArrayChildrenC<HN, HE, EP> | VNodeChildAtomC<HN, HE, EP>>
+
+export type VNodeArrayChildrenKeyed<
+  HN = RendererNode,
+  HE = RendererElement,
+  EP = { [key: string]: any }
+> = Array<VNodeChildAtomKeyed<HN, HE, EP>>
+
+export type VNodeNormalizedChildrenKeyed<
+  HN = RendererNode,
+  HE = RendererElement,
+  EP = { [key: string]: any }
+> = VNodeArrayChildrenKeyed<HN, HE, EP>
 
 export type VNodeArrayChildrenC1<
   HN = RendererNode,
@@ -152,6 +196,8 @@ export type VNodeChildC<HN = RendererNode, HE = RendererElement, EP = { [key: st
   | VNodeChildAtomC<HN, HE, EP>
   | VNodeArrayChildrenC<HN, HE, EP>
 
+type ChildC = Exclude<VNode['children'], VNodeArrayChildren>
+
 export type VNodeNormalizedChildrenC<
   HN = RendererNode,
   HE = RendererElement,
@@ -160,13 +206,13 @@ export type VNodeNormalizedChildrenC<
   /* | Exclude<VVNode['children'], VNodeArrayChildren> 
   VVNode['children']的类型就是VNodeNormalizedChildrenC,
   这样就形成循环依赖了!*/
-  Exclude<VNode['children'], VNodeArrayChildren> | VNodeArrayChildrenC<HN, HE, EP>
+  ChildC | VNodeArrayChildrenC<HN, HE, EP>
 
 export type VNodeNormalizedChildrenC1<
   HN = RendererNode,
   HE = RendererElement,
   EP = { [key: string]: any }
-> = Exclude<VNode['children'], VNodeArrayChildren> | VNodeArrayChildrenC1<HN, HE, EP>
+> = ChildC | VNodeArrayChildrenC1<HN, HE, EP>
 
 /**@version 8.9 */
 interface RendererCreatorFactory<

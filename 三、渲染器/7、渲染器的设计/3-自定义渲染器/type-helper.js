@@ -31,6 +31,8 @@ function init(ignors = []) {
     unmount: undefined,
     patchElement: undefined,
     patchChildren: undefined,
+    // patchKeyedChildren: undefined,
+    // requireKeyedChildren: undefined,
     handleChildAdd: undefined,
     handleChildRemove: undefined,
     patch: undefined,
@@ -105,11 +107,45 @@ function assertUnknownEx(value, validate, ...args) {
   return
 }
 
+/**@type {AssertUnknowns} */
+function assertUnknowns(validate, ...value) {
+  // @ts-ignore
+  if (validate && !validate(...value)) throw new Error('failed')
+  return
+}
+
+/**@type {VVNode} */
+const defVNode = {
+  type: '',
+  props: null,
+  key: null,
+  ref: null,
+  /**
+   * SFC only. This is assigned on vnode creation using currentScopeId
+   * which is set alongside currentRenderingInstance.
+   */
+  scopeId: null,
+  children: null,
+  component: null,
+  dirs: null,
+  transition: null,
+  el: null,
+  anchor: null,
+  target: null,
+  targetAnchor: null,
+  suspense: null,
+  shapeFlag: 0,
+  patchFlag: 0,
+  appContext: null
+}
+
 export {
   setValOfFnType,
   getValOfFnType,
   requireCallable,
   requireEventHandler,
   assertUnknown,
-  assertUnknownEx
+  assertUnknownEx,
+  assertUnknowns,
+  defVNode
 }

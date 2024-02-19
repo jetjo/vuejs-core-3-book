@@ -21,7 +21,7 @@ function factory(_config = defArg0) {
     }
 
     // @ts-ignore
-    const isCommenNode = type => {
+    const isCommentNode = type => {
       if (typeof type === 'symbol') return type === Comment
       if (typeof type === 'string') return Symbol.for(type) === Comment
       return false
@@ -45,7 +45,7 @@ function factory(_config = defArg0) {
       }
       const { type } = newVnode
       const testFlag = arguments[4]
-      if (isTextNode(type) || isCommenNode(type)) {
+      if (isTextNode(type) || isCommentNode(type)) {
         let el
         if (!vnode) el = MountCharacterNode(newVnode, container, anchor)
         else el = PatchCharacterNode(vnode, newVnode, anchor)
