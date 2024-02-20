@@ -44,7 +44,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import creatorFactory from '../6-区分vnode类型/api.js'
 import createJsDomOption from './render-opt-browser.js'
 import { test as baseTest } from '../5-卸载操作/5.spec.js'
-import { log, warn } from '#root/utils'
+import { warn } from '#root/utils'
 import { getApi, isLatestVer } from '../../utils/test.helper.js'
 
 const suitName = '7-事件处理'
