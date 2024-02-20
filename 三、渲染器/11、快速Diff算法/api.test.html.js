@@ -1,7 +1,8 @@
 import { isLatestVer } from '../utils/test.helper.js'
 import { getApi } from '../utils/test.helper.js'
 import vnodes_ from '../vnodes.json'
-import factory from './3-如何移动元素/api.js'
+// import factory from './3-如何移动元素/api.js'
+import factory from './4-改善性能/api.js'
 
 // @ts-ignore
 export async function test(optionCreator, title = '11-3 快速Diff算法测试', isBrowser = false) {
