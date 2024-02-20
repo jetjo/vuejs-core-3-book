@@ -160,7 +160,7 @@
               }
             }
 
-            if (moved) {
+            if (moved || source.includes(-1)) {
               const seq = lis(source)
               // s 指向最长递增子序列的最后一个值
               let s = seq.length - 1
