@@ -13,6 +13,13 @@ function factory(_config = defArg0) {
     /* prettier-ignore */ // 标记config的所有字段都不是`undefined`
     if (!RendererCreatorFactoryConfig.markAllDefined(config)) throw new Error('what???')
 
+    // @ts-ignore
+    const isFragmentNode = type => {
+      if (typeof type === 'symbol') return type === Fragment
+      if (typeof type === 'string') return Symbol.for(type) === Fragment
+      return false
+    }
+
     const basePatch = config.patch
     /**
      * @description 目前实现三个目标:
@@ -29,13 +36,11 @@ function factory(_config = defArg0) {
         vnode = null
       }
       const { type } = newVnode
+      if (vnode && !isFragmentNode(type) && !vnode.el) {
+        throw new Error('旧节点没有对应的真实DOM节点, 无法打补丁!')
+      }
       const testFlag = arguments[4]
-      if (
-        // @ts-ignore
-        (typeof type === 'symbol' && type === Fragment) ||
-        // @ts-ignore
-        (typeof type === 'string' && Symbol.for(type) === Fragment)
-      ) {
+      if (isFragmentNode(type)) {
         if (!config.isVNodeArrayChildrenC(newVnode.children)) throw new Error('Fragment的children字段必须是数组') // prettier-ignore
         if (!vnode) {
           newVnode.children.forEach(child => {
@@ -84,9 +89,8 @@ function factory(_config = defArg0) {
     const baseUmount = config.unmount
     config.unmount = function (vnode) {
       if (!vnode) return
-      if (vnode.type === Fragment) {
-        // @ts-ignore
-        warn([vnode.children[0], vnode.children[1]], '卸载Fragment')
+      if (isFragmentNode(vnode.type)) {
+        // warn([vnode.children[0], vnode.children[1]], '卸载Fragment')
         if(!config.isVNodeArrayChildrenC(vnode.children)) throw new Error('Fragment的children字段必须是数组') // prettier-ignore
         vnode.children.forEach(child => {
           if(!config.isVNodeChildAtomC_VVNode(child)) throw new Error('Fragment的children必须是VNode类型') // prettier-ignore
