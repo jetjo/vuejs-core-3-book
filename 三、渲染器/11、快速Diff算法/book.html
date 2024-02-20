@@ -87,15 +87,23 @@
 
           oldVNode = oldChildren[oldEnd]
           newVNode = newChildren[newEnd]
-
+          const isStart = oldEnd < j || newEnd < j
+          if (isStart) {
+            console.warn('在处理完前置节点后, 其中至少有一方已经完全处理完毕!')
+          }
           // while 循环向前遍历，直到遇到拥有不同 key 值的节点为止
-          while (oldVNode.key === newVNode.key) {
+          while (!isStart && oldVNode.key === newVNode.key) {
             // 调用 patch 函数更新
             patch(oldVNode, newVNode, container)
             oldEnd--
             newEnd--
             oldVNode = oldChildren[oldEnd]
             newVNode = newChildren[newEnd]
+          }
+
+          if (j > oldEnd && j > newEnd) {
+            console.warn('经过前置和后置处理, 新旧子节点完全处理完毕!')
+            return
           }
 
           // 满足条件，则说明从 j -> newEnd 之间的节点应作为新节点插入
