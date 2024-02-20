@@ -31,7 +31,7 @@ interface RendererConfig<
    * @version 8.1
    * @param {HN | null} anchor 用于支持元素的移动
    * @description 将`child`插入到`parent.anchor`节点前面 */
-  insert: (child: HN, parent: HN, anchor?: HN | null, isSvg?: boolean) => void
+  insert: (child: HN | null, parent: HN, anchor?: HN | null, isSvg?: boolean) => void
 
   /**@version 8.7 */
   patchEventProp: (el: HN, key: string, prevValue: Handler, nextValue: Handler) => HN
@@ -117,7 +117,9 @@ interface RendererConfigCreatorBase<
   HWC = HostWindowC
 > {
   // (arg0: { window?: HostWindowC }): RendererConfig
-  (): Promise<RendererConfig<ET, HN, Ele, ParentN, EleNS, Doc, EleNameMapNS, HWC>>
+  (
+    isBrowser?: boolean
+  ): Promise<RendererConfig<ET, HN, Ele, ParentN, EleNS, Doc, EleNameMapNS, HWC>>
 }
 
 interface RendererConfigCreator<

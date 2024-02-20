@@ -33,8 +33,8 @@ async function isLatestVer(optFactory, factory, isBrowser = false) {
  * @param {string} testName
  * @returns {Promise<{render: import('#shims').Renderer['render'], rAF: import('#shims').RendererConfig['requestAnimationFrame'], config: import('#shims').RendererConfig, apiVer: string, optVer:string, container: Element, renderer: any }>}
  * */
-const getApi = async (createOption, creatorFactory, suitName, testName = '') => {
-  const config = await createOption()
+const getApi = async (createOption, creatorFactory, suitName, testName = '', isBrowser = false) => {
+  const config = await createOption(isBrowser)
   const { requestAnimationFrame: rAF, version: optVer } = config
   const renderer = creatorFactory(defArg0)(config)
   const { render, version: apiVer } = renderer

@@ -1,6 +1,6 @@
 // import { JSDOM } from 'jsdom'
 // @ts-ignore
-import { queueMacroTask, queueMicroTask, warn } from '#root/utils'
+import { queueMacroTask, queueMicroTask, warn, isDev, isTest } from '#root/utils'
 import { defVNode as _defVNode } from '#utils'
 
 /**@type {VVNode<Node, Element>} */
@@ -28,7 +28,7 @@ function createHTML({ title } = {}) {
 }
 
 /**@type {import('#shims').RendererConfigCreatorBase} */
-async function createJsDomOption() {
+async function createJsDomOption(isBrowser = false) {
   // const { window } = new JSDOM(createHTML(), {
   //   pretendToBeVisual: true
   // })
@@ -55,14 +55,18 @@ async function createJsDomOption() {
     // return 0
   }
 
-  // // NOTE: 如果`body`已经包含`#app`的`container`了,
-  // // 再重新赋值, 会导致之前`renderer`渲染时所使用的`container`被从页面卸载掉!!!
-  // // if (document.body.innerHTML === '') {
-  // // NOTE: 不知为何, `vitest`测试时, 这一句的执行时机被提升到了方法体外面
-  // 并且,有时候执行了没有效果, body还是原来的内容
-  // // 所以注释掉. 每个`test suit`需要清空`body`时,自行清空
-  document.body.innerHTML = /* html */ `<div id="app"></div>`
-  // // }
+  if (!isBrowser && !isDev) {
+    // // NOTE: 如果`body`已经包含`#app`的`container`了,
+    // // 再重新赋值, 会导致之前`renderer`渲染时所使用的`container`被从页面卸载掉!!!
+    // // if (document.body.innerHTML === '') {
+    // // NOTE: 不知为何, `vitest`测试时, 这一句的执行时机被提升到了方法体外面
+    // 并且,有时候执行了没有效果, body还是原来的内容
+    // // 所以注释掉. 每个`test suit`需要清空`body`时,自行清空
+    document.body.innerHTML = /* html */ `<div id="app"></div>`
+    // // }
+  } else {
+    warn('真实浏览器环境!', { isDev, isTest, isBrowser })
+  }
 
   // NOTE: 前面为`document.body.innerHTML`赋值后, 需要等待一段时间, 等`jsdom`渲染完毕???
   await requestAnimationFrame()
@@ -89,6 +93,7 @@ async function createJsDomOption() {
       return document.createElement(tag)
     },
     insert: (child, parent, anchor = null) => {
+      if (child === null) throw new Error('child不能是null!')
       parent.insertBefore(child, anchor)
     },
     setElementText: (el, text) => {
@@ -128,4 +133,7 @@ async function createJsDomOption() {
 createJsDomOption.version = VER
 createJsDomOption.defVNode = defVNode
 
-export default createJsDomOption
+/**@type {import('#shims').RendererConfigCreator} */
+const optCreator = createJsDomOption
+
+export default optCreator

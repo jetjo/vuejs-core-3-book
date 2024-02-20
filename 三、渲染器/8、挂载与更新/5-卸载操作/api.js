@@ -23,7 +23,7 @@ function factory(_config = defArg0) {
     }
 
     config.unmount = function (vnode) {
-      if (!vnode.el) return
+      if (!vnode || !vnode.el) return
       const parent = vnode.el.parentNode
       if (!parent) return
       parent.removeChild(vnode.el)

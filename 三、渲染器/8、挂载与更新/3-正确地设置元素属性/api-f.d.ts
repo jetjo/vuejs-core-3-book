@@ -73,7 +73,7 @@ interface RendererCreatorFactoryConfig<
   ) => VVNodeWithKeyedChildren<HN, Ele, EP>
 
   /**
-   * @version 10.5
+   * @version 11.4,11.3
    * @description 使用`快速Diff`算法对`vnode.children`进行排序
    * @description 用于`patchChildren`方法, 优先级高于`Vue2`使用的`双端Diff`算法
    * */
@@ -128,7 +128,7 @@ interface RendererCreatorFactoryConfig<
   /**
    * @version 8.11≥8.5
    * @description 卸载, 与`mountElement`一同负责设置`vnode.el` */
-  unmount?: (oldVnode: VVNode<HN, Ele, EP>) => void
+  unmount?: (oldVnode?: VVNode<HN, Ele, EP>) => void
 
   /**
    * @version 8.1
