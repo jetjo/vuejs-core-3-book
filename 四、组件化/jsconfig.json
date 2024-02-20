@@ -1,0 +1,29 @@
+{
+  "extends": "../jsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "checkJs": true,
+    "noUnusedParameters": false,
+    "customConditions": [
+      "test",
+      "verify"
+    ],
+    "paths": {
+      // NOTE: 这里使用单个*,就代表所有层级的子目录,不用使用**/*
+      // NOTE: 与`package.json`中的`imports`字段的`"#root/*"`对应  
+      "#root/*": [
+        "../internal-barrel/*"
+      ],
+      "#shims": [
+        "./types/shims.d.ts"
+      ],
+      "#utils": [
+        "./utils/index.js",
+      ],
+      "@jetjo/vue3/*": [
+        "../exports-barrel/*",
+        "../internal-barrel/*"
+      ]
+    }
+  }
+}

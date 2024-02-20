@@ -1,5 +1,5 @@
 {
-  "name": "@jetjo/vue3-chapter3",
+  "name": "@jetjo/vue3-chapter4",
   "version": "1.0.0",
   "description": "",
   "type": "module",
@@ -43,9 +43,7 @@
     ".": {
       "types": "./types/shims.d.ts",
       "default": null
-    },
-    "./module-res-utils":"./module-res-utils.js",
-    "./module-res-utils.js":"./module-res-utils.js"
+    }
   },
   "dependencies": {
     "jsonc-parser": "^3.2.1",

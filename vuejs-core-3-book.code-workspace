@@ -13,11 +13,15 @@
 			"path": "三、渲染器"
 		},
 		{
-			"path": "typescript-config-test"
+			"name": "chapter-4",
+			"path": "四、组件化"
 		},
-		{
-			"path": "code-for-vue-3-book-master"
-		}
+		// {
+		// 	"path": "typescript-config-test"
+		// },
+		// {
+		// 	"path": "code-for-vue-3-book-master"
+		// }
 	],
 	"settings": {
 		"files.autoSave": "onFocusChange",
