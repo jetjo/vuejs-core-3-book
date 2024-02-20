@@ -61,11 +61,20 @@
           let j = 0
           let oldVNode = oldChildren[j]
           let newVNode = newChildren[j]
+          const isEnd = j === oldChildren.length || j === newChildren.length
+          if (isEnd) {
+            console.warn('处理前置节点前,  \`oldChildren\`和\`newChildren\`之中至少有一个是空数组!') // prettier-ignore
+          }
           // while 循环向后遍历，直到遇到拥有不同 key 值的节点为止
-          while (oldVNode.key === newVNode.key) {
+          while (!isEnd && oldVNode.key === newVNode.key) {
             // 调用 patch 函数更新
             patch(oldVNode, newVNode, container)
             j++
+            // 防止当新旧两个数组完全一致时继续执行
+            if (j === oldChildren.length || j === newChildren.length) {
+              console.warn('处理前置节点时,  \`oldChildren\`和\`newChildren\`之中至少有一个已经遍历完毕!') // prettier-ignore
+              break
+            }
             oldVNode = oldChildren[j]
             newVNode = newChildren[j]
           }
