@@ -12,4 +12,5 @@ async function createDOMOption() {
   return Object.assign(domOpt, { version: VER })
 }
 createDOMOption.version = VER
+createDOMOption.defVNode = baseCreate.defVNode
 export default createDOMOption

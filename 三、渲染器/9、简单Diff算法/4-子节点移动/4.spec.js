@@ -18,6 +18,7 @@ export const test = (optionFactory, factory) => {
 
       render(
         {
+          // @ts-ignore
           type: Fragment,
           children: [
             // @ts-ignore
@@ -32,6 +33,7 @@ export const test = (optionFactory, factory) => {
       expect(container.innerHTML).toBe('<p></p>text')
       render(
         {
+          // @ts-ignore
           type: Fragment,
           children: [
             // @ts-ignore

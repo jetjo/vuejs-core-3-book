@@ -15,6 +15,7 @@ export async function test(optionCreator, title = '4-子节点次序更新', isB
 
     render(
       {
+        // @ts-ignore
         type: Fragment,
         children: [
           // @ts-ignore
@@ -29,6 +30,7 @@ export async function test(optionCreator, title = '4-子节点次序更新', isB
     document.addEventListener('click', () => {
       render(
         {
+          // @ts-ignore
           type: Fragment,
           children: [
             // @ts-ignore

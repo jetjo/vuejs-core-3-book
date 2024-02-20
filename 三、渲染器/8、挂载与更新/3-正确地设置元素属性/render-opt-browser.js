@@ -95,5 +95,6 @@ async function createDOMOption() {
 export { shouldSetAsProp }
 
 createDOMOption.version = VER
+createDOMOption.defVNode = baseCreate.defVNode
 
 export default createDOMOption

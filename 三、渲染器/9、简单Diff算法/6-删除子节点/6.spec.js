@@ -18,6 +18,7 @@ export const test = (optionFactory, factory) => {
 
       render(
         {
+          // @ts-ignore
           type: Fragment,
           // @ts-ignore
           children: [
@@ -36,6 +37,7 @@ export const test = (optionFactory, factory) => {
       )
       render(
         {
+          // @ts-ignore
           type: Fragment,
           children: [
             // @ts-ignore
@@ -56,6 +58,5 @@ export const test = (optionFactory, factory) => {
 }
 
 if (await isLatestVer(createJsDomOption, creatorFactory)) {
-  // @ts-ignore
   test(createJsDomOption, creatorFactory)
 }
