@@ -17,7 +17,9 @@ interface Renderer<HN = Node, Ele extends HN = Element, EP = { [key: string]: an
   version: string
 }
 
-type Container<T, HN, Ele, EP> = T & { vnode?: VVNode<HN, Ele, EP> | null }
+type Container<T, HN = Node, Ele extends HN = Element, EP = { [key: string]: any }> = T & {
+  vnode?: VVNode<HN, Ele, EP> | null
+}
 
 interface RendererEx<HN = Node, Ele extends HN = Element, EP = { [key: string]: any }>
   extends Renderer<HN, Ele, EP> {
@@ -77,7 +79,7 @@ interface RendererEx<HN = Node, Ele extends HN = Element, EP = { [key: string]: 
   ) => VVNodeWithKeyedChildren<HN, Ele, EP>
 
   /**@version 9.4 */
-  requireKeyedChildren: (vnode: VVNodeWithKeyedChildren<HN, Ele>) => boolean
+  requireKeyedChildren: (vnode: VVNodeWithKeyedChildren<HN, Ele, EP>) => boolean
 
   /**
    * @version 9.5

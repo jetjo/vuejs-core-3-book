@@ -76,9 +76,11 @@ export type VNodeArrayChildrenC1<
   EP = { [key: string]: any }
 > = Array<VNodeArrayChildrenC1<HN, HE, EP> | VNodeChildAtomC1<HN, HE, EP>>
 
-export type VNodeChildC<HN = RendererNode, HE = RendererElement, EP = { [key: string]: any }> =
-  | VNodeChildAtomC<HN, HE, EP>
-  | VNodeArrayChildrenC<HN, HE, EP>
+export type VNodeChildC<
+  HN = RendererNode,
+  HE = RendererElement,
+  EP = { [key: string]: any }
+> = VNodeChildAtomC<HN, HE, EP> | VNodeArrayChildrenC<HN, HE, EP>
 
 export type ChildC = Exclude<VNode['children'], VNodeArrayChildren>
 

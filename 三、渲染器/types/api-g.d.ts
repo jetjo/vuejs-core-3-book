@@ -1,4 +1,4 @@
-import type { RendererElement, RendererNode, VNode } from 'vue'
+import type { Element, Node, VNode } from 'vue'
 import type {
   VNodeChildAtomC1,
   VNodeNormalizedChildrenC,
@@ -22,22 +22,22 @@ declare global {
   }
 
   // interface VVNode 1<
-  //   HN = RendererNode,
-  //   HE = RendererElement,
+  //   HN = Node,
+  //   HE = Element,
   //   EP = { [key: string]: any }
   // > extends VNodeChildAtomC 1<HN, HE, EP> {}
 
-  interface VVNode<HN = RendererNode, HE = RendererElement, EP = { [key: string]: any }>
+  interface VVNode<HN = Node, HE = Element, EP = { [key: string]: any }>
     extends VNode<HN, HE, EP> {
-    children?: VNodeNormalizedChildrenC<HN, HE, EP>  // | VNodeNormalizedChildrenC1<HN, HE, EP>
+    children?: VNodeNormalizedChildrenC<HN, HE, EP> // | VNodeNormalizedChildrenC1<HN, HE, EP>
   }
 
-  interface VVNodeWithKeyedChildren<HN = RendererNode, HE = RendererElement, EP = { [key: string]: any }>
+  interface VVNodeWithKeyedChildren<HN = Node, HE = Element, EP = { [key: string]: any }>
     extends VNode<HN, HE, EP> {
     children?: VNodeNormalizedChildrenKeyed<HN, HE, EP>
   }
 
-  interface VVNodeWithKeyedChildrenC<HN = RendererNode, HE = RendererElement, EP = { [key: string]: any }>
+  interface VVNodeWithKeyedChildrenC<HN = Node, HE = Element, EP = { [key: string]: any }>
     extends VNode<HN, HE, EP> {
     children?: VNodeNormalizedChildrenKeyedC<HN, HE, EP>
   }
