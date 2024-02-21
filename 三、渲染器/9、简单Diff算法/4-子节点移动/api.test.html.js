@@ -5,13 +5,14 @@ import { Fragment, Text } from '../../convention.js'
 import factory from '../../11、快速Diff算法/4-改善性能/api.js'
 
 // @ts-ignore
-export async function test(optionCreator, title = '4-子节点次序更新', isBrowser = false) {
-  if (await isLatestVer(optionCreator, factory, isBrowser)) {
+export async function test(option, title = '4-子节点次序更新', isBrowser = false) {
+  if (await isLatestVer(option, factory, isBrowser)) {
     const { render, container } = await getApi(
-      optionCreator,
+      option,
       factory,
       title,
-      '只有两个子节点的特殊情形'
+      '只有两个子节点的特殊情形',
+      isBrowser
     )
 
     render(

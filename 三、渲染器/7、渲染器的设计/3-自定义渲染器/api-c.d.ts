@@ -34,7 +34,13 @@ interface RendererConfig<
   insert: (child: HN | null, parent: HN, anchor?: HN | null, isSvg?: boolean) => void
 
   /**@version 8.7 */
-  patchEventProp: (el: HN, key: string, prevValue: Handler, nextValue: Handler) => HN
+  patchEventProp: (
+    this: RendererConfig<ET, HN, Ele, ParentN, EleNS, Doc, EleNameMapNS, HWC>,
+    el: HN,
+    key: string,
+    prevValue: Handler,
+    nextValue: Handler
+  ) => HN
 
   /**
    * @version 8.7≥8.4≥8.3
@@ -43,7 +49,13 @@ interface RendererConfig<
    * @dependencies el.tagName
    * @dependencies el.className
    */
-  patchProps: ((el: Ele, key: string, prevValue: unknown, nextValue: unknown) => Ele) & {
+  patchProps: ((
+    this: RendererConfig<ET, HN, Ele, ParentN, EleNS, Doc, EleNameMapNS, HWC>,
+    el: Ele,
+    key: string,
+    prevValue: unknown,
+    nextValue: unknown
+  ) => Ele) & {
     // requireElement?: AssertElementNode<HN, Ele>
     isElement?: (n: Ele) => boolean
   }
@@ -94,6 +106,12 @@ interface RendererConfig<
 
   /**@version 8.10 */
   setComment: (el: HN, text: string) => HN
+
+  version: string
+
+  defVNode: VVNode<HN, Ele> //, { [key: string]: any }>
+
+  clearPage: () => void
 }
 
 type Handler = EventListenerOrEventListenerObjectC['value']
@@ -106,34 +124,4 @@ interface JSDOMWindow extends DOMWindow {
   name?: string
 }
 
-interface RendererConfigCreatorBase<
-  ET = EventTarget,
-  HN extends ET = Node,
-  Ele extends HN = Element,
-  ParentN extends HN = ParentNode,
-  EleNS extends Ele = HTMLElement,
-  Doc extends HN = Document,
-  EleNameMapNS = HTMLElementTagNameMap,
-  HWC = HostWindowC
-> {
-  // (arg0: { window?: HostWindowC }): RendererConfig
-  (
-    isBrowser?: boolean
-  ): Promise<RendererConfig<ET, HN, Ele, ParentN, EleNS, Doc, EleNameMapNS, HWC>>
-}
-
-interface RendererConfigCreator<
-  ET = EventTarget,
-  HN extends ET = Node,
-  Ele extends HN = Element,
-  ParentN extends HN = ParentNode,
-  EleNS extends Ele = HTMLElement,
-  Doc extends HN = Document,
-  EleNameMapNS = HTMLElementTagNameMap,
-  HWC = HostWindowC
-> extends RendererConfigCreatorBase<ET, HN, Ele, ParentN, EleNS, Doc, EleNameMapNS, HWC> {
-  version: string
-  defVNode: VVNode<HN, Ele> //, { [key: string]: any }>
-}
-
-export type { RendererConfig, JSDOMWindow, RendererConfigCreator, RendererConfigCreatorBase }
+export type { RendererConfig, JSDOMWindow }

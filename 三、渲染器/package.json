@@ -41,8 +41,8 @@
   },
   "exports": {
     ".": {
-      "types": "./types/shims.d.ts",
-      "default": null
+      "types": "./shims.d.ts",
+      "default": "./index.js"
     },
     "./module-res-utils":"./module-res-utils.js",
     "./module-res-utils.js":"./module-res-utils.js"

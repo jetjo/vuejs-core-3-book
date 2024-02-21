@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import creatorFactory from './api.js'
-import createJsDomOption from '../10-文本节点和注释节点/render-opt-browser.js'
+import factory from './api.js'
+import option from '../10-文本节点和注释节点/render-opt-browser.js'
 import { test as baseTest } from '../10-文本节点和注释节点/10.spec.js'
 import { isLatestVer } from '../../utils/test.helper.js'
 import { getApi } from '../../utils/test.helper.js'
@@ -9,12 +9,12 @@ import { Fragment, Text } from '../../convention.js'
 const suitName = 'Fragment渲染'
 
 /**@type {typeof baseTest} */
-export const test = (optionFactory, factory) => {
-  baseTest(optionFactory, factory)
+export const test = (option, factory) => {
+  baseTest(option, factory)
 
   describe(suitName, async () => {
     it('挂载、更新、卸载', async () => {
-      const { render, rAF, container, apiVer } = await getApi(optionFactory, factory, suitName)
+      const { render, rAF, container, apiVer } = await getApi(option, factory, suitName)
 
       render(
         // @ts-ignore
@@ -35,6 +35,6 @@ export const test = (optionFactory, factory) => {
   })
 }
 
-if (await isLatestVer(createJsDomOption, creatorFactory)) {
-  test(createJsDomOption, creatorFactory)
+if (await isLatestVer(option, factory)) {
+  test(option, factory)
 }

@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest'
-import creatorFactory from './api.js'
-import createJsDomOption from './render-opt-jsdom.js'
+import factory from './api.js'
+import option from './render-opt-jsdom.js'
 import { getApi, isLatestVer } from '../../utils/test.helper.js'
 
 /**
- * @param {import('#shims').RendererConfigCreator } createOption
- * @param {import('#shims').RendererCreatorFactory} creatorFactory
+ * @param {import('#shims').RendererConfig} option
+ * @param {import('#shims').RendererCreatorFactory} factory
  * @returns {void}
  */
-export const test = (createOption, creatorFactory) => {
+export const test = (option, factory) => {
   describe('1-挂载子节点与元素属性', async () => {
     /**@type {VVNode<Node, Element>} */
     // @ts-ignore
@@ -20,7 +20,7 @@ export const test = (createOption, creatorFactory) => {
       },
       children: [
         {
-          ...createOption.defVNode,
+          ...option.defVNode,
           el: null,
           type: 'p',
           props: {},
@@ -33,7 +33,7 @@ export const test = (createOption, creatorFactory) => {
 
     it(`正确创建了页面`, async () => {
       // prettier-ignore
-      const { rAF } = await getApi(createOption, creatorFactory, '挂载子节点与元素属性', '正确创建了页面')
+      const { rAF } = await getApi(option, factory, '挂载子节点与元素属性', '正确创建了页面')
       document.body.innerHTML = /* html */ `<div id="app"></div>`
       await rAF()
       expect(document.body.innerHTML).toBe(/* html */ `<div id="app"></div>`)
@@ -41,7 +41,7 @@ export const test = (createOption, creatorFactory) => {
 
     it(`正确渲染了节点`, async () => {
       // prettier-ignore
-      const { render, rAF, config } = await getApi(createOption, creatorFactory, '挂载子节点与元素属性', '正确渲染了节点')
+      const { render, rAF, config } = await getApi(option, factory, '挂载子节点与元素属性', '正确渲染了节点')
       document.body.innerHTML = /* html */ `<div id="app"></div>`
       await rAF()
       render(vnode, config.getContainer())
@@ -53,6 +53,6 @@ export const test = (createOption, creatorFactory) => {
   })
 }
 
-if (await isLatestVer(createJsDomOption, creatorFactory)) {
-  test(createJsDomOption, creatorFactory)
+if (await isLatestVer(option, factory)) {
+  test(option, factory)
 }

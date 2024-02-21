@@ -11,10 +11,10 @@ function getTestVerTag() {
 }
 
 // @ts-ignore
-async function isLatestVer(optFactory, factory, isBrowser = false) {
+async function isLatestVer(option, factory, isBrowser = false) {
   const testFlag = getTestVerTag()
-  if (!optFactory.version || !factory.version) throw new Error('版本号不能为空')
-  const curFlag = `${optFactory.version},${factory.version}`
+  if (!option.version || !factory.version) throw new Error('版本号不能为空')
+  const curFlag = `${option.version},${factory.version}`
   warn(`testFlag: ${testFlag}, curFlag: ${curFlag}`) //, import.meta.env)
   const flag = testFlag?.startsWith(curFlag)
   if (isTest && !flag) {
@@ -27,21 +27,22 @@ async function isLatestVer(optFactory, factory, isBrowser = false) {
 
 // @ts-ignore
 /**
- * @param {*} createOption
+ * @param {*} option
  * @param {*} creatorFactory
  * @param {string} suitName
  * @param {string} testName
  * @returns {Promise<{render: import('#shims').Renderer['render'], rAF: import('#shims').RendererConfig['requestAnimationFrame'], config: import('#shims').RendererConfig, apiVer: string, optVer:string, container: Element, renderer: any }>}
  * */
-const getApi = async (createOption, creatorFactory, suitName, testName = '', isBrowser = false) => {
-  const config = await createOption(isBrowser)
-  const { requestAnimationFrame: rAF, version: optVer } = config
-  const renderer = creatorFactory(defArg0)(config)
+const getApi = async (option, creatorFactory, suitName, testName = '', remainPage = false) => {
+  if (!remainPage) option.clearPage()
+  const { requestAnimationFrame: rAF, version: optVer } = option
+  await rAF()
+  const renderer = creatorFactory(defArg0)(option)
   const { render, version: apiVer } = renderer
-  const container = config.getContainer()
+  const container = option.getContainer()
   if (!container) throw new Error('container is not defined')
   warn(`${apiVer} - ${optVer} - ${suitName} - ${testName}`)
-  return { render, rAF, config, apiVer, optVer, container, renderer }
+  return { render, rAF, config: option, apiVer, optVer, container, renderer }
 }
 
 export { isLatestVer, getApi }

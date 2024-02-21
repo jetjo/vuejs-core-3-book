@@ -5,9 +5,9 @@ import vnodes_ from '../../vnodes.json'
 import factory from '../../11、快速Diff算法/4-改善性能/api.js'
 
 // @ts-ignore
-export async function test(optionCreator, title = '5,6-子节点增删', isBrowser = false) {
-  if (await isLatestVer(optionCreator, factory, isBrowser)) {
-    const { render, container } = await getApi(optionCreator, factory, title, '子节点增删')
+export async function test(option, title = '5,6-子节点增删', isBrowser = false) {
+  if (await isLatestVer(option, factory, isBrowser)) {
+    const { render, container } = await getApi(option, factory, title, '子节点增删', isBrowser)
 
     /**@type {Array<*>} */
     const vnodes = vnodes_

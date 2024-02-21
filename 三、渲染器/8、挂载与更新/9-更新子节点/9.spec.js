@@ -1,14 +1,14 @@
 import { describe, it, expect, vi } from 'vitest'
 import { getApi, isLatestVer } from '../../utils/test.helper'
-import renderOptionCtor from '../8-事件冒泡与更新时机问题/render-opt-browser.js'
+import option from '../8-事件冒泡与更新时机问题/render-opt-browser.js'
 import { test as baseTest } from '../8-事件冒泡与更新时机问题/8.spec.js'
 import factory from './api.js'
 
 const suitName = '更新子节点'
 
 /**@type {typeof baseTest} */
-export const test = (renderOptionCtor, factory) => {
-  baseTest(renderOptionCtor, factory)
+export const test = (option, factory) => {
+  baseTest(option, factory)
 
   describe(suitName, async () => {
     it(`暂不支持新旧节点都是数组的情况`, async () => {
@@ -19,7 +19,7 @@ export const test = (renderOptionCtor, factory) => {
         children: [{ type: 'p', children: 'p', props: null, el: null }]
       }
       // prettier-ignore
-      const { render, rAF, container, apiVer } = await getApi(renderOptionCtor, factory, suitName, '暂不支持新旧节点都是数组的情况')
+      const { render, rAF, container, apiVer } = await getApi(option, factory, suitName, '暂不支持新旧节点都是数组的情况')
       render(vnode, container)
       await rAF()
       expect(container.innerHTML).toBe(/* html */ `<div><p>p</p></div>`)
@@ -38,7 +38,7 @@ export const test = (renderOptionCtor, factory) => {
         children: 'holly shit🤬'
       }
       // prettier-ignore
-      const { render, rAF, container } = await getApi(renderOptionCtor, factory, suitName, '暂不支持新旧节点都是数组的情况')
+      const { render, rAF, container } = await getApi(option, factory, suitName, '暂不支持新旧节点都是数组的情况')
       render(vnode, container)
       await rAF()
       expect(container.innerHTML).toBe(/* html */ `<div>holly shit🤬</div>`)
@@ -58,7 +58,7 @@ export const test = (renderOptionCtor, factory) => {
         children: [{ type: 'p', children: 'p', props: null, el: null }]
       }
       // prettier-ignore
-      const { render, rAF, container } = await getApi(renderOptionCtor, factory, suitName, '暂不支持新旧节点都是数组的情况')
+      const { render, rAF, container } = await getApi(option, factory, suitName, '暂不支持新旧节点都是数组的情况')
       render(vnode, container)
       await rAF()
       expect(container.innerHTML).toBe(/* html */ `<div><p>p</p></div>`)
@@ -73,6 +73,6 @@ export const test = (renderOptionCtor, factory) => {
   })
 }
 
-if (await isLatestVer(renderOptionCtor, factory)) {
-  test(renderOptionCtor, factory)
+if (await isLatestVer(option, factory)) {
+  test(option, factory)
 }

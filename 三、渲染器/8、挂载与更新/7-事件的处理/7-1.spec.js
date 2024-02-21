@@ -1,4 +1,3 @@
-
 // @ts-ignore
 export function fixRenderForTest(option, renderer) {
   // @ts-ignore
@@ -41,16 +40,16 @@ export function fixRenderForTest(option, renderer) {
 }
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import creatorFactory from '../6-区分vnode类型/api.js'
-import createJsDomOption from './render-opt-browser.js'
+import factory from '../6-区分vnode类型/api.js'
+import option from './render-opt-browser.js'
 import { test as baseTest } from '../5-卸载操作/5.spec.js'
 import { warn } from '#root/utils'
 import { getApi, isLatestVer } from '../../utils/test.helper.js'
 
 const suitName = '7-事件处理'
 /**@type {typeof baseTest} */
-export const test = (optionFactory, factory) => {
-  baseTest(optionFactory, factory)
+export const test = (option, factory) => {
+  baseTest(option, factory)
 
   let clickCounter = 0
 
@@ -153,7 +152,7 @@ export const test = (optionFactory, factory) => {
 
     it(`正确绑定事件`, async () => {
       // prettier-ignore
-      const { render, rAF, container } = await getApi(createJsDomOption, creatorFactory, suitName, '正确绑定事件')
+      const { render, rAF, container } = await getApi(option, factory, suitName, '正确绑定事件')
       render(vnode, container)
       await rAF()
       const p = getEle()
@@ -168,7 +167,7 @@ export const test = (optionFactory, factory) => {
 
     it(`正确卸载事件`, async () => {
       // prettier-ignore
-      const { render, rAF, container, config, renderer } = await getApi(createJsDomOption, creatorFactory, suitName, '正确卸载事件')
+      const { render, rAF, container, config, renderer } = await getApi(option, factory, suitName, '正确卸载事件')
       render(vnode, container)
       await rAF()
       let p = getEle()
@@ -189,7 +188,7 @@ export const test = (optionFactory, factory) => {
     it(`正确得再次绑定事件`, async () => {
       expect(handlerSpy).toHaveBeenCalledTimes(0)
       // prettier-ignore
-      const { render, rAF, container, config, renderer } = await getApi(createJsDomOption, creatorFactory, suitName, '正确得再次绑定事件')
+      const { render, rAF, container, config, renderer } = await getApi(option, factory, suitName, '正确得再次绑定事件')
       render(vnode, container)
       await rAF()
       let p = getEle()
@@ -222,5 +221,5 @@ export const test = (optionFactory, factory) => {
 }
 
 if (await isLatestVer({ version: 'skip ' }, { version: 'skip ' })) {
-  test(createJsDomOption, creatorFactory)
+  test(option, factory)
 }

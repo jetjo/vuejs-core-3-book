@@ -94,8 +94,8 @@ function fixRenderForTest(option, config) {
 }
 
 // @ts-ignore
-export async function test(optionCreator, title = '8-事件冒泡与更新时机问题', isBrowser = false) {
-  if (await isLatestVer(optionCreator, creatorFactory, isBrowser)) {
+export async function test(option, title = '8-事件冒泡与更新时机问题', isBrowser = false) {
+  if (await isLatestVer(option, creatorFactory, isBrowser)) {
     const parentHasProps = ref(false)
     // @ts-ignore
     function getVnode() {
@@ -137,10 +137,11 @@ export async function test(optionCreator, title = '8-事件冒泡与更新时机
     }
 
     const { render, container, config, renderer } = await getApi(
-      optionCreator,
+      option,
       creatorFactory,
       title,
-      `没有调用事件发生后才绑定的'handler'`
+      `没有调用事件发生后才绑定的'handler'`,
+      isBrowser
     )
     fixRenderForTest(config, renderer) //, `8-事件冒泡与更新时机问题-html`)
     effect(() => {

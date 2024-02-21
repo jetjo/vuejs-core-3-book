@@ -10,14 +10,12 @@
     <div id="app"></div>
     <script type="module">
       import ctorFactory from './api.js'
-      // import createRenderOption from './render-opt-jsdom.js'
-      import createRenderOption from '../3-正确地设置元素属性/render-opt-browser.js'
+      // import option_ from './render-opt-jsdom.js'
+      import option_ from '../3-正确地设置元素属性/render-opt-browser.js'
 
       const createRenderer = ctorFactory({})
 
-      const renderConfig = await createRenderOption()
-
-      const { render } = createRenderer(renderConfig)
+      const { render } = createRenderer(option_)
 
       const vnode = {
         type: 'div',
@@ -35,7 +33,7 @@
         ]
       }
 
-      render(vnode, renderConfig.getContainer())
+      render(vnode, option_.getContainer())
     </script>
   </body>
 </html>

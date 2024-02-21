@@ -10,13 +10,8 @@ function factory(_config = defArg0) {
   /* prettier-ignore */ // 标记config的所有字段都不是`undefined`
   if (!RendererCreatorFactoryConfig.markAllDefined(config)) throw new Error('what???')
   // 抽离特定于平台的API,将特定于平台的API视为配置项, 作为参数传入
-  return function createRenderer({
-    createElement,
-    setElementText,
-    setAttribute,
-    insert,
-    patchProps
-  }) {
+  return function createRenderer(option) {
+    const { createElement, setElementText, setAttribute, insert, patchProps } = option
     config.isVNodeArrayChildrenC = Array.isArray //&& children.every(child => typeof child === 'object')
     // @ts-ignore
     config.isVNodeChildAtomC_VVNode = child => {
@@ -55,7 +50,7 @@ function factory(_config = defArg0) {
       const mountProps = () => {
         for (const key in props) {
           // if (Object.hasOwnProperty.call(props, key)) {}
-          patchProps(el, key, null, props[key])
+          patchProps.call(option, el, key, null, props[key])
         }
       }
       props && mountProps()

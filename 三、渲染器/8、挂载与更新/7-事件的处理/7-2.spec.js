@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import creatorFactory from '../6-区分vnode类型/api.js'
-import createJsDomOption from './render-opt-browser.js'
+import factory from '../6-区分vnode类型/api.js'
+import option from './render-opt-browser.js'
 import { test as baseTest, fixRenderForTest } from './7-1.spec.js'
 import { queueMacroTask, warn } from '#root/utils'
 import { ref, effect } from '#vue-fixed/reactive'
 import { getApi, isLatestVer } from '../../utils/test.helper.js'
 
 /**@type {typeof baseTest} */
-export const test = (optionFactory, factory) => {
-  baseTest(optionFactory, factory)
+export const test = (option, factory) => {
+  baseTest(option, factory)
 
   const handlerSpy = vi.fn()
   const eventKey = 'onClick'
@@ -74,7 +74,7 @@ export const test = (optionFactory, factory) => {
 
     it(`正确绑定事件`, async () => {
       // prettier-ignore
-      const { render, container, config, rAF, renderer } = await getApi(optionFactory, factory, '7-引出要在下一节解决的问题', '正确绑定事件')
+      const { render, container, config, rAF, renderer } = await getApi(option, factory, '7-引出要在下一节解决的问题', '正确绑定事件')
       effect(() => {
         // 确保依赖与`parentHasProps`
         // warn('effect before', parentHasProps.value)
@@ -106,6 +106,6 @@ export const test = (optionFactory, factory) => {
   })
 }
 
-if (await isLatestVer(createJsDomOption, creatorFactory)) {
-  test(createJsDomOption, creatorFactory)
+if (await isLatestVer(option, factory)) {
+  test(option, factory)
 }
