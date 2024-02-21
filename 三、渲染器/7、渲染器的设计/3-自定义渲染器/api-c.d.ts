@@ -33,6 +33,9 @@ interface RendererConfig<
    * @description 将`child`插入到`parent.anchor`节点前面 */
   insert: (child: HN | null, parent: HN, anchor?: HN | null, isSvg?: boolean) => void
 
+  /**@version 8.1 */
+  getNextSibling: (child: HN) => HN | null
+
   /**@version 8.7 */
   patchEventProp: (
     this: RendererConfig<ET, HN, Ele, ParentN, EleNS, Doc, EleNameMapNS, HWC>,

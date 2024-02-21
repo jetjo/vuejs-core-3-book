@@ -110,6 +110,9 @@ const config = {
   requestAnimationFrame,
   clearPage: () => {
     document.body.innerHTML = /* html */ `<div id="app"></div>`
+  },
+  getNextSibling: node => {
+    return node.nextSibling
   }
 }
 

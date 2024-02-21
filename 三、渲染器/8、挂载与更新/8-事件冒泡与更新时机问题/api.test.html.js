@@ -1,7 +1,7 @@
 import { ref, effect } from '#vue-fixed/reactive'
-import creatorFactory from '../6-区分vnode类型/api.js'
-// import optionCreator from '../7-事件的处理/render-opt-browser.js'
-// import optionCreator from './render-opt-browser.js'
+import factory from '../6-区分vnode类型/api.js'
+// import option from '../7-事件的处理/render-opt-browser.js'
+// import option from './render-opt-browser.js'
 import { getApi, isLatestVer } from '../../utils/test.helper.js'
 import { warn } from '#root/utils'
 import { requireCallable } from '#utils'
@@ -95,7 +95,7 @@ function fixRenderForTest(option, config) {
 
 // @ts-ignore
 export async function test(option, title = '8-事件冒泡与更新时机问题', isBrowser = false) {
-  if (await isLatestVer(option, creatorFactory, isBrowser)) {
+  if (await isLatestVer(option, factory, isBrowser)) {
     const parentHasProps = ref(false)
     // @ts-ignore
     function getVnode() {
@@ -138,7 +138,7 @@ export async function test(option, title = '8-事件冒泡与更新时机问题'
 
     const { render, container, config, renderer } = await getApi(
       option,
-      creatorFactory,
+      factory,
       title,
       `没有调用事件发生后才绑定的'handler'`,
       isBrowser

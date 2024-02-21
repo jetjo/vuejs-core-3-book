@@ -1,11 +1,17 @@
 import { describe, it, expect } from 'vitest'
-import factory from './api.js'
+import factory from './t.js'
 import option from './render-opt-jsdom.js'
 import { getApi, isLatestVer } from '../../utils/test.helper.js'
 
 /**
+ * @template ET
+ * @template {ET} HN
+ * @template {HN} Ele
+ * @template {HN} ParentN
+ * @template {Ele} EleNS
+ * @template {HN} Doc
  * @param {import('#shims').RendererConfig} option
- * @param {import('#shims').RendererCreatorFactory} factory
+ * @param {import('#shims').RendererFactory<ET, HN, Ele, ParentN, EleNS, Doc>} factory
  * @returns {void}
  */
 export const test = (option, factory) => {
