@@ -1,6 +1,7 @@
 import { createReactive } from './reactive/api/5-8.js'
 import { createRef } from './reactive/ref/6-1.js'
 export { effect } from './effect/index/4-11.js'
+export { scheduler } from './effect/scheduler/4-8.js'
 
 const reactive = createReactive(false, false, '6-1')()
 const shallowReactive = createReactive(true, false, '6-1')()

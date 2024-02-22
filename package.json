@@ -71,7 +71,7 @@
     "./watch/*": "./exports-barrel/watch/*.js",
     "./ref": "./exports-barrel/reactive/ref/6-1.js",
     "./reactive": "./exports-barrel/reactive/5-8.js",
-    "./effect": "./exports-barrel/effect/4-11.js",
+    "./effect": "./exports-barrel/effect/index.js",
     "./computed": "./exports-barrel/computed/4-11.js",
     "./watch": "./exports-barrel/watch/4-11.js",
     "./utils": "./internal-barrel/utils/index.js"
