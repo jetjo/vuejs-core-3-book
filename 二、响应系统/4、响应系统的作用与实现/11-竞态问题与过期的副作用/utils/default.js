@@ -6,9 +6,6 @@
 // // at finalizeResolution (node:internal/modules/esm/resolve:418:11)
 import { warn } from './log.js'
 
-/**@type {*} */
-export const defArg0 = {}
-
 export function voidFunc(params) {
   // warn('voidFunc: ', { params })
 }

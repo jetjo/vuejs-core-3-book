@@ -140,7 +140,7 @@ interface RendererEx<HN = Node, Ele extends HN = Element> extends Renderer<HN, E
   /**
    * @version 8.1
    * @description 只有在合理的上下文中使用才有意义, 例如`mountChildren`方法中 */
-  isVNodeChildAtomC_VVNode: (v: any) => v is VVNode<HN, Ele, EP> //| ((v: any)=> boolean)
+  isVNodeChildAtomC_VVNode: (v: any) => v is VVNode<HN, Ele> //| ((v: any)=> boolean)
 }
 
 /**@version 8.9 */

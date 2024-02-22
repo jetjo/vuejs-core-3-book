@@ -1,4 +1,4 @@
-import { defArg0, warn, isTest, error } from '#root/utils'
+import { warn, isTest, error } from '#root/utils'
 
 /**@returns {string|undefined} */
 function getTestVerTag() {

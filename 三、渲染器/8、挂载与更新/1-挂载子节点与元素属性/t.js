@@ -165,7 +165,7 @@ const factory = function (option) {
 
   setValOfFnType(config, 'unmount')
 
-  warn('factory', VER, config)
+  // warn('factory', VER, config)
 
   return Object.assign(config, { version: VER })
 }
