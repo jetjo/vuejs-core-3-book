@@ -1,11 +1,12 @@
 import { describe, it, expect, vi } from 'vitest'
-import factory from './api.js'
 import { option } from '@jetjo/vue3-chapter3'
 import { isLatestVer, getApi } from '@jetjo/vue3-chapter3/utils'
-import { test as baseTest } from '../1-渲染组件/1.spec.js'
-import Com2 from './Com2.js'
+import { queueMacroTask } from '@jetjo/vue3/utils'
+import factory from './api.js'
+import { test as baseTest } from '../2-组件状态与自更新/2.spec.js'
+import Com3 from './Com3.js'
 
-const suitName = '组件状态'
+const suitName = '组件实例与生命周期'
 
 /**@type {typeof baseTest} */
 export const test = (option, factory) => {
@@ -13,7 +14,7 @@ export const test = (option, factory) => {
   /**@returns {*} */
   function getVNode() {
     return {
-      type: Com2
+      type: Com3
     }
   }
   describe(suitName, () => {
@@ -22,7 +23,10 @@ export const test = (option, factory) => {
       const vnode = getVNode()
       render(vnode, container)
       await rAF()
-      expect(container.innerHTML).toBe('<div>Com2的文本内容: bar</div>')
+      expect(container.innerHTML).toBe('<div>Com3的文本内容: bar</div>')
+      vnode.component.state.foo = 'hello world~'
+      await queueMacroTask()
+      expect(container.innerHTML).toBe('<div>Com3的文本内容: hello world~</div>')
     })
   })
 }
