@@ -44,8 +44,10 @@
       "types": "./shims.d.ts",
       "default": "./index.js"
     },
-    "./module-res-utils":"./module-res-utils.js",
-    "./module-res-utils.js":"./module-res-utils.js"
+    "./module-res-utils": "./module-res-utils.js",
+    "./module-res-utils.js": "./module-res-utils.js",
+    "./utils.js": "./utils/index.js",
+    "./utils": "./utils/index.js"
   },
   "dependencies": {
     "jsonc-parser": "^3.2.1",
