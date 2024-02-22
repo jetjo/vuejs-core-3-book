@@ -83,6 +83,9 @@ function factory({ isShallow, isReadonly, version }) {
   let getProxyHandler
   function reactiveApi(callFromSelfTrap = false) {
     const api = function (target) {
+      if(target == null) {
+        throwErr('响应式状态的target不能是null或undefined!')
+      }
       if (!callFromSelfTrap) {
         requireReactiveTarget(target)
         if (isReactive(target) && isExpectedReactive(target, true))
