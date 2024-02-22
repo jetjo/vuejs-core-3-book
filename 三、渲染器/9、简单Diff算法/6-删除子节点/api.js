@@ -7,14 +7,9 @@ const VER = '9-6'
 const factory = function (option) {
   const config = baseFactory(option)
 
-  /**@param {Array<*>} arr */
-  const requireArray = arr => {
-    if (!Array.isArray(arr)) throw new Error('参数必须是数组!')
-    return true
-  }
   config.handleChildRemove = (newChildren, oldChildren) => {
-    assertUnknown(newChildren, requireArray)
-    assertUnknown(oldChildren, requireArray)
+    if (!config.isVNodeArrayChildrenC(newChildren)) throw new Error('newChildren必须是数组')
+    if (!config.isVNodeArrayChildrenC(oldChildren)) throw new Error('oldChildren必须是数组')
     let i = oldChildren.length
     while (i--) {
       const oldChild = oldChildren[i]

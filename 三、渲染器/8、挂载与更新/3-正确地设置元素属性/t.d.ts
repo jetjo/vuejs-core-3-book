@@ -1,18 +1,21 @@
 import type { RendererConfig, VNodeArrayChildrenC } from '#shims'
 import type { VNode, VNodeArrayChildren } from 'vue'
 
-interface Renderer<HN = Node, Ele extends HN = Element, EP = { [key: string]: any }> {
+interface Renderer<HN = Node, Ele extends HN = Element> {
   /**
    * @version 8.11
    * @description 总入口, 并负责设置`container.vnode` */
-  render: (
+  render: <EP extends { [key: string]: any }>(
     vnode: VVNode<HN, Ele, EP> | null,
     container?: Container<Ele, HN, Ele, EP> | null,
     testTag?: string
   ) => void
 
   /** @description 服务端渲染、同构渲染、激活已有DOM */
-  hydrate: (vnode: VVNode<HN, Ele, EP> | null, container: Ele | null | undefined) => void
+  hydrate: <EP extends { [key: string]: any }>(
+    vnode: VVNode<HN, Ele, EP> | null,
+    container?: Container<Ele, HN, Ele, EP> | null
+  ) => void
 
   version: string
 }
@@ -21,15 +24,14 @@ type Container<T, HN = Node, Ele extends HN = Element, EP = { [key: string]: any
   vnode?: VVNode<HN, Ele, EP> | null
 }
 
-interface RendererEx<HN = Node, Ele extends HN = Element, EP = { [key: string]: any }>
-  extends Renderer<HN, Ele, EP> {
+interface RendererEx<HN = Node, Ele extends HN = Element> extends Renderer<HN, Ele> {
   /**
    * @version 8.5≥8.1
    * @callBy `render`, `patch`
    * @description 初次挂载, 与`unmount`一同负责设置`vnode.el`
    * @description 不负责维护`container.vnode`的值,由`config.render`维护 */
   mountElement: (
-    vnode: VVNode<HN, Ele, EP>,
+    vnode: VVNode<HN, Ele>,
     container: Ele,
     anchor?: HN | null,
     testTag?: string
@@ -40,14 +42,14 @@ interface RendererEx<HN = Node, Ele extends HN = Element, EP = { [key: string]: 
    * @description 实现对`vnode.type`为`string`类型的`vnode`的更新
    * @description 并负责设置`newVNode.el`实现DOM的复用
    * */
-  patchElement: (
+  patchElement: <EP extends { [key: string]: any }>(
     vnode: VVNode<HN, Ele, EP>,
     newVNode: VVNode<HN, Ele, EP>,
     testTag?: string
   ) => VVNode<HN, Ele, EP>
 
   /**@version 9.4≥8.9 */
-  patchChildren: (
+  patchChildren: <EP extends { [key: string]: any }>(
     vnode: VVNode<HN, Ele, EP>,
     newVNode: VVNode<HN, Ele, EP>,
     container: HN,
@@ -59,7 +61,7 @@ interface RendererEx<HN = Node, Ele extends HN = Element, EP = { [key: string]: 
    * @description 使用`双端Diff`算法对`vnode.children`进行排序
    * @description 用于`patchChildren`方法, 优先级高于`简单Diff`算法
    * */
-  patchKeyedChildren: (
+  patchKeyedChildren: <EP extends { [key: string]: any }>(
     vnode: VVNodeWithKeyedChildrenC<HN, Ele, EP>,
     newVNode: VVNodeWithKeyedChildren<HN, Ele, EP>,
     container: Ele,
@@ -71,15 +73,21 @@ interface RendererEx<HN = Node, Ele extends HN = Element, EP = { [key: string]: 
    * @description 使用`快速Diff`算法对`vnode.children`进行排序
    * @description 用于`patchChildren`方法, 优先级高于`Vue2`使用的`双端Diff`算法
    * */
-  patchKeyedChildrenQk: (
+  patchKeyedChildrenQk: <EP extends { [key: string]: any }>(
     vnode: VVNodeWithKeyedChildrenC<HN, Ele, EP>,
     newVNode: VVNodeWithKeyedChildren<HN, Ele, EP>,
     container: Ele,
     testTag?: string
   ) => VVNodeWithKeyedChildren<HN, Ele, EP>
 
+  /**
+   * @description 定义`<EP ...>`泛型会导致断言失效!!!
+   * @version 9.4 */
+  // requireKeyedChildren: <EP extends { [key: string]: any }>(vnode: VVNodeWithKeyedChildren<HN, Ele, EP>) => boolean
+  requireKeyedChildren: (vnode: VVNodeWithKeyedChildren<HN, Ele>) => boolean
+
   /**@version 9.4 */
-  requireKeyedChildren: (vnode: VVNodeWithKeyedChildren<HN, Ele, EP>) => boolean
+  requireKeyedChildrenC: (vnode: VVNodeWithKeyedChildrenC<HN, Ele>) => boolean
 
   /**
    * @version 9.5
@@ -87,7 +95,7 @@ interface RendererEx<HN = Node, Ele extends HN = Element, EP = { [key: string]: 
    * @param {number} newChildIndex 在使用`Diff`算法排序子节点的过程中顺带发现的新节点的索引
    * */
   handleChildAdd: (
-    newChildren: VVNode<HN, Ele, EP>['children'],
+    newChildren: VVNode<HN, Ele>['children'],
     container: HN,
     newChildIndex: number
   ) => void
@@ -97,8 +105,8 @@ interface RendererEx<HN = Node, Ele extends HN = Element, EP = { [key: string]: 
    * @description 用于`patchChildren`方法, 负责查找并卸载不存在于`newChildren`中的节点
    * */
   handleChildRemove: (
-    newChildren: VVNode<HN, Ele, EP>['children'],
-    oldChildren: VVNode<HN, Ele, EP>['children']
+    newChildren: VVNode<HN, Ele>['children'],
+    oldChildren: VVNode<HN, Ele>['children']
   ) => void
 
   /**
@@ -111,7 +119,7 @@ interface RendererEx<HN = Node, Ele extends HN = Element, EP = { [key: string]: 
    * @param {HN | null} [anchor] 用于支持`patchChildren`方法在`container`中的起始位置新增节点
    * @requires `mountElement`,`patchElement`
    */
-  patch: (
+  patch: <EP extends { [key: string]: any }>(
     oldVnode?: VVNode<HN, Ele, EP> | null,
     vnode: VVNode<HN, Ele, EP>,
     container: Ele,
@@ -122,12 +130,12 @@ interface RendererEx<HN = Node, Ele extends HN = Element, EP = { [key: string]: 
   /**
    * @version 8.11≥8.5
    * @description 卸载, 与`mountElement`一同负责设置`vnode.el` */
-  unmount: (oldVnode?: VVNode<HN, Ele, EP>) => void
+  unmount: (oldVnode?: VVNode<HN, Ele>) => void
 
   /**
    * @version 8.1
    * @description 只有在合理的上下文中使用才有意义, 例如`mountChildren`方法中 */
-  isVNodeArrayChildrenC: (v: any) => v is VNodeArrayChildrenC<HN, Ele, EP>
+  isVNodeArrayChildrenC: (v: any) => v is VNodeArrayChildrenC<HN, Ele>
 
   /**
    * @version 8.1
@@ -142,10 +150,9 @@ interface RendererFactory<
   Ele extends HN = Element,
   ParentN extends HN = ParentNode,
   EleNS extends Ele = HTMLElement,
-  Doc extends HN = Document,
-  EP = { [key: string]: any }
+  Doc extends HN = Document
 > {
-  (option: RendererConfig<ET, HN, Ele, ParentN, EleNS, Doc>): RendererEx<HN, Ele, EP>
+  (option: RendererConfig<ET, HN, Ele, ParentN, EleNS, Doc>): RendererEx<HN, Ele>
   version: string
 }
 

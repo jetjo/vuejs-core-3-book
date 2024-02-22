@@ -11,9 +11,8 @@ declare function _factory<
   Ele extends HN = Element,
   ParentN extends HN = ParentNode,
   EleNS extends Ele = HTMLElement,
-  Doc extends HN = Document,
-  EP = { [key: string]: any }
->(option: RendererConfig<ET, HN, Ele, ParentN, EleNS, Doc>): RendererEx<HN, Ele, EP>
+  Doc extends HN = Document
+>(option: RendererConfig<ET, HN, Ele, ParentN, EleNS, Doc>): RendererEx<HN, Ele>
 
 declare const factory: typeof _factory & { version: string }
 

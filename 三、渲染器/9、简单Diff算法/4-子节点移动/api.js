@@ -17,6 +17,9 @@ const factory = function (option) {
     return true
   }
 
+  // @ts-ignore
+  config.requireKeyedChildrenC = config.requireKeyedChildren
+
   const basePatchChildren = config.patchChildren
   /**
    * @description 通过`简单Diff算法`更新子节点顺序
@@ -27,17 +30,19 @@ const factory = function (option) {
     const testFlag = arguments[3]
     if (Array.isArray(newVnode.children) && Array.isArray(vnode.children)) {
       assertUnknown(container, option.patchProps.isElement)
-      assertUnknown(vnode, config.requireKeyedChildren)
+      assertUnknown(vnode, config.requireKeyedChildrenC)
       assertUnknown(newVnode, config.requireKeyedChildren)
       const newChildren = newVnode.children
       const oldChildren = vnode.children
       // NOTE: 如果支持,使用`双端Diff`算法处理排序
       if (config.patchKeyedChildrenQk) {
-        return config.patchKeyedChildrenQk(vnode, newVnode, container, testFlag)
+        config.patchKeyedChildrenQk(vnode, newVnode, container, testFlag)
+        return newVnode
       }
       // NOTE: 如果支持,使用`双端Diff`算法处理排序
       if (config.patchKeyedChildren) {
-        return config.patchKeyedChildren(vnode, newVnode, container, testFlag)
+        config.patchKeyedChildren(vnode, newVnode, container, testFlag)
+        return newVnode
       }
       let maxOldIndexOfFindNode = 0
       // 处理子节点次序和新增的子节点
@@ -46,6 +51,7 @@ const factory = function (option) {
         let find = false
         for (let oldIndex = 0; oldIndex < oldChildren.length; oldIndex++) {
           const oldChild = oldChildren[oldIndex] // if (!config.isVNodeChildAtomC_VVNode(oldChild)) throw new Error('oldChildren的元素必须是VNode类型') // prettier-ignore
+          if (oldChild == null) throw new Error('oldChild不能为null')
           if (newChild.key !== oldChild.key) continue
           find = true
           // NOTE: if (newChild.type !== oldChild.type) continue???

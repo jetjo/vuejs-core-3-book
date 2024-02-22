@@ -67,7 +67,6 @@ const factory = function (option) {
   }
   setValOfFnType(config, 'mountProps', mountProps)
 
-  /**@type {ReturnType<typeof factory>['mountElement']} */
   config.mountElement = function (vnode, container, anchor) {
     const { type, props, children } = vnode
     if (typeof type !== 'string') throw new Error('type不是字符串')

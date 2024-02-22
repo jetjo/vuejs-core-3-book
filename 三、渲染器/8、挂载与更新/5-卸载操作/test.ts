@@ -39,3 +39,5 @@ r1.render({el: 1})
 r.render({el: '0'})
 
 const f = factory
+
+export {}

@@ -38,8 +38,10 @@ const factory = function (option) {
     if (!isElement) throw new Error('Element类型验证为实现!')
     // @ts-ignore
     assertUnknown(el, isElement, testFlag) //, '÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷÷')
-    const oldProps = vnode.props || {}
-    const newProps = newVnode.props || {}
+    /**@type {Record<string, any>} */
+    const def = {}
+    const oldProps = vnode.props || def
+    const newProps = newVnode.props || def
     for (const key in newProps) {
       if (newProps[key] !== oldProps[key]) {
         option.patchProps(el, key, oldProps[key], newProps[key])
