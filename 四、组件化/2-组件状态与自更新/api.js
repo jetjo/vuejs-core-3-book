@@ -1,6 +1,7 @@
 import { effect, reactive } from '#vue-fixed/reactive'
 import { scheduler } from '@jetjo/vue3/effect'
 import factory from '../1-渲染组件/api.js'
+import { getValOfFnType } from '@jetjo/vue3-chapter3/utils'
 
 const VER = '4-2-0'
 
@@ -8,7 +9,9 @@ const VER = '4-2-0'
 const factory2 = option => {
   const config = factory(option)
 
-  config.mountComponent = (vnode, container, anchor) => {
+  /**@type {typeof config.mountComponent} */
+  // @ts-ignore
+  function mountComponent(vnode, container, anchor) {
     const com = vnode.type
     if (typeof com === 'function') throw new Error('暂不支持的组件类型!')
     const { render, data } = com
@@ -23,13 +26,15 @@ const factory2 = option => {
     effect(
       () => {
         const subTree = render.call(state, state)
-        config.patch(null, subTree, container, anchor)
+        getValOfFnType(config, 'patch')(null, subTree, container, anchor)
       },
       {
         scheduler
       }
     )
   }
+
+  // config.mountComponent = mountComponent
 
   config.version = VER
   return config

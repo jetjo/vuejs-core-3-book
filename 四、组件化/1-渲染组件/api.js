@@ -1,5 +1,6 @@
 import { warn } from '#root/utils'
 import { factory } from '@jetjo/vue3-chapter3'
+import { getValOfFnType } from '@jetjo/vue3-chapter3/utils'
 
 const VER = '4-1-0'
 
@@ -43,14 +44,18 @@ const factory2 = function (option) {
     basePath(vnode, newVnode, container, anchor)
   }
 
-  config.mountComponent = (newVnode, container, anchor) => {
+  /**@type {typeof config.mountComponent} */
+  // @ts-ignore
+  function mountComponent(newVnode, container, anchor) {
     const com = newVnode.type
     if (typeof com === 'function') throw new Error('暂不支持的组件类型')
     const { render } = com
     if (!render) throw new Error('render is required')
     const subTree = render()
-    config.patch(null, subTree, container, anchor)
+    getValOfFnType(config, 'patch')(null, subTree, container, anchor)
   }
+
+  // config.mountComponent = mountComponent
 
   config.version = VER
   warn('factory', VER, config)
