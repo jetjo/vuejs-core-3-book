@@ -10,6 +10,7 @@ const factory2 = option => {
   const config = factory(option)
 
   /**@type {typeof config.mountComponent} */
+  // @ts-ignore
   function mountComponent(vnode, container, anchor) {
     const Com = vnode.type
     if (typeof Com === 'function') throw new Error('暂不支持的组件类型!')

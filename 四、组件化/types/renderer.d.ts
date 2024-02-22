@@ -20,7 +20,7 @@ export interface RendererEx4<HN = Node, Ele extends HN = Element> extends Render
     testTag?: string
   ) => void
 
-  /**@version 4.1.0 */
+  /**@version 4.4.0 */
   mountComponent: (
     vnode: VComponent<HN, Ele>,
     container: Ele,
@@ -28,7 +28,13 @@ export interface RendererEx4<HN = Node, Ele extends HN = Element> extends Render
     testTag?: string
   ) => void
 
-  /**@version 4.1.0 */
+  /**@version 4.4.0 */
+  resolveProps: (options: Data, propsData: Data) => Data[]
+
+  /**@version 4.4.0 */
+  hasPropsChanged: (preProps: Data, nextProps: Data) => boolean
+
+  /**@version 4.4.0 */
   patchComponent: <EP extends { [key: string]: any }>(
     oldVnode?: VComponent<HN, Ele, EP> | null,
     vnode: VComponent<HN, Ele, EP>,
@@ -36,6 +42,13 @@ export interface RendererEx4<HN = Node, Ele extends HN = Element> extends Render
     testTag?: string
   ) => void
 
+  /**@version 4.4.0 */
+  createRenderContext: <EP extends { [key: string]: any }>(
+    instance: VComponent<HN, Ele, EP>['component']
+  ) => VComponent<HN, Ele, EP>['component']
+
   /**@version 4.1.0 */
   isComponentVNode: (vnode: any) => vnode is VComponent<HN, Ele>
 }
+
+export type Data = Record<string, unknown>
