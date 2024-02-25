@@ -6,6 +6,7 @@ import { createReactive as baseCreateReactive } from '#reactive/5-7.js'
 import { throwErr } from '#utils'
 import getReactive from './traps/Reactive.js'
 import { withRecordTrapOption } from '#reactive/traps/option.js'
+import { proxyRefs } from '#ref-convention'
 
 /**
  * @param {ReactiveApiCreator} api
@@ -81,6 +82,7 @@ function factory({ isShallow, isReadonly, version }) {
         requireReactiveTarget(target)
         if (isReactive(target) && isExpectedReactive(target, true)) return target
       }
+      target = proxyRefs(target)
       if (reactiveMap.has(target)) return reactiveMap.get(target)
       reactiveInfo.set(target, Object.create(null))
       const py = new Proxy(target, getProxyHandler(target))
