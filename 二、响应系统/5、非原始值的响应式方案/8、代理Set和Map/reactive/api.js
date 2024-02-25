@@ -1,11 +1,7 @@
 /// <reference path="../../../../reactive.d.ts" />
 import { trapGetters as defaultTrapGetters } from './traps/index.js'
 import { isReactive, PROTOTYPE } from './traps/convention.js'
-import {
-  createProxyHandler,
-  requireReactiveTarget,
-  setReactiveApiFlag
-} from './traps/helper.js'
+import { createProxyHandler, requireReactiveTarget, setReactiveApiFlag } from './traps/helper.js'
 import { createReactive as baseCreateReactive } from '#reactive/5-7.js'
 import { throwErr } from '#utils'
 import getReactive from './traps/Reactive.js'
@@ -41,9 +37,7 @@ function configApi(api, baseApi) {
       return proxyHandlerForSetAndMap
     },
     get isInitialized() {
-      return (
-        proxyHandler !== undefined || proxyHandlerForSetAndMap !== undefined
-      )
+      return proxyHandler !== undefined || proxyHandlerForSetAndMap !== undefined
     }
   }
   const _getProxyHandler = () => {
@@ -61,10 +55,7 @@ function configApi(api, baseApi) {
 
     if (!isSetOrMap) return proxyHandler || (proxyHandler = _getProxyHandler())
 
-    return (
-      proxyHandlerForSetAndMap ||
-      (proxyHandlerForSetAndMap = _getProxyHandler())
-    )
+    return proxyHandlerForSetAndMap || (proxyHandlerForSetAndMap = _getProxyHandler())
   }
   return res
 }
@@ -83,13 +74,12 @@ function factory({ isShallow, isReadonly, version }) {
   let getProxyHandler
   function reactiveApi(callFromSelfTrap = false) {
     const api = function (target) {
-      if(target == null) {
+      if (target == null) {
         throwErr('响应式状态的target不能是null或undefined!')
       }
       if (!callFromSelfTrap) {
         requireReactiveTarget(target)
-        if (isReactive(target) && isExpectedReactive(target, true))
-          return target
+        if (isReactive(target) && isExpectedReactive(target, true)) return target
       }
       if (reactiveMap.has(target)) return reactiveMap.get(target)
       reactiveInfo.set(target, Object.create(null))
@@ -147,11 +137,7 @@ function factory({ isShallow, isReadonly, version }) {
 }
 
 /**@type {CreateReactive} */
-function createReactive(
-  isShallow = false,
-  isReadonly = false,
-  version = '5-8'
-) {
+function createReactive(isShallow = false, isReadonly = false, version = '5-8') {
   return withRecordTrapOption({
     factory,
     isShallow,
