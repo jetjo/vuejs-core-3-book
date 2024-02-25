@@ -1,4 +1,3 @@
-import { isRef } from '#ref-convention'
 import { withRecordTrapOption } from '#reactive/traps/option.js'
 import { TRY_PROXY_NO_RESULT, toRaw } from './convention.js'
 import { canReactive, canReadonly } from './helper.js'
@@ -32,16 +31,12 @@ function factory({
     const tryRes = Reactive.tryGet(target, key, receiver, true)
     if (tryRes !== TRY_PROXY_NO_RESULT) return tryRes
     const res = Reflect.get(target, key, receiver)
-    const res_raw = toRaw(res)
-    const is_ref = isRef(res_raw)
     if (!isReadonly && Effect.hasActive) {
-      // 没必要,后面访问res.value时,如果res是响应式的,会自动track
-      // if (is_ref) track(res_raw, 'value', get)
       track(target, key)
     }
     // 定义的拦截器函数中,目前没有对Call和Constructor的拦截,所以不用代理function
     // 但是function也是一种对象,也可以有自定义属性,该如何处理??? vue如何处理的???
-    return returnVal(is_ref ? res.value : res)
+    return returnVal(res)
   }
   // const get = _.bind(null, false)
   // get.trapForSetAndMap = _.bind(null, true)

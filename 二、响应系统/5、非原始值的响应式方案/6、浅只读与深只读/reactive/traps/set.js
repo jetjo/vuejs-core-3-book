@@ -1,4 +1,3 @@
-import { isRef } from '#ref-convention'
 import { withRecordTrapOption } from '#reactive/traps/option.js'
 import { warn, notNaN } from '#utils'
 import { RAW, TRIGGER_TYPE, TRY_PROXY_NO_RESULT, toRaw } from './convention.js'
@@ -21,11 +20,6 @@ function factory({ isReadonly, trigger, Reactive, version }) {
     const trySuc = Reactive.trySet(target, key, newVal, receiver)
     if (trySuc !== TRY_PROXY_NO_RESULT) return trySuc
     const oldVal = target[key]
-    if (isRef(toRaw(oldVal)) && !isRef(toRaw(newVal))) {
-      // 这里也会触发依赖于oldVal的value的effect
-      oldVal.value = newVal
-      return true
-    }
     const type = getType(target, key)
     const suc = Reflect.set(target, key, newVal, receiver)
     // if (suc) {

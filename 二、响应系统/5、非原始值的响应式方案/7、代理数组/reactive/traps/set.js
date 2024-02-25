@@ -1,4 +1,3 @@
-import { isRef } from '#ref-convention'
 import { withRecordTrapOption } from '#reactive/traps/option.js'
 import { warn, notNaN, isValidArrayIndex } from '#utils'
 import { canTrigger } from '../trigger-helper.js'
@@ -108,10 +107,6 @@ function factory({ isReadonly, trigger, Reactive }) {
     // 此方法被调用的前提是receiver是reactive或shallowReactive的返回值
     // 所以target一定是raw,非响应的
     const oldVal = target[key]
-    if (isRef(toRaw(oldVal)) && !isRef(toRaw(newVal))) {
-      oldVal.value = newVal
-      return true
-    }
     const suc = Reflect.set(target, key, newVal, receiver)
     // #region 恢复现场
     receiverRaw = receiver[RAW]
