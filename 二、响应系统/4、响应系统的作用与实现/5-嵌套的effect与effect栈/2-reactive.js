@@ -10,14 +10,17 @@ const bucket = new WeakMap()
 
 /* 对依赖的跟踪和触发逻辑的封装 */
 
-function track(target, key) {
+function track(target, key)
+{
   if (!activeEffect) return
   let depsMap = bucket.get(target)
-  if (!depsMap) {
+  if (!depsMap)
+  {
     bucket.set(target, (depsMap = new Map()))
   }
   let deps = depsMap.get(key)
-  if (!deps) {
+  if (!deps)
+  {
     depsMap.set(key, (deps = new Set()))
   }
   deps.add(activeEffect)
@@ -28,7 +31,8 @@ function track(target, key) {
   activeEffect.deps.push(deps)
 }
 
-function trigger(target, key) {
+function trigger(target, key)
+{
   const depsMap = bucket.get(target)
   if (!depsMap) return
   // cleanup
@@ -39,7 +43,7 @@ function trigger(target, key) {
   // 所以要new Set重新实例化一个副本
   const effects = new Set(depsMap.get(key))
   // Set没有map方法,所以要[...effects]
-  effects && effects.forEach(ef => ef())
+  effects.forEach(ef => ef())
   console.log({
     target,
     key,
@@ -47,13 +51,16 @@ function trigger(target, key) {
   })
 }
 
-function reactive(target) {
+function reactive(target)
+{
   return new Proxy(target, {
-    get(target, key) {
+    get(target, key)
+    {
       track(target, key)
       return target[key]
     },
-    set(target, key, newVal) {
+    set(target, key, newVal)
+    {
       target[key] = newVal
       trigger(target, key)
       return true

@@ -11,25 +11,31 @@ const microTasker = Promise.resolve()
 // 即同步代码是否还在执行
 // 因为同步代码的执行可能更改响应式数据,
 // 从而导致副作用任务排入`jobArray`
-function isFlushingQueue() {
+function isFlushingQueue()
+{
   // 按照约定,执行`flushJob`前,
   // 会先将任务插入`jobArray`,
   // 所以这么判断
   return jobArray.length > 1
 }
 
-function flushJob() {
+function flushJob()
+{
   if (isFlushingQueue()) return
-  microTasker.then(() => {
+  microTasker.then(() =>
+  {
     // 副作用job的执行可能导致新的副作用任务插入`jobArray`
     // 所以拷贝一份,并去重
     jobQueue = new Set(jobArray)
+    console.log('job去重前数量：', jobArray.length)
+    console.log('job去重后数量：', jobQueue.size)
     jobArray.length = 0
     jobQueue.forEach(job => job())
   })
 }
 
-function scheduler(effectFnScheduler) {
+function scheduler(effectFnScheduler)
+{
   // function scheduler(effectFn) {
   // 这样Set的自动去重不起作用了
   // jobQueue.add(() => effectFn.options.scheduler(effectFn))
