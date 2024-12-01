@@ -39,16 +39,16 @@
       )
       console.log('Object.keys(obj): ', Object.keys(obj))
       for (const key in obj) {
-        console.log(key)
+        console.log(key, 'in obj')
       }
-      console.log('设置obj.price为不可枚举: ')
+        console.log('设置obj.price为不可枚举...')
       Object.defineProperty(obj, 'price', {
         ...Object.getOwnPropertyDescriptor(obj, 'price'),
         enumerable: false
       })
       console.log('Object.keys(obj): ', Object.keys(obj))
       for (const key in obj) {
-        console.log(key)
+        console.log(key, 'in obj')
       }
       console.log('私有属性Symbol(name): ', obj[Symbol.for('name')])
       obj.price = 1000
