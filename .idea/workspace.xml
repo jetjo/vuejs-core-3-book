@@ -5,20 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a1e09cb1-daf0-4d8f-bd52-216b9c7afb49" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.node-version" beforeDir="false" afterPath="$PROJECT_DIR$/.node-version" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/extensions.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/jsconfig.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/vite.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/二、响应系统/4、响应系统的作用与实现/11-竞态问题与过期的副作用/effect/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/二、响应系统/4、响应系统的作用与实现/11-竞态问题与过期的副作用/effect/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/二、响应系统/4、响应系统的作用与实现/11-竞态问题与过期的副作用/utils/task.js" beforeDir="false" afterPath="$PROJECT_DIR$/二、响应系统/4、响应系统的作用与实现/11-竞态问题与过期的副作用/utils/task.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/二、响应系统/5、非原始值的响应式方案/6、浅只读与深只读/reactive/auto-unref-reacitve.spec.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/二、响应系统/5、非原始值的响应式方案/6、浅只读与深只读/reactive/traps/deleteProperty.verify.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/二、响应系统/5、非原始值的响应式方案/6、浅只读与深只读/reactive/traps/deleteProperty.verify.spec.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/二、响应系统/5、非原始值的响应式方案/6、浅只读与深只读/reactive/traps/get.verify.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/二、响应系统/5、非原始值的响应式方案/6、浅只读与深只读/reactive/traps/get.verify.spec.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/二、响应系统/5、非原始值的响应式方案/6、浅只读与深只读/reactive/traps/set.verify.spec.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/二、响应系统/5、非原始值的响应式方案/7、代理数组/reactive/traps/array/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/二、响应系统/5、非原始值的响应式方案/7、代理数组/reactive/traps/array/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/二、响应系统/6、原始值的响应方案/2、响应丢失问题/reactive/ref.spec.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/二、响应系统/6、原始值的响应方案/3、自动脱ref/ref.spec.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/二、响应系统/vitest.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/二、响应系统/vitest.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pnpm-workspace.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-workspace.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vuejs-core-3-book.code-workspace" beforeDir="false" afterPath="$PROJECT_DIR$/vuejs-core-3-book.code-workspace" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/三、渲染器/.node-version" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/三、渲染器/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/三、渲染器/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/二、响应系统/.node-version" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/二、响应系统/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/二、响应系统/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/四、组件化/4-props与组件的被动更新/4.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/四、组件化/4-props与组件的被动更新/4.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/四、组件化/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/四、组件化/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,9 +28,21 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 5
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "jetjo"
+  }
 }]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/jetjo/vuejs-core-3-book.git",
+    "accountId": "2a9e69db-e6d6-494c-8b46-78beeab5ad5e"
+  }
+}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
   <component name="ProjectId" id="2bDPPbC3SA8d1Zqkmgi3w4UWcE5" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -41,20 +53,43 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "vitest-debugger",
     "last_opened_file_path": "/Users/loong/project/vuejs-core-3-book",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "pnpm",
+    "npm.serve.executor": "Debug",
+    "npm.四、组件化 > t-test.executor": "Debug",
+    "npm.四、组件化 > v-test.executor": "Debug",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration name="四、组件化 &gt; v-test" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/四、组件化/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="v-test" />
+      </scripts>
+      <node-interpreter value="project" />
+      <node-options value="--conditions=verify --inspect --enable-source-maps" />
+      <envs>
+        <env name="VITE_ST_FLAG" value="8-10 browser,4-4-0" />
+      </envs>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.四、组件化 &gt; v-test" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-1d06a55b98c1-56bbcd2c060c-JavaScript-WS-233.11799.293" />
+        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-WS-241.14494.235" />
       </set>
     </attachedChunks>
   </component>
@@ -67,10 +102,77 @@
       <option name="presentableId" value="Default" />
       <updated>1705746653776</updated>
       <workItem from="1705746654844" duration="378000" />
+      <workItem from="1713693599982" duration="4735000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>mock://file:///Users/loong/project/vuejs-core-3-book/四、组件化/4-props与组件的被动更新/4.spec.js</url>
+          <line>34</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>mock://file:///Users/loong/project/vuejs-core-3-book/四、组件化/4-props与组件的被动更新/4.spec.js</url>
+          <line>32</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>mock://file:///Users/loong/project/vuejs-core-3-book/四、组件化/4-props与组件的被动更新/4.spec.js</url>
+          <line>33</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>mock://file:///Users/loong/project/vuejs-core-3-book/四、组件化/4-props与组件的被动更新/4.spec.js</url>
+          <line>38</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>mock://file:///Users/loong/project/vuejs-core-3-book/四、组件化/4-props与组件的被动更新/4.spec.js</url>
+          <line>31</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>mock://file:///Users/loong/project/vuejs-core-3-book/四、组件化/4-props与组件的被动更新/4.spec.js</url>
+          <line>30</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/四、组件化/4-props与组件的被动更新/4.spec.js</url>
+          <line>37</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/四、组件化/4-props与组件的被动更新/4.spec.js</url>
+          <line>30</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/四、组件化/5-setup函数的作用与实现/4.spec.js</url>
+          <line>38</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="ws://localhost:4444/...">
+        <watch expression="factory" />
+        <watch expression="option" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>
