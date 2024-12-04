@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "sourceMap": true,
     // https://www.typescriptlang.org/tsconfig#rootDir
     // https://www.typescriptlang.org/tsconfig#composite
     "composite": true,

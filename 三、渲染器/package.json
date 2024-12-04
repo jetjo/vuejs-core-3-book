@@ -4,7 +4,6 @@
   "description": "",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@8.15.3",
   "scripts": {
     "v-test": "NODE_OPTIONS='--experimental-import-meta-resolve --experimental-json-modules --conditions=verify' vitest run",
     "t-test": "NODE_OPTIONS='--experimental-import-meta-resolve --experimental-json-modules --conditions=test' vitest run",
