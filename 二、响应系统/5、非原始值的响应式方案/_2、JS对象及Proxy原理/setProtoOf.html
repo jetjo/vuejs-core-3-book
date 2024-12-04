@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+    <head>
+        <meta charset='UTF-8'>
+        <meta
+            name='viewport'
+            content='width=device-width, initial-scale=1.0'
+        >
+        <title>setProtoOf</title>
+    </head>
+
+    <body>
+        <script type='module'>
+            function reactive(obj)
+            {
+                return new Proxy(obj, {})
+            }
+            const obj = {}
+            const proto = { bar: 1 }
+            const child = reactive(obj)
+            const parent = reactive(proto)
+            // 使用 parent 作为 child 的原型
+            Object.setPrototypeOf(child, parent)
+            console.log(Object.getPrototypeOf(child) === parent);
+            console.log(Object.getPrototypeOf(obj) === parent);
+
+        </script>
+    </body>
+
+</html>

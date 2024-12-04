@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+    <head>
+        <meta charset='UTF-8'>
+        <meta
+            name='viewport'
+            content='width=device-width, initial-scale=1.0'
+        >
+        <title>Proxy有哪些内部方法</title>
+    </head>
+
+    <body>
+        Proxy有哪些内部方法取决于proxy代理的对象有哪些内部方法，
+        例如一个普通对象obj,不能执行obj(),会抛出异常，因为obj内部没有部署[[Call]]方法，
+        所以obj的proxy(new Proxy(obj))也不能执行proxy(),因为proxy内部也没有[[Call]]方法。
+    </body>
+
+</html>
