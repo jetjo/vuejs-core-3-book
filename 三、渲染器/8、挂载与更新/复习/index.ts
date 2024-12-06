@@ -13,8 +13,9 @@ export type Options = {
 function createRenderer(options: Options) {
   const { createElement, setElementText, insert, patchProps } = options;
 
+  /**挂载,并设置vnode.el */
   function mountElement(vnode: VNode, container) {
-    const element = createElement(vnode.type);
+    const element = vnode.el = createElement(vnode.type);
     if (typeof vnode.children === 'string') {
       setElementText(element, vnode.children);
     } else if (isArray(vnode.children)) {
@@ -40,16 +41,25 @@ function createRenderer(options: Options) {
     }
   }
 
+  /**渲染,并设置container._vnode */
   function render(vnode, container: Container) {
     if (vnode) {
       patch(container._vnode, vnode, container)
     } else {
       if (container._vnode) {
-        container.innerHTML = ''
+        // 不能处理生命周期钩子、自定义指令等
+        // container.innerHTML = ''
+        unmount(container._vnode)
       }
     }
     container._vnode = vnode;
   }
+
+  function unmount(vnode: VNode) {
+    const parent = vnode.el.parentNode;
+    parent?.removeChild(vnode.el);
+  }
+
   return {
     render
   }
