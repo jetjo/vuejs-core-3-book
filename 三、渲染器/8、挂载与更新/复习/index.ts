@@ -35,10 +35,26 @@ function createRenderer(options: Options) {
   }
 
   function patch(vnodeOld, vnodeNew, container) {
-    if (!vnodeOld) {
-      mountElement(vnodeNew, container);
-    } else {
+    // //类型不同，没必要打补丁
+    if (vnodeOld && vnodeOld.type !== vnodeNew.type) {
+      unmount(vnodeOld);
+      vnodeOld = null;
     }
+    // !至此，新旧vnode类型相同
+    const { type } = vnodeNew;
+    if (typeof type === 'string') {
+      if (!vnodeOld) {
+        mountElement(vnodeNew, container);
+      } else {
+        patchElement(vnodeOld, vnodeNew); // !不需要container
+      }
+    } else if (typeof type === 'object') {
+      // 组件
+    }
+  }
+
+  function patchElement(oldNode: VNode, newNode: VNode) {
+
   }
 
   /**渲染,并设置container._vnode */
