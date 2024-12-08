@@ -17,7 +17,8 @@ import { warn } from '@jetjo/vue3/utils'
  * @description 可以使用返回值配置`vite`的`resolve.conditions`字段
  * @description 以保持不同基础设施配置的一致性
  */
-async function parseCustomConditions({ url }) {
+async function parseCustomConditions({ url })
+{
   const conf = await readJson({ url })
   // console.warn('tsconfig.json: ', conf)
   const conditions = conf?.compilerOptions?.customConditions || []
@@ -31,7 +32,8 @@ async function parseCustomConditions({ url }) {
   // import.meta.resolve(extends_, path) // TypeError: Invalid URL
   const ext_url = extends_ ? await import.meta.resolve(extends_, url) : ''
   // console.warn({ ext_url })
-  if (ext_url) {
+  if (ext_url)
+  {
     const baseConditions = await parseCustomConditions({
       url: ext_url
     })
@@ -41,8 +43,9 @@ async function parseCustomConditions({ url }) {
   return conditions
 }
 
-/**@type {import('./module-res-utils-c').getConfFromJson<import('./jsconfig.json')>} */
-async function readJson({ url }) {
+/**@type {import('./module-res-utils-c').getConfFromJson<import('./tsconfig.json')>} */
+async function readJson({ url })
+{
   // // fucking import()!!!, 对json支持巨差, 也不支持jsonc
   // // This "import()" was not recognized because this property was not called "assert" [unsupported-dynamic-import]
   // // const conf = await import(url, {
@@ -57,7 +60,8 @@ async function readJson({ url }) {
   // const conf = await import(url, { with: { type: 'json' } })
   // // const conf = await import(url, { assert: { type: 'json' } })
 
-  if (url.startsWith('file:')) {
+  if (url.startsWith('file:'))
+  {
     url = fileURLToPath(url)
   }
   warn('read config: ', url)
@@ -65,7 +69,7 @@ async function readJson({ url }) {
   const text = await readFile(url, { encoding: 'utf-8' })
 
   return parse(text)
-  /* 
+  /*
   // make edits and apply them
   const edits = modify(text, [...keys], value, {})
   const updated = applyEdits(text, edits)
@@ -78,10 +82,12 @@ async function readJson({ url }) {
   await Deno.writeTextFile(file, res) */
 }
 
-function parsePkgResolveConditionFrom(NODE_OPTIONS = '') {
+function parsePkgResolveConditionFrom(NODE_OPTIONS = '')
+{
   // console.warn('NODE_OPTIONS: ', NODE_OPTIONS);
   // @ts-ignore
-  const parseMatchArray = arr => {
+  const parseMatchArray = arr =>
+  {
     if (!Array.isArray(arr)) return []
     if (typeof arr[1] !== 'string') return []
     return arr[1].split(',')

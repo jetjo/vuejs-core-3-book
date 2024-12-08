@@ -4,10 +4,9 @@
   "description": "",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@8.15.3",
   "scripts": {
-    "v-test": "NODE_OPTIONS='--experimental-import-meta-resolve --experimental-json-modules --conditions=verify' vitest run",
-    "t-test": "NODE_OPTIONS='--experimental-import-meta-resolve --experimental-json-modules --conditions=test' vitest run",
+    "v-test": "NODE_OPTIONS='--conditions=verify --enable-source-maps --inspect --trace-uncaught --trace-exit --trace-warnings --inspect=localhost:4444' vitest run",
+    "t-test": "NODE_OPTIONS='--conditions=test' vitest run",
     "v-dev": "NODE_OPTIONS='--experimental-import-meta-resolve --experimental-json-modules --conditions=verify' vite",
     "t-dev": "NODE_OPTIONS='--experimental-import-meta-resolve --experimental-json-modules --conditions=test' vite",
     "dev": "NODE_OPTIONS='--experimental-import-meta-resolve --experimental-default-type=module' vite"
@@ -37,7 +36,8 @@
     },
     "#shims": "./types/shims.d.ts",
     "#utils": "./utils/index.js",
-    "#root/utils": "../internal-barrel/utils/index.js"
+    "#root/utils": "../internal-barrel/utils/index.js",
+    "#root/*.js": "../internal-barrel/*.js"
   },
   "exports": {
     ".": {

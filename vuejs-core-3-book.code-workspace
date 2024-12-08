@@ -1,9 +1,9 @@
 {
 	"folders": [
-		// {
-		// 	"name": "root",
-		// 	"path": "."
-		// },
+		{
+			"name": "root",
+			"path": "."
+		},
 		{
 			"name": "chapter-2",
 			"path": "二、响应系统"
@@ -52,9 +52,9 @@
 			"**/Thumbs.db": true,
 			"**/package-lock.json": true,
 			"**/pnpm-lock.yaml": true,
-			"**/serve.sh.log": true,
-			"**/node_modules": true,
-			"**/.node-version": true,
+			"**/serve.sh.log": false,
+			"**/node_modules": false,
+			"**/.node-version": false,
 			"tests/unit/coverage": true,
 			"**/.idea": true
 		},
