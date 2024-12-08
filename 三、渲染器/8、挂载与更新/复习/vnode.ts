@@ -1,5 +1,5 @@
 
-export interface HTMLElementVNode {
+export interface VHTMLElement {
     el: any,
     type: string,
     /**支持挂载非文本子节点，扩充类型VNode[] */
@@ -10,16 +10,28 @@ export interface HTMLElementVNode {
     }
 }
 
-export interface TextVNode {
+export const _Text = 111, _Comment = 222, _Fragment = 333;
+
+export interface VText {
     el: any,
-    type: 111,
+    type: typeof _Text,
     children: string
 }
 
-export interface CommentVNode {
+export interface VComment {
     el: any,
-    type: 222,
+    type: typeof _Comment,
     children: string
 }
 
-export type VNode = HTMLElementVNode | TextVNode | CommentVNode
+export interface VFragment {
+    el: any,
+    type: typeof _Fragment,
+    children: VNode[],
+    props: {
+        [key: string]: string | number | boolean,
+        id: string
+    }
+}
+
+export type VNode = VHTMLElement | VText | VComment | VFragment

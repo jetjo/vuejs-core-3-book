@@ -1,20 +1,23 @@
 import { isArray } from "lodash";
 import type { Container } from "./container";
-import type { HTMLElementVNode, VNode } from "./vnode";
+import { _Comment, _Text, _Fragment, type VHTMLElement, type VNode } from "./vnode";
 
 export type Options = {
   createElement: any;
   setElementText: any;
   insert: any;
   patchProps: any;
-
+  createText: any;
+  createComment: any;
+  setText: any;
+  setComment: any;
 }
 
 function createRenderer(options: Options) {
-  const { createElement, setElementText, insert, patchProps } = options;
+  // const { createElement, setElementText, insert, patchProps } = options;
 
   /**vnode没有对应old VNode，并且vnode.type是字符串，挂载，并设置vnode.el */
-  function mountElement(vnode: HTMLElementVNode, container) {
+  function mountElement(vnode: VHTMLElement, container) {
     const element = vnode.el = createElement(vnode.type);
     if (typeof vnode.children === 'string') {
       setElementText(element, vnode.children);
@@ -48,7 +51,7 @@ function createRenderer(options: Options) {
       } else {
         patchElement(n1, n2); // !不需要container
       }
-    } else if (type === 111) {
+    } else if (type === _Text) {
       if (!n1) {
         const el = n2.el = createText(n2.children);
         insert(el, container);
@@ -58,7 +61,7 @@ function createRenderer(options: Options) {
           setText(el, n2.children)
         }
       }
-    } else if (type === 222) {
+    } else if (type === _Comment) {
       if (!n1) {
         const el = n2.el = createComment(n2.children);
         insert(el, container);
@@ -68,12 +71,18 @@ function createRenderer(options: Options) {
           setComment(el, n2.children)
         }
       }
+    } else if (type === _Fragment) {
+      if (!n1) {
+        n2.children.forEach(child => patch(null, child, container))
+      } else {
+        patchChildren(n1, n2, container)
+      }
     } else if (typeof type === 'object') {
       // 组件
     }
   }
 
-  function patchElement(n1: HTMLElementVNode, n2: HTMLElementVNode) {
+  function patchElement(n1: VHTMLElement, n2: VHTMLElement) {
     const el = n2.el = n1.el; // !设置vnode.el
     const oldProps = n1.props;
     const newProps = n2.props;
@@ -125,6 +134,10 @@ function createRenderer(options: Options) {
   }
 
   function unmount(vnode: VNode) {
+    if (vnode.type === _Fragment) {
+      vnode.children.forEach(c => unmount(c))
+      return
+    }
     const parent = vnode.el.parentNode;
     parent?.removeChild(vnode.el);
   }
@@ -132,6 +145,18 @@ function createRenderer(options: Options) {
   return {
     render
   }
+}
+
+function createElement(type: string) {
+  return document.createElement(type);
+}
+
+function setElementText(el: Node, text: string) {
+  el.textContent = text;
+}
+
+function insert(el: Node, parent: Node, anchor: Node | null = null) {
+  parent.insertBefore(el, anchor);
 }
 
 function patchProps(el: Element, key: string, oldVal, newVal) {
@@ -178,3 +203,6 @@ function setComment(el: Comment, comment: string) {
   el.nodeValue = comment;
 }
 
+const options = { createElement, setElementText, createComment, createText, setText, setComment, insert, patchProps }
+
+createRenderer(options);
