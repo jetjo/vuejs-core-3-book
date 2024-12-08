@@ -32,7 +32,7 @@ function createRenderer(option: Options) {
         if (typeof vnode.children === 'string') {
             setElementText(el, vnode.children)
         } else if (Array.isArray(vnode.children)) {
-            vnode.children.forEach(child => patch(null, child, vnode))
+            vnode.children.forEach(child => patch(null, child, el))
         }
         insert(el, container)
     }
