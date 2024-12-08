@@ -1,6 +1,6 @@
 import { isArray } from "lodash";
 import type { Container } from "./container";
-import type { VNode } from "./vnode";
+import type { HTMLElementVNode, VNode } from "./vnode";
 
 export type Options = {
   createElement: any;
@@ -14,7 +14,7 @@ function createRenderer(options: Options) {
   const { createElement, setElementText, insert, patchProps } = options;
 
   /**vnode没有对应old VNode，并且vnode.type是字符串，挂载，并设置vnode.el */
-  function mountElement(vnode: VNode, container) {
+  function mountElement(vnode: HTMLElementVNode, container) {
     const element = vnode.el = createElement(vnode.type);
     if (typeof vnode.children === 'string') {
       setElementText(element, vnode.children);
@@ -34,7 +34,7 @@ function createRenderer(options: Options) {
     insert(element, container);
   }
 
-  function patch(vnodeOld, vnodeNew, container) {
+  function patch(vnodeOld, vnodeNew: VNode, container) {
     // //类型不同，没必要打补丁
     if (vnodeOld && vnodeOld.type !== vnodeNew.type) {
       unmount(vnodeOld);
@@ -48,12 +48,32 @@ function createRenderer(options: Options) {
       } else {
         patchElement(vnodeOld, vnodeNew); // !不需要container
       }
+    } else if (type === 111) {
+      if (!vnodeOld) {
+        const el = vnodeNew.el = createText(vnodeNew.children);
+        insert(el, container);
+      } else {
+        const el = vnodeNew.el = vnodeOld.el;
+        if (vnodeNew.children !== vnodeOld.children) {
+          setText(el, vnodeNew.children)
+        }
+      }
+    } else if (type === 222) {
+      if (!vnodeOld) {
+        const el = vnodeNew.el = createComment(vnodeNew.children);
+        insert(el, container);
+      } else {
+        const el = vnodeNew.el = vnodeOld.el;
+        if (vnodeNew.children !== vnodeOld.children) {
+          setComment(el, vnodeNew.children)
+        }
+      }
     } else if (typeof type === 'object') {
       // 组件
     }
   }
 
-  function patchElement(n1: VNode, n2: VNode) {
+  function patchElement(n1: HTMLElementVNode, n2: HTMLElementVNode) {
     const el = n2.el = n1.el; // !设置vnode.el
     const oldProps = n1.props;
     const newProps = n2.props;
@@ -140,3 +160,21 @@ function shouldSetAsProps(key: any, el: Element, value: any) { // !value 何用
   // 兜底
   return key in el;
 }
+
+function createText(text: string) {
+  return document.createTextNode(text);
+}
+
+function setText(el: Text, text: string) {
+  el.nodeValue = text;
+}
+
+
+function createComment(comment: string) {
+  return document.createComment(comment);
+}
+
+function setComment(el: Comment, comment: string) {
+  el.nodeValue = comment;
+}
+
