@@ -108,6 +108,12 @@ function createRenderer(option: Options) {
                         patch(null, newChild, container, anchor)
                     }
                 }
+                for (let j = 0; j < n1.children.length; j++) {
+                    const oldChild = n1.children[j];
+                    const has = n2.children.find(c => c.key === oldChild.key)
+                    if (has) continue;
+                    unmount(oldChild)
+                }
             }
         } else {
             if (Array.isArray(n1.children)) {
