@@ -13,7 +13,7 @@ export type Options = {
 function createRenderer(options: Options) {
   const { createElement, setElementText, insert, patchProps } = options;
 
-  /**挂载,并设置vnode.el */
+  /**vnode没有对应old VNode，并且vnode.type是字符串，挂载，并设置vnode.el */
   function mountElement(vnode: VNode, container) {
     const element = vnode.el = createElement(vnode.type);
     if (typeof vnode.children === 'string') {
@@ -53,8 +53,41 @@ function createRenderer(options: Options) {
     }
   }
 
-  function patchElement(oldNode: VNode, newNode: VNode) {
+  function patchElement(n1: VNode, n2: VNode) {
+    const el = n2.el = n1.el; // !设置vnode.el
+    const oldProps = n1.props;
+    const newProps = n2.props;
+    for (const key in newProps) {
+      if (newProps[key] === oldProps[key]) continue;
+      patchProps(el, key, oldProps[key], newProps[key])
+    }
+    for (const key in oldProps) {
+      if (key in newProps) continue;
+      patchProps(el, key, oldProps[key], null)
+    }
+    patchChildren(n1, n2, el);
+  }
 
+  function patchChildren(n1: VNode, n2: VNode, container) {
+    if (typeof n2.children === 'string') {
+      if (Array.isArray(n1.children)) {
+        n1.children.forEach(c => typeof c === 'object' && unmount(c))
+      }
+      setElementText(container, n2.children)
+    } else if (Array.isArray(n2.children)) {
+      if (Array.isArray(n1.children)) {
+        // !diff
+      } else {
+        setElementText(container, '');
+        n2.children.forEach(cn => patch(null, cn, container));
+      }
+    } else {
+      if (Array.isArray(n1.children)) {
+        n1.children.forEach(c => typeof c === 'object' && unmount(c))
+      } else if (typeof n1.children === 'string') {
+        setElementText(container, '')
+      }
+    }
   }
 
   /**渲染,并设置container._vnode */
@@ -81,12 +114,17 @@ function createRenderer(options: Options) {
   }
 }
 
-function patchProps(el: Element, key, oldVal, newVal) {
-  if (shouldSetAsProps(key, el)) {
-    if (key === 'class') {
-      // !通过className设值，性能比使用setAttribute和classList快一倍
-      el.className = newVal || ''
-    }
+function patchProps(el: Element, key: string, oldVal, newVal) {
+  if (/^on/.test(key)) {
+    const eventName = key.slice(2).toLowerCase();
+    // !没有处理同一事件绑定多个handler、
+    // !事件发生时间早于绑定事件时间（但冒泡到达时间晚于绑定事件时间）等问题
+    oldVal && el.removeEventListener(eventName, oldVal);
+    el.addEventListener(eventName, newVal);
+  } else if (key === 'class') {
+    // !通过className设值，性能比使用setAttribute和classList快一倍
+    el.className = newVal || ''
+  } else if (shouldSetAsProps(key, el, newVal)) {
     const type = typeof el[key]
     if (type === 'boolean' && newVal === '') {
       newVal = true
@@ -97,9 +135,8 @@ function patchProps(el: Element, key, oldVal, newVal) {
   }
 }
 
-function shouldSetAsProps(key: any, el: Element) {
-  // !只读属性 穷举
-  if (el.tagName === 'INPUT' && key === 'form') return false;
+function shouldSetAsProps(key: any, el: Element, value: any) { // !value 何用
+  if (el.tagName === 'INPUT' && key === 'form') return false; // !只读属性 穷举
   // 兜底
   return key in el;
 }
