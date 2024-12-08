@@ -34,38 +34,38 @@ function createRenderer(options: Options) {
     insert(element, container);
   }
 
-  function patch(vnodeOld, vnodeNew: VNode, container) {
+  function patch(n1, n2: VNode, container) {
     // //类型不同，没必要打补丁
-    if (vnodeOld && vnodeOld.type !== vnodeNew.type) {
-      unmount(vnodeOld);
-      vnodeOld = null;
+    if (n1 && n1.type !== n2.type) {
+      unmount(n1);
+      n1 = null;
     }
     // !至此，新旧vnode类型相同
-    const { type } = vnodeNew;
+    const { type } = n2;
     if (typeof type === 'string') {
-      if (!vnodeOld) {
-        mountElement(vnodeNew, container);
+      if (!n1) {
+        mountElement(n2, container);
       } else {
-        patchElement(vnodeOld, vnodeNew); // !不需要container
+        patchElement(n1, n2); // !不需要container
       }
     } else if (type === 111) {
-      if (!vnodeOld) {
-        const el = vnodeNew.el = createText(vnodeNew.children);
+      if (!n1) {
+        const el = n2.el = createText(n2.children);
         insert(el, container);
       } else {
-        const el = vnodeNew.el = vnodeOld.el;
-        if (vnodeNew.children !== vnodeOld.children) {
-          setText(el, vnodeNew.children)
+        const el = n2.el = n1.el;
+        if (n2.children !== n1.children) {
+          setText(el, n2.children)
         }
       }
     } else if (type === 222) {
-      if (!vnodeOld) {
-        const el = vnodeNew.el = createComment(vnodeNew.children);
+      if (!n1) {
+        const el = n2.el = createComment(n2.children);
         insert(el, container);
       } else {
-        const el = vnodeNew.el = vnodeOld.el;
-        if (vnodeNew.children !== vnodeOld.children) {
-          setComment(el, vnodeNew.children)
+        const el = n2.el = n1.el;
+        if (n2.children !== n1.children) {
+          setComment(el, n2.children)
         }
       }
     } else if (typeof type === 'object') {
