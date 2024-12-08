@@ -54,7 +54,7 @@ function createRenderer(options: Options) {
 
     function patchKeyedChildren(n1: VNode, n2: VNode, container) {
         if (!Array.isArray(n1.children) || !Array.isArray(n2.children)) return;
-        const newChildren = n2.children, oldChildren = n1.children;
+        const newChildren = n2.children, oldChildren = n1.children as (VNode | undefined)[];
         let newStartIdx = 0, oldStartIdx = 0;
         let newEndIdx = newChildren.length - 1, oldEndIdx = oldChildren.length - 1;
         let newStart = newChildren[newStartIdx], newEnd = newChildren[newEndIdx];
@@ -85,11 +85,11 @@ function createRenderer(options: Options) {
                 oldEnd = oldChildren[--oldEndIdx]
             } else {
                 // !新旧节点的首尾各不相同，
-                const oldIdx = oldChildren.findIndex(c => c.key === newStart.key)
+                const oldIdx = oldChildren.findIndex(c => c && c.key === newStart.key)
                 if (oldIdx !== -1) {
                     const old = oldChildren[oldIdx]
-                    patch(old, newStart, container)
-                    insert(old.el, container, oldStart.el)
+                    patch(old!, newStart, container)
+                    insert(old!.el, container, oldStart.el)
                     oldChildren[oldIdx] = undefined
                 } else {
                     patch(null, newStart, container, oldStart.el)
@@ -106,7 +106,7 @@ function createRenderer(options: Options) {
         } else if (newEndIdx > newStartIdx && oldEndIdx <= oldStartIdx) {
             // !剩下需要移除的旧节点
             for (let j = oldStartIdx; j <= oldEndIdx; j++) {
-                unmount(oldChildren[j])
+                unmount(oldChildren[j]!)
             }
         } else {
             // !不会执行到此，这种情况下，上面的while循环不会退出
