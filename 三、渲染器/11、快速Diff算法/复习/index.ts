@@ -191,11 +191,93 @@ function createRenderer(options: Options) {
             }
         }
     }
+
+
+    function patchKeyedChildren1(n1: VNode, n2: VNode, container) {
+        const newChildren = n2.children as VNode[], oldChildren = n1.children as VNode[];
+        const newLen = newChildren?.length, oldLen = oldChildren?.length;
+        let j = 0;
+        const jEnd = Math.min(newLen! - 1, oldLen! - 1);
+        let newChild = newChildren[j], oldChild = oldChildren[j];
+        while (j <= jEnd && newChild.key === oldChild.key) {
+            patch(oldChild, newChild, container);
+            j++;
+            newChild = newChildren[j];
+            oldChild = oldChildren[j];
+        }
+        let newEndIdx = newLen - 1, oldEndIdx = oldLen - 1;
+        newChild = newChildren[newEndIdx], oldChild = oldChildren[oldEndIdx];
+        while (newEndIdx >= j && oldEndIdx >= j && newChild.key === oldChild.key) {
+            patch(oldChild, newChild, container);
+            newEndIdx--;
+            oldEndIdx--;
+            newChild = newChildren[newEndIdx], oldChild = oldChildren[oldEndIdx];
+        }
+        if (newEndIdx >= j && oldEndIdx < j) {
+            const anchor = newEndIdx + 1 < newChildren.length ? newChildren[newEndIdx + 1].el : null
+            while (newEndIdx >= j) {
+                patch(null, newChildren[j++], container, anchor)
+            }
+        } else if (oldEndIdx >= j && newEndIdx < j) {
+            while (oldEndIdx >= j) {
+                unmount(oldChildren[j++])
+            }
+        } else if (newEndIdx >= j && oldEndIdx >= j) {
+            const startIdx = j;
+            const _newEndIdx = newEndIdx;
+            const _oldEndIdx = oldEndIdx;
+            const sourceLen = _newEndIdx - startIdx + 1;
+            const source = new Array[sourceLen].fill(-1)
+
+            const keyIndexMap = Object.create(null);
+            for (let i = startIdx; i <= _newEndIdx; i++) {
+                keyIndexMap[newChildren[i].key] = i;
+            }
+            let kMax = 0, move = false, patched = 0;
+            for (let i = startIdx; i <= _oldEndIdx; i++) {
+                const oldChild = oldChildren[i];
+                if (patched < sourceLen) {
+                    const k = keyIndexMap[oldChild.key]
+                    if (typeof k !== 'undefined') {
+                        patch(oldChild, newChildren[k], container, null);
+                        patched++;
+                        source[k - startIdx] = i;
+                        if (k >= kMax) {
+                            kMax = k;
+                        } else {
+                            move = true;
+                        }
+                    } else {
+                        unmount(oldChild);
+                    }
+                } else {
+                    unmount(oldChild);
+                }
+            }
+            if (move) {
+                const seq = getSequence(source);
+                let sIdx = seq.length - 1;
+                for (let i = sourceLen - 1; i >= 0; i--) {
+                    if (source[i] === -1) {
+                        const anchor = i + startIdx + 1 < newChildren.length ? newChildren[i + startIdx + 1].el : null;
+                        patch(null, newChildren[i + startIdx], container, anchor);
+                    } else if (i !== seq[sIdx]) {
+                        const anchor = i + startIdx + 1 < newChildren.length ? newChildren[i + startIdx + 1].el : null;
+                        insert(newChildren[i + startIdx].el, container, anchor);
+                    } else {
+                        sIdx--;
+                    }
+                }
+            }
+        }
+    }
+
     function patchChildren(n1: VHTMLElement | VFragment, n2: VHTMLElement | VFragment, container) {
         if (typeof n2.children === 'string') {
             if (Array.isArray(n2.children)) {
                 n2.children.forEach(c => unmount(c))
             }
+            // !第一个参数不是n2.el，n2是Fragment时，没有n2.el
             setElementText(container, n2.children)
         } else if (Array.isArray(n2.children)) {
             if (!Array.isArray(n1.children)) {
